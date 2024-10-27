@@ -57,6 +57,7 @@ onMounted(async () => {
             }
         });
         
+        // Accede a los vuelos en la estructura correcta según tu backend
         vuelos.value = response.data.vuelosAPI || [];
     } catch (error) {
         console.error('Error al obtener vuelos:', error);
