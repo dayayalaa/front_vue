@@ -11,7 +11,7 @@
       <div v-else-if="Array.isArray(vuelosIda) && vuelosIda.length">
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosIda" :key="vuelo.flight_number" class="bg-white shadow-md rounded-lg p-4">
-            <p><strong>Aerolínea:</strong> {{ vuelo.airline }}</p>
+            <img :src="vuelo.logo" alt="Logo de la aerolínea" class="w-12 h-12 object-contain">
             <p><strong>Número de Vuelo:</strong> {{ vuelo.flight_number }}</p>
             <p><strong>Precio:</strong> {{ vuelo.price }} ARS</p>
             <p><strong>Origen:</strong> {{ vuelo.origin }}</p>
@@ -44,7 +44,7 @@
       <div v-else-if="Array.isArray(vuelosVuelta) && vuelosVuelta.length">
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosVuelta" :key="vuelo.flight_number" class="bg-white shadow-md rounded-lg p-4">
-            <p><strong>Aerolínea:</strong> {{ vuelo.airline }}</p>
+            <img :src="vuelo.logo" alt="Logo de la aerolínea" class="w-12 h-12 object-contain">
             <p><strong>Número de Vuelo:</strong> {{ vuelo.flight_number }}</p>
             <p><strong>Precio:</strong> {{ vuelo.price }} ARS</p>
             <p><strong>Origen:</strong> {{ vuelo.origin }}</p>

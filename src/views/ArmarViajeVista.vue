@@ -1,30 +1,3 @@
-<template>
-  <div class="max-w-md mx-auto p-4">
-    <h2 class="text-2xl font-bold mb-4 text-center">Buscar Vuelos</h2>
-    <form @submit.prevent="irARuta">
-      <div class="mb-4">
-        <label for="origen" class="block text-sm font-medium">Origen:</label>
-        <input type="text" id="origen" v-model="origen" class="border border-gray-300 p-2 rounded w-full" required>
-        <p v-if="origenError" class="text-red-500 text-sm">{{ origenError }}</p>
-      </div>
-      <div class="mb-4">
-        <label for="destino" class="block text-sm font-medium">Destino:</label>
-        <input type="text" id="destino" v-model="destino" class="border border-gray-300 p-2 rounded w-full" required>
-        <p v-if="destinoError" class="text-red-500 text-sm">{{ destinoError }}</p>
-      </div>
-      <div class="mb-4">
-        <label for="fechaSalida" class="block text-sm font-medium">Fecha de Ida:</label>
-        <input type="date" id="fechaSalida" v-model="fechaSalida" class="border border-gray-300 p-2 rounded w-full" required>
-      </div>
-      <div class="mb-4">
-        <label for="fechaVuelta" class="block text-sm font-medium">Fecha de Vuelta:</label>
-        <input type="date" id="fechaVuelta" v-model="fechaVuelta" class="border border-gray-300 p-2 rounded w-full" required>
-      </div>
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Buscar Vuelos</button>
-    </form>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -33,9 +6,67 @@ const router = useRouter();
 const origen = ref('');
 const destino = ref('');
 const fechaSalida = ref('');
-const fechaVuelta = ref('');  // Nueva variable para la fecha de vuelta
+const fechaVuelta = ref('');
 const origenError = ref('');
 const destinoError = ref('');
+const sugerenciasOrigen = ref([]);
+const sugerenciasDestino = ref([]);
+
+// Array de lugares argentinos
+const lugaresArgentinos = [
+  'Buenos Aires - Aeroparque Jorge Newbery',
+  'Buenos Aires - Aeropuerto Internacional Ministro Pistarini',
+  'Córdoba',
+  'Mendoza',
+  'Mar del Plata',
+  'Ushuaia',
+  'Bariloche',
+  'Salta',
+  'Rosario',
+  'Tucumán',
+  'Iguazú',
+  'Neuquén',
+  'Misiones',
+  'Posadas',
+  'San Fernando del Valle de Catamarca',
+  'San Juan',
+  'Río Gallegos',
+  'Río Grande',
+  'El Calafate',
+  'San Luis',
+  'Resistencia',
+  'Tremedal',
+  'General Roca',
+];
+
+const quitarAcentos = (texto) => {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
+const filtrarSugerencias = (campo) => {
+  if (campo === 'origen') {
+    sugerenciasOrigen.value = lugaresArgentinos.filter(lugar =>
+      quitarAcentos(lugar.toLowerCase()).includes(quitarAcentos(origen.value.toLowerCase()))
+    );
+    sugerenciasDestino.value = []; 
+  } else {
+    sugerenciasDestino.value = lugaresArgentinos.filter(lugar =>
+      quitarAcentos(lugar.toLowerCase()).includes(quitarAcentos(destino.value.toLowerCase()))
+    );
+    sugerenciasOrigen.value = []; 
+  }
+};
+
+
+const seleccionarSugerencia = (sugerencia, tipo) => {
+  if (tipo === 'origen') {
+    origen.value = sugerencia;
+    sugerenciasOrigen.value = []; 
+  } else {
+    destino.value = sugerencia;
+    sugerenciasDestino.value = []; 
+  }
+};
 
 const irARuta = () => {
   origenError.value = '';
@@ -58,8 +89,41 @@ const irARuta = () => {
       origen: origen.value,
       destino: destino.value,
       fechaSalida: fechaSalida.value,
-      fechaVuelta: fechaVuelta.value,  
+      fechaVuelta: fechaVuelta.value,
     }
   });
 };
 </script>
+
+<template>
+  <div class="max-w-md mx-auto p-4">
+    <h2 class="text-2xl font-bold mb-4 text-center">Buscar Vuelos</h2>
+    <form @submit.prevent="irARuta">
+      <div class="mb-4">
+        <label for="origen" class="block text-sm font-medium">Origen:</label>
+        <input type="text" id="origen" v-model="origen" @input="filtrarSugerencias('origen')" class="border border-gray-300 p-2 rounded w-full" required>
+        <p v-if="origenError" class="text-red-500 text-sm">{{ origenError }}</p>
+        <ul v-if="sugerenciasOrigen.length > 0" class="border border-gray-300 mt-1">
+          <li v-for="(sugerencia, index) in sugerenciasOrigen" :key="index" @click="seleccionarSugerencia(sugerencia, 'origen')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
+        </ul>
+      </div>
+      <div class="mb-4">
+        <label for="destino" class="block text-sm font-medium">Destino:</label>
+        <input type="text" id="destino" v-model="destino" @input="filtrarSugerencias('destino')" class="border border-gray-300 p-2 rounded w-full" required>
+        <p v-if="destinoError" class="text-red-500 text-sm">{{ destinoError }}</p>
+        <ul v-if="sugerenciasDestino.length > 0" class="border border-gray-300 mt-1">
+          <li v-for="(sugerencia, index) in sugerenciasDestino" :key="index" @click="seleccionarSugerencia(sugerencia, 'destino')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
+        </ul>
+      </div>
+      <div class="mb-4">
+        <label for="fechaSalida" class="block text-sm font-medium">Fecha de Ida:</label>
+        <input type="date" id="fechaSalida" v-model="fechaSalida" class="border border-gray-300 p-2 rounded w-full" required>
+      </div>
+      <div class="mb-4">
+        <label for="fechaVuelta" class="block text-sm font-medium">Fecha de Vuelta:</label>
+        <input type="date" id="fechaVuelta" v-model="fechaVuelta" class="border border-gray-300 p-2 rounded w-full" required>
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Buscar Vuelos</button>
+    </form>
+  </div>
+</template>
