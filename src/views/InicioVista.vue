@@ -8,14 +8,14 @@ import IconoMas from '../components/icons/IconoMas.vue'
     <div class="fondo">
 
       <div class="flex flex-col justify-center items-center bg-cover bg-center h-64">
-       <div>
-        <h1 class="text-xl font-bold">¡Descubre nuevos destinos!</h1>
-        <div class="mt-4">
-          <label for="busqueda" class="hidden">Búsqueda:</label>
-          <input type="text" id="busqueda" class="border border-gray-300 p-2 rounded w-full"
-            placeholder="Buscar destinos" required>
+        <div>
+          <h1 class="text-xl font-bold">¡Descubre nuevos destinos!</h1>
+          <div class="mt-4">
+            <label for="busqueda" class="hidden">Búsqueda:</label>
+            <input type="text" id="busqueda" class="border border-gray-300 p-2 rounded w-full"
+              placeholder="Buscar destinos" required>
+          </div>
         </div>
-       </div>
       </div>
 
       <!-- Itinerario guardados del usuario -->
@@ -24,35 +24,31 @@ import IconoMas from '../components/icons/IconoMas.vue'
           <h2 class="text-lg font-semibold mb-2 ml-2.5">Mí itinerario:</h2>
           <a href="#">Ver más</a>
         </div>
-<<<<<<< HEAD
-      
-=======
 
         <div class="overflow-x-auto">
-  <div class="flex gap-4 ml-3">
-    <div class="w-[150px] h-[150px] flex-none">
-      <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-    </div>
+          <div class="flex gap-4 ml-3">
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
 
-    <div class="w-[150px] h-[150px] flex-none">
-      <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-    </div>
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
 
-    <div class="w-[150px] h-[150px] flex-none">
-      <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-    </div>
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
 
-    <div class="w-[150px] h-[150px] flex-none">
-      <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-    </div>
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
 
-    <div class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
-      <IconoMas class="w-20 h-20 text-gray-600" />
-    </div>
-  </div>
-</div>
-
->>>>>>> 87441689789f07b4f80401477045073e51668101
+            <div
+              class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
+              <IconoMas class="w-20 h-20 text-gray-600" />
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Recomendaciones de Arcana -->
@@ -124,13 +120,13 @@ import IconoMas from '../components/icons/IconoMas.vue'
       </div>
 
     </div>
-    
-  </main> 
+
+  </main>
 </template>
 
 <style>
-.fondo{
-  background-image: url('/img/fondo-3.png'); 
+.fondo {
+  background-image: url('/img/fondo-3.png');
   background-repeat: no-repeat;
   background-size: cover;
 }
