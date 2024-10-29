@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
+import IconoDespegar from '../components/icons/IconoDespegar.vue';
+import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 
 const router = useRouter();
 const origen = ref('');
@@ -59,7 +61,6 @@ const filtrarSugerencias = (campo) => {
   }
 };
 
-
 const seleccionarSugerencia = (sugerencia, tipo) => {
   if (tipo === 'origen') {
     origen.value = sugerencia;
@@ -98,34 +99,40 @@ const irARuta = () => {
 </script>
 
 <template>
-  <div class="max-w-md mx-auto p-4">
-    <TituloPrincipal> Buscar vuelos </TituloPrincipal>
-    <form @submit.prevent="irARuta">
-      <div class="mb-4">
-        <label for="origen" class="block text-sm font-medium">Origen:</label>
-        <input type="text" id="origen" v-model="origen" @input="filtrarSugerencias('origen')" class="border border-gray-300 p-2 rounded w-full" required>
-        <p v-if="origenError" class="text-red-500 text-sm">{{ origenError }}</p>
-        <ul v-if="sugerenciasOrigen.length > 0" class="border border-gray-300 mt-1">
-          <li v-for="(sugerencia, index) in sugerenciasOrigen" :key="index" @click="seleccionarSugerencia(sugerencia, 'origen')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
-        </ul>
-      </div>
-      <div class="mb-4">
-        <label for="destino" class="block text-sm font-medium">Destino:</label>
-        <input type="text" id="destino" v-model="destino" @input="filtrarSugerencias('destino')" class="border border-gray-300 p-2 rounded w-full" required>
-        <p v-if="destinoError" class="text-red-500 text-sm">{{ destinoError }}</p>
-        <ul v-if="sugerenciasDestino.length > 0" class="border border-gray-300 mt-1">
-          <li v-for="(sugerencia, index) in sugerenciasDestino" :key="index" @click="seleccionarSugerencia(sugerencia, 'destino')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
-        </ul>
-      </div>
-      <div class="mb-4">
-        <label for="fechaSalida" class="block text-sm font-medium">Fecha de Ida:</label>
-        <input type="date" id="fechaSalida" v-model="fechaSalida" class="border border-gray-300 p-2 rounded w-full" required>
-      </div>
-      <div class="mb-4">
-        <label for="fechaVuelta" class="block text-sm font-medium">Fecha de Vuelta:</label>
-        <input type="date" id="fechaVuelta" v-model="fechaVuelta" class="border border-gray-300 p-2 rounded w-full" required>
-      </div>
-      <BotonPrincipal type="submit" >Buscar Vuelos</BotonPrincipal>
-    </form>
+  <div class="flex items-center justify-center h-screen">
+    <div class="max-w-md p-4 bg-white rounded shadow-lg">
+      <TituloPrincipal>Buscar vuelos</TituloPrincipal>
+      <form @submit.prevent="irARuta">
+        <div class="mb-4 relative">
+          <label for="origen" class="block text-sm font-medium">Origen:</label>
+          <IconoDespegar class="absolute left-3 top-8" />
+          <input type="text" id="origen" v-model="origen" @input="filtrarSugerencias('origen')" class="border border-gray-300 pl-10 p-2 rounded w-full" required>
+          <p v-if="origenError" class="text-red-500 text-sm">{{ origenError }}</p>
+          <ul v-if="sugerenciasOrigen.length > 0" class="border border-gray-300 mt-1">
+            <li v-for="(sugerencia, index) in sugerenciasOrigen" :key="index" @click="seleccionarSugerencia(sugerencia, 'origen')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
+          </ul>
+        </div>
+        <div class="mb-4 relative">
+          <label for="destino" class="block text-sm font-medium">Destino:</label>
+          <IconoAterrizaje class="absolute left-3 top-8 " />
+          <input type="text" id="destino" v-model="destino" @input="filtrarSugerencias('destino')" class="border border-gray-300 pl-10 p-2 rounded w-full" required>
+          <p v-if="destinoError" class="text-red-500 text-sm">{{ destinoError }}</p>
+          <ul v-if="sugerenciasDestino.length > 0" class="border border-gray-300 mt-1">
+            <li v-for="(sugerencia, index) in sugerenciasDestino" :key="index" @click="seleccionarSugerencia(sugerencia, 'destino')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
+          </ul>
+        </div>
+        <div class="mb-4">
+          <label for="fechaSalida" class="block text-sm font-medium">Fecha de Ida:</label>
+          <input type="date" id="fechaSalida" v-model="fechaSalida" class="border border-gray-300 p-2 rounded w-full" required>
+        </div>
+        <div class="mb-4">
+          <label for="fechaVuelta" class="block text-sm font-medium">Fecha de Vuelta:</label>
+          <input type="date" id="fechaVuelta" v-model="fechaVuelta" class="border border-gray-300 p-2 rounded w-full" required>
+        </div>
+        <div class="flex justify-center">
+          <BotonPrincipal type="submit">Buscar Vuelos</BotonPrincipal>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
