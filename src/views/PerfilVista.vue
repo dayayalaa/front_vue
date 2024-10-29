@@ -1,5 +1,6 @@
 <script setup>
 import TituloPrincipal from '../components/TituloPrincipal.vue';
+import IconoMas from '../components/icons/IconoMas.vue';
 
 
 const userName = 'Juan Pérez';
@@ -26,5 +27,37 @@ const userName = 'Juan Pérez';
       <TituloPrincipal class="text-2xl font-bold">Perfil de Usuario</TituloPrincipal>
       <p>¡Bienvenido, {{ userName }}!</p>
     </div>
+
+    <div class="w-full mb-16">
+        <div class="flex justify-between m-3">
+          <h2 class="text-lg font-semibold mb-2 ml-2.5">Mí itinerario:</h2>
+          <a href="#">Ver más</a>
+        </div>
+
+        <div class="overflow-x-auto">
+          <div class="flex gap-4 ml-3">
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
+
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
+
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
+
+            <div class="w-[150px] h-[150px] flex-none">
+              <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+            </div>
+
+            <div
+              class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
+              <IconoMas class="w-20 h-20 text-gray-600" />
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
