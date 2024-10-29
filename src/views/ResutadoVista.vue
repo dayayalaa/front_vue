@@ -73,7 +73,7 @@ onMounted(async () => {
             <p><strong>Destino:</strong> {{ vuelo.destination }}</p>
             <p><strong>Salida:</strong> {{ vuelo.departure_at }}</p>
             <p><strong>Duración:</strong> {{ vuelo.duration }} Minutos</p>
-            <button class="bg-blue-500 text-white px-4 py-2 rounded">Seleccionar vuelo</button>
+            <BotonPrincipal> Seleccionar vuelo </BotonPrincipal>
           </div>
         </div>
       </div>
