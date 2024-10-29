@@ -12,19 +12,19 @@
 
         <div class="overflow-x-auto whitespace-nowrap">
           <div class="flex gap-6">
-            <div class="w-[150px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
-              <p class="text-white text-center">Contenido 1</p>
+            <div class="w-[250px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
+              img
             </div>
 
-            <div class="w-[150px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
+            <div class="w-[250px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
               <p class="text-white text-center">Contenido 2</p>
             </div>
 
-            <div class="w-[150px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
+            <div class="w-[250px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
               <p class="text-white text-center">Contenido 3</p>
             </div>
 
-            <div class="w-[150px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
+            <div class="w-[250px] h-[150px] bg-gray-700 rounded-lg shadow-lg">
               <p class="text-white text-center">Contenido 4</p>
             </div>
           </div>
