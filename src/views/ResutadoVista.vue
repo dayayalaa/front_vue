@@ -1,6 +1,61 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+import TituloPrincipal from '../components/TituloPrincipal.vue';
+import BotonPrincipal from '../components/BotonPrincipal.vue';
+
+const route = useRoute();
+const origen = route.query.origen;
+const destino = route.query.destino;
+const fechaSalida = route.query.fechaSalida;
+const fechaVuelta = route.query.fechaVuelta; // Obtener la fecha de vuelta del query
+const vuelosIda = ref([]);
+const vuelosVuelta = ref([]);
+const cargando = ref(true);
+const cargandoVuelta = ref(true);
+
+onMounted(async () => {
+  try {
+    if (!origen || !destino || !fechaSalida || !fechaVuelta) { // Validar todas las entradas
+      cargando.value = false;
+      cargandoVuelta.value = false;
+      return;
+    }
+
+    // Obtener vuelos de ida
+    const responseIda = await axios.get('http://localhost:3000/arcana/vuelos/ida', {
+      params: {
+        origen,
+        destino,
+        fechaSalida,
+      }
+    });
+    vuelosIda.value = responseIda.data.vuelosAPI || [];
+
+    // Obtener vuelos de vuelta
+    const responseVuelta = await axios.get('http://localhost:3000/arcana/vuelos/vuelta', {
+      params: {
+        origen: destino,  
+        destino: origen,  
+        fechaVuelta, // Usar la fecha de vuelta ingresada por el usuario
+      }
+    });
+    vuelosVuelta.value = responseVuelta.data.vuelosAPI || [];
+  } catch (error) {
+    console.error('Error al obtener vuelos:', error);
+  } finally {
+    cargando.value = false;
+    cargandoVuelta.value = false;
+  }
+});
+</script>
+
+
+
 <template>
     <div class="max-w-md mx-auto p-4">
-      <h2 class="text-2xl font-bold mb-4 text-center">Resultados de Vuelos de Ida</h2>
+      <TituloPrincipal> Resultado de viajes de ida </TituloPrincipal>
       <p><strong>Origen:</strong> {{ origen }}</p>
       <p><strong>Destino:</strong> {{ destino }}</p>
   
@@ -26,11 +81,11 @@
 
       <div class="max-w-md mx-auto p-4 flex flex-col justify-center items-center">
         <h2  class="text-2xl font-bold mb-4 text-center">Agregar un hotel</h2>
-        <button class="bg-blue-500 text-white px-4 py-2 rounded">Buscar</button>
+        <BotonPrincipal> Buscar </BotonPrincipal>
       </div>
       <div class="max-w-md mx-auto p-4 flex flex-col justify-center items-center">
         <h2  class="text-2xl font-bold mb-4 text-center">Agregar una actividad</h2>
-        <button class="bg-blue-500 text-white px-4 py-2 rounded">Buscar</button>
+        <BotonPrincipal> Buscar </BotonPrincipal>
       </div>
   
       <h2 class="text-2xl font-bold mb-4 text-center">Resultados de Vuelos de Vuelta</h2>
@@ -51,7 +106,7 @@
             <p><strong>Destino:</strong> {{ vuelo.destination }}</p>
             <p><strong>Salida:</strong> {{ vuelo.departure_at }}</p>
             <p><strong>Duración:</strong> {{ vuelo.duration }} Minutos</p>
-            <button class="bg-blue-500 text-white px-4 py-2 rounded">Seleccionar vuelo</button>
+            <BotonPrincipal> Seleccionar vuelo </BotonPrincipal>
           </div>
         </div>
       </div>
@@ -59,54 +114,4 @@
     </div>
   </template>
   
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import { useRoute } from 'vue-router';
-  import axios from 'axios';
-  
-  const route = useRoute();
-  const origen = route.query.origen;
-  const destino = route.query.destino;
-  const fechaSalida = route.query.fechaSalida;
-  const fechaVuelta = route.query.fechaVuelta; // Obtener la fecha de vuelta del query
-  const vuelosIda = ref([]);
-  const vuelosVuelta = ref([]);
-  const cargando = ref(true);
-  const cargandoVuelta = ref(true);
-  
-  onMounted(async () => {
-    try {
-      if (!origen || !destino || !fechaSalida || !fechaVuelta) { // Validar todas las entradas
-        cargando.value = false;
-        cargandoVuelta.value = false;
-        return;
-      }
-  
-      // Obtener vuelos de ida
-      const responseIda = await axios.get('http://localhost:3000/arcana/vuelos/ida', {
-        params: {
-          origen,
-          destino,
-          fechaSalida,
-        }
-      });
-      vuelosIda.value = responseIda.data.vuelosAPI || [];
-  
-      // Obtener vuelos de vuelta
-      const responseVuelta = await axios.get('http://localhost:3000/arcana/vuelos/vuelta', {
-        params: {
-          origen: destino,  
-          destino: origen,  
-          fechaVuelta, // Usar la fecha de vuelta ingresada por el usuario
-        }
-      });
-      vuelosVuelta.value = responseVuelta.data.vuelosAPI || [];
-    } catch (error) {
-      console.error('Error al obtener vuelos:', error);
-    } finally {
-      cargando.value = false;
-      cargandoVuelta.value = false;
-    }
-  });
-  </script>
-  
+ 

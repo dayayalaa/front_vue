@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { fetchVuelos } from '../services/apiService.js';
+// import { fetchVuelos } from '../services/apiService.js';
 
 const vuelos = ref([]);
 

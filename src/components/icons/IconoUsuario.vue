@@ -1,7 +1,6 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#788B69]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11c0 4.418-3.582 8-8 8S0 15.418 0 11c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
-    <path stroke-linecap="round" stroke-linejoin="round" d="M16 19c-3.313 0-6 2.686-6 6" />
-  </svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="512" height="512"><path d="m16,23.314c-1.252.444-2.598.686-4,.686s-2.748-.242-4-.686v-2.314c0-2.206,1.794-4,4-4s4,1.794,4,4v2.314ZM12,7c-1.103,0-2,.897-2,2s.897,2,2,2,2-.897,2-2-.897-2-2-2Zm12,5c0,4.433-2.416,8.311-6,10.389v-1.389c0-3.309-2.691-6-6-6s-6,2.691-6,6v1.389C2.416,20.311,0,16.433,0,12,0,5.383,5.383,0,12,0s12,5.383,12,12Zm-8-3c0-2.206-1.794-4-4-4s-4,1.794-4,4,1.794,4,4,4,4-1.794,4-4Z" fill="#ffffff"/></svg>
+
   
 </template>

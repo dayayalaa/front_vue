@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import TituloPrincipal from '../components/TituloPrincipal.vue';
+import BotonPrincipal from '../components/BotonPrincipal.vue';
 
 const router = useRouter();
 const origen = ref('');
@@ -97,7 +99,7 @@ const irARuta = () => {
 
 <template>
   <div class="max-w-md mx-auto p-4">
-    <h2 class="text-2xl font-bold mb-4 text-center">Buscar Vuelos</h2>
+    <TituloPrincipal> Buscar vuelos </TituloPrincipal>
     <form @submit.prevent="irARuta">
       <div class="mb-4">
         <label for="origen" class="block text-sm font-medium">Origen:</label>
@@ -123,7 +125,7 @@ const irARuta = () => {
         <label for="fechaVuelta" class="block text-sm font-medium">Fecha de Vuelta:</label>
         <input type="date" id="fechaVuelta" v-model="fechaVuelta" class="border border-gray-300 p-2 rounded w-full" required>
       </div>
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Buscar Vuelos</button>
+      <BotonPrincipal type="submit" >Buscar Vuelos</BotonPrincipal>
     </form>
   </div>
 </template>
