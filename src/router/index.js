@@ -24,6 +24,12 @@ const router = createRouter({
       name: 'perfil',
       component: () => import('../views/PerfilVista.vue')
     }
+    , 
+    {
+      path: '/guias',
+      name: 'guias',
+      component: () => import('../views/GuiasVista.vue')
+    }
   ]
 })
 
