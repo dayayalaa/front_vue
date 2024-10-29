@@ -55,26 +55,26 @@ import IconoMas from '../components/icons/IconoMas.vue'
       <div class="flex flex-col justify-center items-center mb-20">
         <h2 class="text-xl font-bold mb-4">Destinos Arcana</h2>
 
-        <div class="flex flex-wrap gap-6 justify-center">
-          <div class="relative w-[150px] h-[250px]">
+        <div class="flex flex-wrap gap-3 justify-center m-2">
+          <div class="relative w-[130px] h-[200px]">
             <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Jujuy</p>
           </div>
 
-          <div class="relative w-[150px] h-[250px]">
+          <div class="relative w-[130px] h-[200px]">
             <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Misiones</p>
           </div>
 
-          <div class="relative w-[150px] h-[250px]">
+          <div class="relative w-[130px] h-[200px]">
             <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Neuquén</p>
           </div>
 
-          <div class="relative w-[150px] h-[250px]">
+          <div class="relative w-[130px] h-[200px]">
             <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Santa Cruz</p>
@@ -93,25 +93,25 @@ import IconoMas from '../components/icons/IconoMas.vue'
         <h2 class="text-xl font-bold mb-4">Destinos populares</h2>
 
         <div class="flex flex-col gap-6 justify-center">
-          <div class="relative w-[350px] h-[150px]">
+          <div class="relative w-[300px] h-[150px]">
             <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Jujuy</p>
           </div>
 
-          <div class="relative w-[350px] h-[150px]">
+          <div class="relative w-[300px] h-[150px]">
             <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Misiones</p>
           </div>
 
-          <div class="relative w-[350px] h-[150px]">
+          <div class="relative w-[300px] h-[150px]">
             <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Neuquén</p>
           </div>
 
-          <div class="relative w-[350px] h-[150px]">
+          <div class="relative w-[300px] h-[150px]">
             <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
               Santa Cruz</p>
