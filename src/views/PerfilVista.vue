@@ -1,13 +1,14 @@
 <script setup>
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import IconoMas from '../components/icons/IconoMas.vue';
+import BotonPrincipal from '../components/BotonPrincipal.vue';
 
 
 const userName = 'Juan Pérez';
 </script>
 
 <template>
-  <div class="max-w-md mx-auto p-4">
+  <div class="max-w-md mx-auto p-4 mb-20">
     <div class="relative mb-4">
       <img
         src="/img/neuquen.jpg"
@@ -59,5 +60,7 @@ const userName = 'Juan Pérez';
           </div>
         </div>
       </div>
+
+      <BotonPrincipal>Ver mí mapa</BotonPrincipal>
   </div>
 </template>

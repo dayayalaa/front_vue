@@ -85,7 +85,7 @@ import IconoMas from '../components/icons/IconoMas.vue'
       <!-- Giuas de turismo local -->
       <div class="flex flex-col justify-center items-center mb-20">
         <h2 class="text-xl font-bold mb-4">¡Conoce nuestros guías!</h2>
-        <BotonPrincipal>Guías locales</BotonPrincipal>
+        <router-link to="/guias"><BotonPrincipal>Guías locales</BotonPrincipal></router-link>
       </div>
 
       <!-- Más reservados por la gente -->
