@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoMas from '../components/icons/IconoMas.vue'
 </script>
@@ -85,7 +86,7 @@ import IconoMas from '../components/icons/IconoMas.vue'
       <!-- Giuas de turismo local -->
       <div class="flex flex-col justify-center items-center mb-20">
         <h2 class="text-xl font-bold mb-4">¡Conoce nuestros guías!</h2>
-        <BotonPrincipal>Guías locales</BotonPrincipal>
+      <RouterLink to="/guias">  <BotonPrincipal>Guías locales</BotonPrincipal> </RouterLink>
       </div>
 
       <!-- Más reservados por la gente -->
