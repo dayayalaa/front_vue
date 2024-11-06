@@ -16,7 +16,6 @@ const destinoError = ref('');
 const sugerenciasOrigen = ref([]);
 const sugerenciasDestino = ref([]);
 
-// Array de lugares argentinos
 const lugaresArgentinos = [
   'Buenos Aires - Aeroparque Jorge Newbery',
   'Buenos Aires - Aeropuerto Internacional Ministro Pistarini',

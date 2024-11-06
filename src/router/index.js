@@ -29,8 +29,25 @@ const router = createRouter({
       path: '/guias',
       name: 'guias',
       component: () => import('../views/GuiasVista.vue')
+    }, 
+    {
+      path: '/lista',
+      name: 'lista',
+      component: () => import('../views/ListaVista.vue')
     }
-  ]
-})
+  ], 
 
-export default router
+
+  scrollBehavior(to) {
+    if (to.hash) {
+      return { el: to.hash };
+    } else {
+  
+      return { top: 0 };
+    }
+  },
+  });
+  
+ 
+export default router;
+

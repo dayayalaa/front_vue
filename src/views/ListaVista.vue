@@ -2,18 +2,20 @@
 import { ref, reactive } from 'vue';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
+import IconoBorrar from '../components/icons/IconoBorrar.vue';
+import IrAtras from '../components/IrAtras.vue';
 
-const newItem = ref('');
+const nuevoItem = ref('');  
 const checklistItems = reactive([
-  { text: 'Ejemplo de ítem 1', checked: false },
-  { text: 'Ejemplo de ítem 2', checked: false },
-  { text: 'Ejemplo de ítem 3', checked: false },
+  { texto: 'Cepillo de dientes', checked: false },
+  { texto: 'Protector solar', checked: false },
+  { texto: 'Pasaporte', checked: false },
 ]);
 
 function addItem() {
-  if (newItem.value.trim()) {
-    checklistItems.push({ text: newItem.value.trim(), checked: false });
-    newItem.value = ''; 
+  if (nuevoItem.value.trim()) {  
+    checklistItems.push({ textoo: nuevoItem.value.trim(), checked: false });
+    nuevoItem.value = '';  
   }
 }
 
@@ -23,30 +25,23 @@ function removeItem(index) {
 </script>
 
 
-
-
 <template>
   <div class="max-w-md mx-auto p-4">
-    <TituloPrincipal> checklist </TituloPrincipal>
+    <IrAtras/>
+    <TituloPrincipal> Checklist </TituloPrincipal>
     <p class="text-lg mb-4 text-left">No olvidarme de ...</p>
-
-    <!-- Formulario para agregar un nuevo checklist -->
     <div class="mb-4">
       <input
-        v-model="newItem"
+        v-model="nuevoItem"
         type="text"
         placeholder="Agregar nuevo ítem"
         class="w-full p-2 border border-gray-300 rounded-lg mb-2"
       />
-      <button
-        @click="addItem"
-        class="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600"
-      >
+      <BotonPrincipal
+        @click="addItem">
         Agregar
-      </button>
+      </BotonPrincipal>
     </div>
-
-    <!-- Lista de checklists -->
     <div
       v-for="(item, index) in checklistItems"
       :key="index"
@@ -57,14 +52,12 @@ function removeItem(index) {
         v-model="item.checked"
         class="mr-2"
       />
-      <span :class="{ 'line-through text-gray-500': item.checked }">{{ item.text }}</span>
-      <BotonPrincipal
-        @click="removeItem(index)"
-        class="ml-auto text-red-500 hover:text-red-700"
-      >
-        Borrar
-      </BotonPrincipal>
+      <span :class="{ 'line-through text-gray-500': item.checked }">{{ item.texto }}</span>
+      <button
+       @click="removeItem(index)"
+       class="ml-auto flex items-center justify-center bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition">
+       <IconoBorrar class="w-6 h-6" />
+       </button>
     </div>
   </div>
 </template>
-

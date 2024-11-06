@@ -1,138 +1,76 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
-import IconoMas from '../components/icons/IconoMas.vue'
+import Subtitulo from '../components/Subtitulo.vue';
+import TituloPrincipal from '../components/TituloPrincipal.vue';
+import TarjetaDestino from '../components/TarjetaDestino.vue';
+import MiItinerario from '../components/MiItinerario.vue';
+
+const destinos = [
+  { id: 1, nombre: 'Jujuy', img: '/img/86475-Jujuy.jpg' },
+  { id: 2, nombre: 'Misiones', img: '/img/misiones.jpg' },
+  { id: 3, nombre: 'Neuquén', img: '/img/neuquen.jpg' },
+  { id: 4, nombre: 'Santa Cruz', img: '/img/upsala-glacier.jpg' }
+];
 </script>
 
 <template>
-  <main>
-    <div class="fondo">
-
+    <div >
+    <!-- Sección principal de búsqueda -->
       <div class="flex flex-col justify-center items-center bg-cover bg-center h-64">
-        <div>
-          <h1 class="text-xl font-bold">¡Descubre nuevos destinos!</h1>
-          <div class="mt-4">
-            <label for="busqueda" class="hidden">Búsqueda:</label>
-            <input type="text" id="busqueda" class="border border-gray-300 p-2 rounded w-full"
-              placeholder="Buscar destinos" required>
-          </div>
+        <TituloPrincipal>¡Descubre nuevos destinos!</TituloPrincipal>
+        <div class="mt-4">
+          <label for="busqueda" class="hidden">Búsqueda:</label>
+          <input 
+            type="text" 
+            id="busqueda" 
+            class="border border-gray-300 p-2 rounded w-full"
+            placeholder="Buscar destinos" 
+            required 
+          />
         </div>
       </div>
 
-      <!-- Itinerario guardados del usuario -->
-      <div class="w-full mb-16">
-        <div class="flex justify-between m-3">
-          <h2 class="text-lg font-semibold mb-2 ml-2.5">Mí itinerario:</h2>
-          <a href="#">Ver más</a>
-        </div>
-
-        <div class="overflow-x-auto">
-          <div class="flex gap-4 ml-3">
-            <div class="w-[150px] h-[150px] flex-none">
-              <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            </div>
-
-            <div class="w-[150px] h-[150px] flex-none">
-              <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            </div>
-
-            <div class="w-[150px] h-[150px] flex-none">
-              <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            </div>
-
-            <div class="w-[150px] h-[150px] flex-none">
-              <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            </div>
-
-            <div
-              class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
-              <IconoMas class="w-20 h-20 text-gray-600" />
-            </div>
-          </div>
-        </div>
-      </div>
+      <div>
+    <MiItinerario />
+  </div>
 
       <!-- Recomendaciones de Arcana -->
-      <div class="flex flex-col justify-center items-center mb-20">
-        <h2 class="text-xl font-bold mb-4">Destinos Arcana</h2>
-
+      <section class="flex flex-col justify-center items-center mb-20">
+        <Subtitulo>Destinos Arcana</Subtitulo>
         <div class="flex flex-wrap gap-3 justify-center m-2">
-          <div class="relative w-[130px] h-[200px]">
-            <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Jujuy</p>
-          </div>
-
-          <div class="relative w-[130px] h-[200px]">
-            <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Misiones</p>
-          </div>
-
-          <div class="relative w-[130px] h-[200px]">
-            <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Neuquén</p>
-          </div>
-
-          <div class="relative w-[130px] h-[200px]">
-            <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Santa Cruz</p>
-          </div>
+          <TarjetaDestino 
+            v-for="destino in destinos" 
+            :key="destino.id" 
+            :nombre="destino.nombre" 
+            :imagen="destino.img" 
+          />
         </div>
-      </div>
+      </section>
 
-      <!-- Giuas de turismo local -->
-      <div class="flex flex-col justify-center items-center mb-20">
-        <h2 class="text-xl font-bold mb-4">¡Conoce nuestros guías!</h2>
-<<<<<<< HEAD
-      <RouterLink to="/guias">  <BotonPrincipal>Guías locales</BotonPrincipal> </RouterLink>
-=======
-        <router-link to="/guias"><BotonPrincipal>Guías locales</BotonPrincipal></router-link>
->>>>>>> 6f7d63061e4c64f4eaa89485154b90d4715002cc
-      </div>
+      <!-- Guías de turismo local -->
+      <section class="flex flex-col justify-center items-center mb-20">
+        <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
+        <RouterLink to="/guias"> 
+          <BotonPrincipal>Guías locales</BotonPrincipal> 
+        </RouterLink>
+      </section>
 
-      <!-- Más reservados por la gente -->
-      <div class="flex flex-col justify-center items-center mb-20">
-        <h2 class="text-xl font-bold mb-4">Destinos populares</h2>
-
+      <!-- Destinos populares -->
+      <section class="flex flex-col justify-center items-center mb-20">
+        <Subtitulo>Destinos populares</Subtitulo>
         <div class="flex flex-col gap-6 justify-center">
-          <div class="relative w-[300px] h-[150px]">
-            <img src="/img/86475-Jujuy.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+          <div v-for="destino in destinos" :key="destino.id" class="relative w-[300px] h-[150px]">
+            <img 
+              :src="destino.img" 
+              :alt="`Imagen de ${destino.nombre}`" 
+              class="w-full h-full object-cover rounded-lg" 
+            />
             <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Jujuy</p>
-          </div>
-
-          <div class="relative w-[300px] h-[150px]">
-            <img src="/img/misiones.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Misiones</p>
-          </div>
-
-          <div class="relative w-[300px] h-[150px]">
-            <img src="/img/neuquen.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Neuquén</p>
-          </div>
-
-          <div class="relative w-[300px] h-[150px]">
-            <img src="/img/upsala-glacier.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-            <p class="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-              Santa Cruz</p>
+              {{ destino.nombre }}
+            </p>
           </div>
         </div>
-      </div>
-
+      </section> 
     </div>
-
-  </main>
 </template>
-
-<style>
-.fondo {
-  background-image: url('/img/fondo-3.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-</style>

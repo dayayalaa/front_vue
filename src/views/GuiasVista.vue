@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
+import IrAtras from '../components/IrAtras.vue';
 
 const guias = ref([
   {
@@ -44,9 +45,10 @@ const guias = ref([
 
 <template>
   <div class="max-w-2xl mx-auto p-4 mb-20"> 
-    <TituloPrincipal> Conoce a los guías locales </TituloPrincipal>
+    <IrAtras/>
+    <TituloPrincipal> Conocé a los guías locales </TituloPrincipal>
     <p class="text-center mb-6">
-      Explora Argentina con nuestros guías locales y descubrí los lugares de una forma más accesible.
+      Explorá Argentina con nuestros guías locales y descubrí los lugares de una forma más accesible.
     </p>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
