@@ -10,7 +10,7 @@ const irAtras = () => {
 </script>
 
 <template>
-  <button @click="irAtras" class="btn_back z-3 mt-3">
+  <button @click="irAtras" class="btn_back z-3 mt-5">
     <IconoAtras />
   </button>
 </template>
