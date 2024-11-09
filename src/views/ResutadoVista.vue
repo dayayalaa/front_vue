@@ -10,43 +10,56 @@ const route = useRoute();
 const router = useRouter();
 const origen = route.query.origen;
 const destino = route.query.destino;
-const fechaSalidaQuery = route.query.fechaSalida;
+const fechaSalida = route.query.fechaSalida;
 const fechaVuelta = route.query.fechaVuelta;
+
 const vuelosIda = ref([]);
 const vuelosVuelta = ref([]);
 const cargando = ref(true);
-const cargandoVuelta = ref(true);
 const errorMensaje = ref('');
+const hotelEconomico = ref(null);
 
 onMounted(async () => {
   try {
-    if (!origen || !destino || !fechaSalidaQuery || !fechaVuelta) {
+
+    //vuelo
+    if (!origen || !destino || !fechaSalida || !fechaVuelta) {
       cargando.value = false;
-      cargandoVuelta.value = false;
+      errorMensaje.value = 'Por favor, verifica que todos los parámetros se hayan ingresado correctamente.';
       return;
     }
 
-    const responseIda = await axios.get('http://localhost:3000/arcana/vuelos/ida', {
-      params: { origen, destino, fechaSalida: fechaSalidaQuery }
-    });
-    vuelosIda.value = responseIda.data.vuelosAPI || [];
+    const response = await axios.get(`http://localhost:3000/arcana/vuelos/resultados/${origen}/${destino}/${fechaSalida}/${fechaVuelta}`);
+    console.log(response.data);
 
-    const responseVuelta = await axios.get('http://localhost:3000/arcana/vuelos/vuelta', {
-      params: { origen: destino, destino: origen, fechaVuelta }
-    });
-    vuelosVuelta.value = responseVuelta.data.vuelosAPI || [];
+    if (response.data && Array.isArray(response.data.vuelosIda)) {
+      vuelosIda.value = response.data.vuelosIda;
+    } else {
+      errorMensaje.value = 'No se encontraron vuelos de ida.';
+    }
+
+    if (response.data && Array.isArray(response.data.vuelosVuelta)) {
+      vuelosVuelta.value = response.data.vuelosVuelta;
+    } else {
+      errorMensaje.value = 'No se encontraron vuelos de vuelta.';
+    }
+
+    // hotles
+    const hotelResponse = await axios.get('http://localhost:3000/arcana/hoteles/precio/economico');
+    console.log(hotelResponse.data);
+    hotelEconomico.value = hotelResponse.data;
+
   } catch (error) {
     errorMensaje.value = 'Error al obtener los vuelos. Por favor, inténtalo de nuevo más tarde.';
     console.error('Error al obtener vuelos:', error);
   } finally {
     cargando.value = false;
-    cargandoVuelta.value = false;
   }
 });
 
 const calcularLlegada = (vuelo) => {
-  const fechaSalida = new Date(vuelo.departure_at);
-  const duracion = vuelo.duration;
+  const fechaSalida = new Date(vuelo.fechaSalida);
+  const duracion = vuelo.duracion;
   fechaSalida.setMinutes(fechaSalida.getMinutes() + duracion);
   return {
     fecha: fechaSalida.toLocaleDateString('es-ES'),
@@ -61,162 +74,172 @@ const obtenerFechaYHora = (fecha) => {
     hora: date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false })
   };
 };
-
 </script>
 
 <template>
   <div class="max-w-md mx-auto p-4">
-    <TituloPrincipal> Resultado de viajes de ida </TituloPrincipal>
-    <p><strong>Origen:</strong> {{ origen }}</p>
-    <p><strong>Destino:</strong> {{ destino }}</p>
+    <div>
+      <TituloPrincipal>Resultado de viajes de ida</TituloPrincipal>
+      <p><strong>Origen:</strong> {{ origen }}</p>
+      <p><strong>Destino:</strong> {{ destino }}</p>
 
-    <div v-if="cargando">
-      <p>Cargando opciones de vuelos...</p>
-    </div>
-
-    <div v-else-if="errorMensaje">
-      <p>{{ errorMensaje }}</p>
-    </div>
-
-    <div v-else-if="Array.isArray(vuelosVuelta) && vuelosVuelta.length">
-      <div class="grid grid-cols-1 gap-4">
-        <div v-for="vuelo in vuelosVuelta" :key="vuelo.flight_number"
-          class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center">
-          <div class="w-full mb-6">
-            <div class="flex justify-between mb-6">
-              <div>
-                <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.destination }}</p>
-                <p>Origen</p>
-              </div>
-              <div class="text-end">
-                <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.origen }}</p>
-                <p>Destino</p>
-              </div>
-            </div>
-
-            <div class="flex justify-between mb-6">
-              <img :src="vuelo.logo" alt="Logo de la aerolínea {{ vuelo.airline }}" class="w-16 h-16 object-contain">
-              <div class="text-end">
-                <p>Número de Vuelo:</p>
-                <p class="font-medium text-2xl">{{ vuelo.flight_number }}</p>
-              </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-6">
-              <div class="flex justify-between items-center flex-col">
-                <p>{{ obtenerFechaYHora(vuelo.departure_at).fecha }}</p>
-                <p>{{ obtenerFechaYHora(vuelo.departure_at).hora }}</p>
-              </div>
-
-              <div class="flex-1 mx-2 relative">
-                <div class="absolute left-1/2 transform -translate-x-1/2 -top-3 text-[#222725]">
-                  <IconoAvion />
-                </div>
-                <hr class="border-t border-dashed border-[#788B69]">
-              </div>
-
-              <div class="flex justify-between items-center flex-col">
-                <p>{{ calcularLlegada(vuelo).fecha }}</p>
-                <p>{{ calcularLlegada(vuelo).hora }}</p>
-              </div>
-            </div>
-
-
-            <p><strong>Duración:</strong> {{ vuelo.duration }} Minutos</p>
-            <p><strong>Escala:</strong> {{ vuelo.transfers }}</p>
-
-            <div class="flex justify-between">
-              <p><strong>Precio:</strong></p>
-              <p class="font-black text-2xl text-[#4F6D3A]"> ${{ vuelo.price }} ARS</p>
-            </div>
-          </div>
-
-          <BotonPrincipal @click="seleccionarVueloIda(vuelo)"> Seleccionar vuelo </BotonPrincipal>
-        </div>
+      <div v-if="cargando">
+        <p>Cargando opciones de vuelos...</p>
       </div>
-    </div>
-    <p v-else>No hay opciones de vuelos de ida disponibles.</p>
 
-    <div class="max-w-md mx-auto p-4 flex flex-col justify-center items-center">
-      <h2 class="text-2xl font-bold mb-4 text-center">Agregar un hotel</h2>
-      <BotonPrincipal @click="buscarHotel"> Buscar </BotonPrincipal>
-    </div>
-    <div class="max-w-md mx-auto p-4 flex flex-col justify-center items-center">
-      <h2 class="text-2xl font-bold mb-4 text-center">Agregar una actividad</h2>
-      <BotonPrincipal @click="buscarActividad"> Buscar </BotonPrincipal>
-    </div>
+      <div v-else-if="errorMensaje">
+        <p>{{ errorMensaje }}</p>
+      </div>
 
-    <h2 class="text-2xl font-bold mb-4 text-center">Resultados de Vuelos de Vuelta</h2>
-    <p><strong>Origen:</strong> {{ destino }}</p>
-    <p><strong>Destino:</strong> {{ origen }}</p>
-
-    <div v-if="cargandoVuelta">
-      <p>Cargando opciones de vuelos de vuelta...</p>
-    </div>
-
-    <div v-else-if="errorMensaje">
-      <p>{{ errorMensaje }}</p>
-    </div>
-
-    <div v-else-if="Array.isArray(vuelosVuelta) && vuelosVuelta.length">
-      <div class="grid grid-cols-1 gap-4">
+      <div v-else-if="Array.isArray(vuelosIda) && vuelosIda.length">
         <div class="grid grid-cols-1 gap-4">
-        <div v-for="vuelo in vuelosIda" :key="vuelo.flight_number"
-          class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center">
-          <div class="w-full mb-6">
-            <div class="flex justify-between mb-6">
-              <div>
-                <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.origin }}</p>
-                <p>Origen</p>
-              </div>
-              <div class="text-end">
-                <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.destination }}</p>
-                <p>Destino</p>
-              </div>
-            </div>
-
-            <div class="flex justify-between mb-6">
-              <img :src="vuelo.logo" alt="Logo de la aerolínea {{ vuelo.airline }}" class="w-16 h-16 object-contain">
-              <div class="text-end">
-                <p>Número de Vuelo:</p>
-                <p class="font-medium text-2xl">{{ vuelo.flight_number }}</p>
-              </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-6">
-              <div class="flex justify-between items-center flex-col">
-                <p>{{ obtenerFechaYHora(vuelo.departure_at).fecha }}</p>
-                <p>{{ obtenerFechaYHora(vuelo.departure_at).hora }}</p>
-              </div>
-
-              <div class="flex-1 mx-2 relative">
-                <div class="absolute left-1/2 transform -translate-x-1/2 -top-3 text-[#222725]">
-                  <IconoAvion />
+          <div v-for="vuelo in vuelosIda" :key="vuelo.numeroVuelo"
+            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center">
+            <div class="w-full mb-6">
+              <div class="flex justify-between mb-6">
+                <div>
+                  <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.origen }}</p>
+                  <p>Origen</p>
                 </div>
-                <hr class="border-t border-dashed border-[#788B69]">
+                <div class="text-end">
+                  <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.destino }}</p>
+                  <p>Destino</p>
+                </div>
               </div>
 
-              <div class="flex justify-between items-center flex-col">
-                <p>{{ calcularLlegada(vuelo).fecha }}</p>
-                <p>{{ calcularLlegada(vuelo).hora }}</p>
+              <div class="flex justify-between mb-6">
+                <img :src="vuelo.imgAerolinea" alt="Logo de la aerolínea {{ vuelo.aerolinea }}"
+                  class="w-16 h-16 object-contain">
+                <div class="text-end">
+                  <p>Número de Vuelo:</p>
+                  <p class="font-medium text-2xl">{{ vuelo.numeroVuelo }}</p>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center mb-6">
+                <div class="flex justify-between items-center flex-col">
+                  <p>{{ obtenerFechaYHora(vuelo.fechaSalida).fecha }}</p>
+                  <p>{{ obtenerFechaYHora(vuelo.fechaSalida).hora }}</p>
+                </div>
+
+                <div class="flex-1 mx-2 relative">
+                  <div class="absolute left-1/2 transform -translate-x-1/2 -top-3 text-[#222725]">
+                    <IconoAvion />
+                  </div>
+                  <hr class="border-t border-dashed border-[#788B69]">
+                </div>
+
+                <div class="flex justify-between items-center flex-col">
+                  <p>{{ calcularLlegada(vuelo).fecha }}</p>
+                  <p>{{ calcularLlegada(vuelo).hora }}</p>
+                </div>
+              </div>
+
+              <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
+              <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
+
+              <div class="flex justify-between">
+                <p><strong>Precio:</strong></p>
+                <p class="font-black text-2xl text-[#4F6D3A]"> ${{ vuelo.precio }} ARS</p>
               </div>
             </div>
 
-
-            <p><strong>Duración:</strong> {{ vuelo.duration }} Minutos</p>
-            <p><strong>Escala:</strong> {{ vuelo.transfers }}</p>
-
-            <div class="flex justify-between">
-              <p><strong>Precio:</strong></p>
-              <p class="font-black text-2xl text-[#4F6D3A]"> ${{ vuelo.price }} ARS</p>
-            </div>
+            <BotonPrincipal @click="seleccionarVueloIda(vuelo)">Seleccionar vuelo</BotonPrincipal>
           </div>
-
-          <BotonPrincipal @click="seleccionarVueloIda(vuelo)"> Seleccionar vuelo </BotonPrincipal>
         </div>
       </div>
+      <p v-else>No hay opciones de vuelos de ida disponibles.</p>
+    </div>
+
+    <div>
+      <div>
+        <TituloPrincipal>Hoteles</TituloPrincipal>
+
+        <div v-if="hotelEconomico">
+          <img :src="hotelEconomico.habitaciones[0].imgHabitacion" alt="Imagen del hotel" />
+          <h3>{{ hotelEconomico.nombre }}</h3>
+          <p>Tipo de habitación: {{ hotelEconomico.habitaciones[0].tipo }}</p>
+          <p>Precio por noche: ${{ hotelEconomico.habitaciones[0].precioPorNoche }}</p>
+        </div>
+        <div v-else>
+          <p>No se encontró un hotel económico.</p>
+        </div>
+
+        <BotonPrincipal>Buscar más opciones</BotonPrincipal>
       </div>
     </div>
-    <p v-else>No hay opciones de vuelos de vuelta disponibles.</p>
+
+    <div>
+      <h2 class="text-2xl font-bold mb-4 text-center">Resultados de Vuelos de Vuelta</h2>
+      <p><strong>Origen:</strong> {{ destino }}</p>
+      <p><strong>Destino:</strong> {{ origen }}</p>
+
+      <div v-if="cargandoVuelta">
+        <p>Cargando opciones de vuelos de vuelta...</p>
+      </div>
+
+      <div v-else-if="errorMensaje">
+        <p>{{ errorMensaje }}</p>
+      </div>
+
+      <div v-else-if="Array.isArray(vuelosVuelta) && vuelosVuelta.length">
+        <div class="grid grid-cols-1 gap-4">
+          <div v-for="vuelo in vuelosVuelta" :key="vuelo.numeroVuelo"
+            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center">
+            <div class="w-full mb-6">
+              <div class="flex justify-between mb-6">
+                <div>
+                  <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.origen }}</p>
+                  <p>Origen</p>
+                </div>
+                <div class="text-end">
+                  <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.destino }}</p>
+                  <p>Destino</p>
+                </div>
+              </div>
+
+              <div class="flex justify-between mb-6">
+                <img :src="vuelo.imgAerolinea" alt="Logo de la aerolínea {{ vuelo.aerolinea }}"
+                  class="w-16 h-16 object-contain">
+                <div class="text-end">
+                  <p>Número de Vuelo:</p>
+                  <p class="font-medium text-2xl">{{ vuelo.numeroVuelo }}</p>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center mb-6">
+                <div class="flex justify-between items-center flex-col">
+                  <p>{{ obtenerFechaYHora(vuelo.fechaSalida).fecha }}</p>
+                  <p>{{ obtenerFechaYHora(vuelo.fechaSalida).hora }}</p>
+                </div>
+
+                <div class="flex-1 mx-2 relative">
+                  <div class="absolute left-1/2 transform -translate-x-1/2 -top-3 text-[#222725]">
+                    <IconoAvion />
+                  </div>
+                  <hr class="border-t border-dashed border-[#788B69]">
+                </div>
+
+                <div class="flex justify-between items-center flex-col">
+                  <p>{{ calcularLlegada(vuelo).fecha }}</p>
+                  <p>{{ calcularLlegada(vuelo).hora }}</p>
+                </div>
+              </div>
+
+              <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
+              <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
+
+              <div class="flex justify-between">
+                <p><strong>Precio:</strong></p>
+                <p class="font-black text-2xl text-[#4F6D3A]"> ${{ vuelo.precio }} ARS</p>
+              </div>
+            </div>
+
+            <BotonPrincipal @click="seleccionarVueloVuelta(vuelo)">Seleccionar vuelo</BotonPrincipal>
+          </div>
+        </div>
+      </div>
+      <p v-else>No hay opciones de vuelos de vuelta disponibles.</p>
+    </div>
   </div>
 </template>
