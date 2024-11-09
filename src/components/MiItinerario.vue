@@ -1,12 +1,12 @@
 <script setup>
-import IconoMas from '../components/icons/IconoMas.vue'; 
-
+import { RouterLink } from 'vue-router';
+import IconoMas from '../components/icons/IconoMas.vue';
 
 const itinerarios = [
-  { id: 1, img: '/img/86475-Jujuy.jpg', alt: 'Imagen de Jujuy' },
-  { id: 2, img: '/img/misiones.jpg', alt: 'Imagen de Misiones' },
-  { id: 3, img: '/img/neuquen.jpg', alt: 'Imagen de Neuquén' },
-  { id: 4, img: '/img/upsala-glacier.jpg', alt: 'Imagen de Santa Cruz' }
+  { id: 1, img: '/img/86475-Jujuy.jpg',      alt: 'Imagen de Jujuy' },
+  { id: 2, img: '/img/misiones.jpg',         alt: 'Imagen de Misiones' },
+  { id: 3, img: '/img/neuquen.jpg',          alt: 'Imagen de Neuquén' },
+  { id: 4, img: '/img/upsala-glacier.jpg',   alt: 'Imagen de Santa Cruz' }
 ];
 </script>
 
@@ -19,10 +19,15 @@ const itinerarios = [
 
     <div class="overflow-x-auto">
       <div class="flex gap-4 ml-3">
-        <!-- Recorrer itinerarios -->
-        <div v-for="itinerario in itinerarios" :key="itinerario.id" class="w-[150px] h-[150px] flex-none">
+        <!-- Recorrer itinerarios y hacer clic para ir al detalle -->
+        <router-link
+          v-for="itinerario in itinerarios"
+          :key="itinerario.id"
+          :to="{ name: 'ItinerarioDetalle', params: { id: itinerario.id }}"
+          class="w-[150px] h-[150px] flex-none"
+        >
           <img :src="itinerario.img" :alt="itinerario.alt" class="w-full h-full object-cover rounded-lg" />
-        </div>
+        </router-link>
 
         <!-- Ícono de agregar nuevo itinerario -->
         <div class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
@@ -32,4 +37,3 @@ const itinerarios = [
     </div>
   </div>
 </template>
-

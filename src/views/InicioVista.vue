@@ -1,66 +1,88 @@
 <script setup>
+import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import BotonPrincipal from '../components/BotonPrincipal.vue';
-import Subtitulo from '../components/Subtitulo.vue';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
+import Subtitulo from '../components/Subtitulo.vue';
 import TarjetaDestino from '../components/TarjetaDestino.vue';
 import MiItinerario from '../components/MiItinerario.vue';
+import BotonPrincipal from '../components/BotonPrincipal.vue';
 
-const destinos = [
-  { id: 1, nombre: 'Jujuy', img: '/img/86475-Jujuy.jpg' },
-  { id: 2, nombre: 'Misiones', img: '/img/misiones.jpg' },
-  { id: 3, nombre: 'Neuquén', img: '/img/neuquen.jpg' },
-  { id: 4, nombre: 'Santa Cruz', img: '/img/upsala-glacier.jpg' }
-];
+const destinosPopulares = ref([
+  { id: 1, nombre: 'Córdoba', img: '/img/cordoba.png' },
+  { id: 2, nombre: 'Iguazú', img: '/img/iguazu.png' },
+  { id: 3, nombre: 'Bariloche', img: '/img/bariloche.png' },
+  { id: 4, nombre: 'Mendoza', img: '/img/mendoza.png' }
+ 
+]);
+
+const destinosArcana = ref([
+  { id: 1, nombre: 'El Calafate', img: '/img/calafate.png' },
+  { id: 2, nombre: 'Ushuaia', img: '/img/ushuaia.png' },
+  { id: 3, nombre: 'La Pampa', img: '/img/lapampa.png' },
+  { id: 4, nombre: 'Buenos Aires', img: '/img/buenosAires.png' },
+]);
+
 </script>
 
+
+
 <template>
-    <div >
-    <!-- Sección principal de búsqueda -->
-      <div class="flex flex-col justify-center items-center bg-cover bg-center h-64">
-        <TituloPrincipal>¡Descubre nuevos destinos!</TituloPrincipal>
-        <div class="mt-4">
-          <label for="busqueda" class="hidden">Búsqueda:</label>
-          <input 
-            type="text" 
-            id="busqueda" 
-            class="border border-gray-300 p-2 rounded w-full"
-            placeholder="Buscar destinos" 
-            required 
-          />
-        </div>
+  <div>
+     <!-- Sección principal de búsqueda -->
+     <div class="flex flex-col justify-center items-center bg-cover bg-center h-64">
+      <TituloPrincipal>¡Descubre nuevos destinos!</TituloPrincipal>
+      <div class="mt-4">
+        <label for="busqueda" class="hidden">Búsqueda:</label>
+        <input 
+          type="text" 
+          id="busqueda" 
+          class="border border-gray-300 p-2 rounded w-full"
+          placeholder="Buscar destinos" 
+          required 
+        />
       </div>
+    </div>
 
-      <div>
-    <MiItinerario />
-  </div>
+    <div>
+      <MiItinerario/>
+    </div>
 
-      <!-- Recomendaciones de Arcana -->
+      <!-- Sección de Destinos Arcana -->
       <section class="flex flex-col justify-center items-center mb-20">
-        <Subtitulo>Destinos Arcana</Subtitulo>
-        <div class="flex flex-wrap gap-3 justify-center m-2">
+      <Subtitulo>Destinos Arcana</Subtitulo>
+      <div class="flex flex-wrap gap-3 justify-center m-2">
+        <RouterLink 
+          v-for="destino in destinosArcana" 
+          :key="destino.id" 
+          :to="{ name: 'destinoArcana', params: { id: destino.id, type: 'arcana' } }" 
+        >
           <TarjetaDestino 
-            v-for="destino in destinos" 
-            :key="destino.id" 
             :nombre="destino.nombre" 
             :imagen="destino.img" 
           />
-        </div>
-      </section>
-
-      <!-- Guías de turismo local -->
-      <section class="flex flex-col justify-center items-center mb-20">
-        <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
-        <RouterLink to="/guias"> 
-          <BotonPrincipal>Guías locales</BotonPrincipal> 
         </RouterLink>
-      </section>
+      </div>
+    </section>
 
-      <!-- Destinos populares -->
-      <section class="flex flex-col justify-center items-center mb-20">
-        <Subtitulo>Destinos populares</Subtitulo>
-        <div class="flex flex-col gap-6 justify-center">
-          <div v-for="destino in destinos" :key="destino.id" class="relative w-[300px] h-[150px]">
+       <!-- Guías de turismo local -->
+       <section class="flex flex-col justify-center items-center mb-20">
+      <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
+      <RouterLink to="/guias"> 
+        <BotonPrincipal>Guías locales</BotonPrincipal> 
+      </RouterLink>
+    </section>
+
+
+    <!-- Sección de Destinos Populares -->
+    <section class="flex flex-col justify-center items-center mb-20">
+      <Subtitulo>Destinos Populares</Subtitulo>
+      <div class="flex flex-col gap-6 justify-center">
+        <RouterLink 
+          v-for="destino in destinosPopulares" 
+          :key="destino.id" 
+          :to="{ name: 'destinoPopular', params: { id: destino.id, type: 'popular' } }"  
+        >
+          <div class="relative w-[300px] h-[150px]">
             <img 
               :src="destino.img" 
               :alt="`Imagen de ${destino.nombre}`" 
@@ -70,7 +92,9 @@ const destinos = [
               {{ destino.nombre }}
             </p>
           </div>
-        </div>
-      </section> 
-    </div>
+        </RouterLink>
+      </div>
+    </section>
+  </div>
 </template>
+

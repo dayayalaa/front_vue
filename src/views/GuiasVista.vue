@@ -8,37 +8,37 @@ const guias = ref([
     id: 1,
     nombre: "Juan Pérez",
     provincia: "Buenos Aires",
-    imagen: "https://via.placeholder.com/100",
+    imagen: "./img/persona_1.jpeg", // Agregar la extensión de la imagen
   },
   {
     id: 2,
     nombre: "Ana López",
     provincia: "Córdoba",
-    imagen: "https://via.placeholder.com/100",
+    imagen: "/img/persona_2.jpeg", // Agregar la extensión de la imagen
   },
   {
     id: 3,
     nombre: "Carlos Gómez",
     provincia: "Mendoza",
-    imagen: "https://via.placeholder.com/100",
+    imagen: "/img/persona_3.jpeg" // Agregar la extensión de la imagen
   },
   {
     id: 4,
     nombre: "Lucía Fernández",
     provincia: "Salta",
-    imagen: "https://via.placeholder.com/100",
+    imagen: "/img/persona_4.jpeg", // Agregar la extensión de la imagen
   },
   {
     id: 5,
     nombre: "Roberto Díaz",
     provincia: "Santa Fe",
-    imagen: "https://via.placeholder.com/100",
+    imagen: "/img/persona_5.jpeg", // Agregar la extensión de la imagen
   },
   {
     id: 6,
     nombre: "María Rodríguez",
     provincia: "Misiones",
-    imagen: "https://via.placeholder.com/100",
+    imagen: "/img/persona_6.jpeg", // Agregar la extensión de la imagen
   },
 ]);
 </script>
@@ -57,12 +57,12 @@ const guias = ref([
         :key="guia.id"
         class="bg-white shadow-md rounded-lg p-4 flex flex-col items-center"
       >
-      <div class="w-24 h-24 rounded-full mb-4 bg-gray-500"></div>
-        <!-- <img
+      
+        <img
           :src="guia.imagen"
-          alt="Foto del guía"
-          class="w-24 h-24 rounded-full mb-4"
-        /> -->
+          :alt="'Foto de ' + guia.nombre"
+          class="w-24 h-24 rounded-full mb-4 object-cover"
+        />
         <strong class="text-lg">{{ guia.nombre }}</strong>
         <p class="text-gray-600">{{ guia.provincia }}</p>
       </div>
