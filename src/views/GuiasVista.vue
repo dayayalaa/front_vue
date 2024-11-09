@@ -8,37 +8,37 @@ const guias = ref([
     id: 1,
     nombre: "Juan Pérez",
     provincia: "Buenos Aires",
-    imagen: "./img/persona_1.jpeg", // Agregar la extensión de la imagen
+    imagen: "./img/persona_1.jpeg",
   },
   {
     id: 2,
     nombre: "Ana López",
     provincia: "Córdoba",
-    imagen: "/img/persona_2.jpeg", // Agregar la extensión de la imagen
+    imagen: "/img/persona_2.jpeg", 
   },
   {
     id: 3,
     nombre: "Carlos Gómez",
     provincia: "Mendoza",
-    imagen: "/img/persona_3.jpeg" // Agregar la extensión de la imagen
+    imagen: "/img/persona_3.jpeg" 
   },
   {
     id: 4,
     nombre: "Lucía Fernández",
     provincia: "Salta",
-    imagen: "/img/persona_4.jpeg", // Agregar la extensión de la imagen
+    imagen: "/img/persona_4.jpeg", 
   },
   {
     id: 5,
     nombre: "Roberto Díaz",
     provincia: "Santa Fe",
-    imagen: "/img/persona_5.jpeg", // Agregar la extensión de la imagen
+    imagen: "/img/persona_5.jpeg", 
   },
   {
     id: 6,
     nombre: "María Rodríguez",
     provincia: "Misiones",
-    imagen: "/img/persona_6.jpeg", // Agregar la extensión de la imagen
+    imagen: "/img/persona_6.jpeg", 
   },
 ]);
 </script>

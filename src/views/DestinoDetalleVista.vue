@@ -79,7 +79,6 @@ onMounted(() => {
   const { id, type } = route.params;
   const destinoId = parseInt(id);
 
-  // Buscar el destino en el array adecuado dependiendo del tipo
   if (type === 'arcana') {
     destino.value = destinosArcana.find(d => d.id === destinoId);
   } else if (type === 'popular') {
