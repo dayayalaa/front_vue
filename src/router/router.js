@@ -7,6 +7,7 @@ import Guias from "../views/GuiasVista.vue";
 import Listas from "../views/ListaVista.vue";
 import ItinerarioDetalle from "../views/ItinerarioDetalle.vue";
 import DestinosArcana from "../components/DestinosArcana.vue";
+import HotelesVista from "../views/HotelesVista.vue";
 
 const routes = [
   { path: "/", name: "Home", component: HomeView },
@@ -15,16 +16,19 @@ const routes = [
   { path: "/perfil", name: "Perfil", component: Perfil },
   { path: "/guias", name: "Guias", component: Guias },
   { path: "/listas", name: "Listas", component: Listas },
-  {
-    path: "/itinerario/:id",
-    name: "ItinerarioDetalle",
-    component: ItinerarioDetalle,
+  { path: "/itinerario/:id", name: "ItinerarioDetalle", component: ItinerarioDetalle,
   },
   {
     path: '/arcana/lugares/:id',
     name: 'lugarDetalle',
     component: DestinosArcana
-  }
+  },
+  {
+    path: '/hoteles',
+    name: 'opcionesHoteles',
+    component: HotelesVista
+  },
+  
 ];
 
 const router = createRouter({

@@ -164,8 +164,9 @@ const obtenerFechaYHora = (fecha) => {
         <div v-else>
           <p>No se encontró un hotel económico.</p>
         </div>
-
+        <RouterLink to="/hoteles"> 
         <BotonPrincipal>Buscar más opciones</BotonPrincipal>
+      </RouterLink>
       </div>
     </div>
 
