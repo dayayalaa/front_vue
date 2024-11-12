@@ -10,26 +10,16 @@ import DestinosArcana from "../components/DestinosArcana.vue";
 import HotelesVista from "../views/HotelesVista.vue";
 
 const routes = [
-  { path: "/", name: "Home", component: HomeView },
-  { path: "/crear", name: "Crear", component: Crear },
-  { path: "/resultados", name: "Resultados", component: Resultados },
-  { path: "/perfil", name: "Perfil", component: Perfil },
-  { path: "/guias", name: "Guias", component: Guias },
-  { path: "/listas", name: "Listas", component: Listas },
-  { path: "/itinerario/:id", name: "ItinerarioDetalle", component: ItinerarioDetalle,
-  },
-  {
-    path: '/arcana/lugares/:id',
-    name: 'lugarDetalle',
-    component: DestinosArcana
-  },
-  {
-    path: '/hoteles',
-    name: 'opcionesHoteles',
-    component: HotelesVista
-  },
-  
-];
+  { path: "/",                   name: "Home",               component: HomeView },
+  { path: "/crear",              name: "Crear",              component: Crear },
+  { path: "/resultados",         name: "Resultados",         component: Resultados },
+  { path: "/perfil",             name: "Perfil",             component: Perfil },
+  { path: "/guias",              name: "Guias",              component: Guias },
+  { path: "/listas",             name: "Listas",             component: Listas },
+  { path: "/itinerario/:id",     name: "ItinerarioDetalle",  component: ItinerarioDetalle,},
+  { path: '/arcana/lugares/:id', name: 'lugarDetalle',       component: DestinosArcana, },
+  { path: '/hoteles',            name: 'opcionesHoteles',    component: HotelesVista},
+  ];
 
 const router = createRouter({
   history: createWebHistory(),

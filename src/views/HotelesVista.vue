@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import IrAtras from '../components/IrAtras.vue';
 
 const hoteles = ref([]); 
 onMounted(async () => {
@@ -19,6 +20,7 @@ onMounted(async () => {
 
 
 <template>
+  <IrAtras/>
     <div class="hoteles-container">
       <h1 class="text-center text-2xl font-semibold mb-6">Hoteles</h1>
       <div v-if="hoteles.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

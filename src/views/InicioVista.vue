@@ -7,6 +7,7 @@ import Subtitulo from '../components/Subtitulo.vue';
 import TarjetaDestino from '../components/TarjetaDestino.vue';
 import MiItinerario from '../components/MiItinerario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
+import NavSuperior from '../components/NavSuperior.vue';
 
 const destinosPopulares = ref([]);
 const destinosArcana = ref([]);
@@ -30,7 +31,8 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="flex flex-col justify-center items-center bg-cover bg-center h-64">
+    <NavSuperior/>
+    <div class="flex flex-col justify-center items-center bg-cover bg-center h-40">
       <TituloPrincipal>¡Descubre nuevos destinos!</TituloPrincipal>
       <div class="mt-4">
         <label for="busqueda" class="hidden">Búsqueda:</label>

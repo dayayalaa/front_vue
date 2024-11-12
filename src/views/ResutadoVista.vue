@@ -5,6 +5,7 @@ import axios from 'axios';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoAvion from '../components/icons/IconoAvion.vue';
+import IrAtras from '../components/IrAtras.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -77,7 +78,9 @@ const obtenerFechaYHora = (fecha) => {
 </script>
 
 <template>
-  <div class="max-w-md mx-auto p-4">
+  <!---Resultado Vuelos-->
+  <IrAtras />
+  <div class="max-w-md mx-auto p-4 mb-6">
     <div>
       <TituloPrincipal>Resultado de viajes de ida</TituloPrincipal>
       <p><strong>Origen:</strong> {{ origen }}</p>
@@ -94,7 +97,7 @@ const obtenerFechaYHora = (fecha) => {
       <div v-else-if="Array.isArray(vuelosIda) && vuelosIda.length">
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosIda" :key="vuelo.numeroVuelo"
-            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center">
+            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6"> <!-- Aquí se agregó el mb-6 -->
             <div class="w-full mb-6">
               <div class="flex justify-between mb-6">
                 <div>
@@ -151,26 +154,32 @@ const obtenerFechaYHora = (fecha) => {
       <p v-else>No hay opciones de vuelos de ida disponibles.</p>
     </div>
 
-    <div>
-      <div>
-        <TituloPrincipal>Hoteles</TituloPrincipal>
-
-        <div v-if="hotelEconomico">
-          <img :src="hotelEconomico.habitaciones[0].imgHabitacion" alt="Imagen del hotel" />
-          <h3>{{ hotelEconomico.nombre }}</h3>
-          <p>Tipo de habitación: {{ hotelEconomico.habitaciones[0].tipo }}</p>
-          <p>Precio por noche: ${{ hotelEconomico.habitaciones[0].precioPorNoche }}</p>
+    <!-- Hoteles -->
+    <div class="max-w-3xl mx-auto px-4 py-6 mb-12">
+      <TituloPrincipal class="text-center text-4xl font-semibold text-gray-800 mb-6">Hoteles</TituloPrincipal>
+      <div v-if="hotelEconomico" class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <img 
+          :src="hotelEconomico.habitaciones[0].imgHabitacion" 
+          :alt="hotelEconomico.nombre" 
+          class="w-full h-64 object-cover rounded-t-lg" 
+        />
+        <div class="px-6 py-4">
+          <h3 class="text-2xl font-semibold text-gray-800">{{ hotelEconomico.nombre }}</h3>
+          <p class="text-gray-600 text-sm mt-2">Tipo de habitación: {{ hotelEconomico.habitaciones[0].tipo }}</p>
+          <p class="text-gray-600 text-sm">Precio por noche: ${{ hotelEconomico.habitaciones[0].precioPorNoche }}</p>
         </div>
-        <div v-else>
-          <p>No se encontró un hotel económico.</p>
-        </div>
-        <RouterLink to="/hoteles"> 
-        <BotonPrincipal>Buscar más opciones</BotonPrincipal>
-      </RouterLink>
+        <section class="flex justify-center items-center mb-6">
+          <RouterLink to="/hoteles">
+            <BotonPrincipal>Buscar más opciones</BotonPrincipal>
+          </RouterLink>
+        </section>
       </div>
+
+      <p v-else class="text-center text-gray-600 italic">No se encontró un hotel económico.</p>
     </div>
 
-    <div>
+    <!-- Resultados vuelos de vuelta -->
+    <div class="mb-6">
       <h2 class="text-2xl font-bold mb-4 text-center">Resultados de Vuelos de Vuelta</h2>
       <p><strong>Origen:</strong> {{ destino }}</p>
       <p><strong>Destino:</strong> {{ origen }}</p>
@@ -186,7 +195,7 @@ const obtenerFechaYHora = (fecha) => {
       <div v-else-if="Array.isArray(vuelosVuelta) && vuelosVuelta.length">
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosVuelta" :key="vuelo.numeroVuelo"
-            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center">
+            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6"> <!-- Aquí se agregó el mb-6 -->
             <div class="w-full mb-6">
               <div class="flex justify-between mb-6">
                 <div>
@@ -244,3 +253,4 @@ const obtenerFechaYHora = (fecha) => {
     </div>
   </div>
 </template>
+

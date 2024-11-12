@@ -5,6 +5,7 @@ import TituloPrincipal from '../components/TituloPrincipal.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoDespegar from '../components/icons/IconoDespegar.vue';
 import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
+import IrAtras from '../components/IrAtras.vue';
 
 const router = useRouter();
 const origen = ref('');
@@ -98,7 +99,8 @@ const irARuta = () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center h-screen">
+  <IrAtras/>
+  <div class="flex items-center justify-center h-screen pt-2 pb-8"> <!-- Menos padding-top y más padding-bottom -->
     <div class="max-w-md p-4 bg-white rounded shadow-lg">
       <TituloPrincipal>Buscar vuelos</TituloPrincipal>
       <form @submit.prevent="irARuta">
@@ -113,7 +115,7 @@ const irARuta = () => {
         </div>
         <div class="mb-4 relative">
           <label for="destino" class="block text-sm font-medium">Destino:</label>
-          <IconoAterrizaje class="absolute left-3 top-8 " />
+          <IconoAterrizaje class="absolute left-3 top-8" />
           <input type="text" id="destino" v-model="destino" @input="filtrarSugerencias('destino')" class="border border-gray-300 pl-10 p-2 rounded w-full" required>
           <p v-if="destinoError" class="text-red-500 text-sm">{{ destinoError }}</p>
           <ul v-if="sugerenciasDestino.length > 0" class="border border-gray-300 mt-1">
