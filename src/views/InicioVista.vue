@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import { RouterLink } from 'vue-router';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import Subtitulo from '../components/Subtitulo.vue';
@@ -7,29 +8,29 @@ import TarjetaDestino from '../components/TarjetaDestino.vue';
 import MiItinerario from '../components/MiItinerario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 
-const destinosPopulares = ref([
-  { id: 1, nombre: 'Córdoba', img: '/img/cordoba.png' },
-  { id: 2, nombre: 'Iguazú', img: '/img/iguazu.png' },
-  { id: 3, nombre: 'Bariloche', img: '/img/bariloche.png' },
-  { id: 4, nombre: 'Mendoza', img: '/img/mendoza.png' }
- 
-]);
+const destinosPopulares = ref([]);
+const destinosArcana = ref([]);
 
-const destinosArcana = ref([
-  { id: 1, nombre: 'El Calafate', img: '/img/calafate.png' },
-  { id: 2, nombre: 'Ushuaia', img: '/img/ushuaia.png' },
-  { id: 3, nombre: 'La Pampa', img: '/img/lapampa.png' },
-  { id: 4, nombre: 'Buenos Aires', img: '/img/buenosAires.png' },
-]);
+const obtenerDestinos = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/arcana/lugares'); 
+    const lugares = response.data.data;
 
+    destinosPopulares.value = lugares.filter(lugar => lugar.categoria === 'popular');
+    destinosArcana.value = lugares.filter(lugar => lugar.categoria === 'arcana');
+  } catch (error) {
+    console.error('Error al obtener lugares:', error);
+  }
+};
+
+onMounted(() => {
+  obtenerDestinos();
+});
 </script>
-
-
 
 <template>
   <div>
-     <!-- Sección principal de búsqueda -->
-     <div class="flex flex-col justify-center items-center bg-cover bg-center h-64">
+    <div class="flex flex-col justify-center items-center bg-cover bg-center h-64">
       <TituloPrincipal>¡Descubre nuevos destinos!</TituloPrincipal>
       <div class="mt-4">
         <label for="busqueda" class="hidden">Búsqueda:</label>
@@ -47,44 +48,40 @@ const destinosArcana = ref([
       <MiItinerario/>
     </div>
 
-      <!-- Sección de Destinos Arcana -->
-      <section class="flex flex-col justify-center items-center mb-20">
+    <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>Destinos Arcana</Subtitulo>
       <div class="flex flex-wrap gap-3 justify-center m-2">
         <RouterLink 
           v-for="destino in destinosArcana" 
-          :key="destino.id" 
-          :to="{ name: 'destinoArcana', params: { id: destino.id, type: 'arcana' } }" 
+          :key="destino._id" 
+          :to="{ name: 'lugarDetalle', params: { id: destino._id } }" 
         >
           <TarjetaDestino 
             :nombre="destino.nombre" 
-            :imagen="destino.img" 
+            :imagen="destino.imagen[0]" 
           />
         </RouterLink>
       </div>
     </section>
 
-       <!-- Guías de turismo local -->
-       <section class="flex flex-col justify-center items-center mb-20">
+    <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
       <RouterLink to="/guias"> 
         <BotonPrincipal>Guías locales</BotonPrincipal> 
       </RouterLink>
     </section>
 
-
-    <!-- Sección de Destinos Populares -->
     <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>Destinos Populares</Subtitulo>
       <div class="flex flex-col gap-6 justify-center">
         <RouterLink 
           v-for="destino in destinosPopulares" 
-          :key="destino.id" 
-          :to="{ name: 'destinoPopular', params: { id: destino.id, type: 'popular' } }"  
+          :key="destino._id" 
+          :to="{ name: 'lugarDetalle', params: { id: destino._id } }" 
         >
           <div class="relative w-[300px] h-[150px]">
             <img 
-              :src="destino.img" 
+              :src="destino.imagen[0]" 
               :alt="`Imagen de ${destino.nombre}`" 
               class="w-full h-full object-cover rounded-lg" 
             />
@@ -97,4 +94,3 @@ const destinosArcana = ref([
     </section>
   </div>
 </template>
-
