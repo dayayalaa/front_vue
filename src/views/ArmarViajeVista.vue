@@ -14,6 +14,7 @@ const fechaSalida = ref('');
 const fechaVuelta = ref('');
 const origenError = ref('');
 const destinoError = ref('');
+const fechaVueltaError = ref('');
 const sugerenciasOrigen = ref([]);
 const sugerenciasDestino = ref([]);
 
@@ -74,6 +75,7 @@ const seleccionarSugerencia = (sugerencia, tipo) => {
 const irARuta = () => {
   origenError.value = '';
   destinoError.value = '';
+  fechaVueltaError.value = '';
 
   if (!origen.value) {
     origenError.value = 'El origen es requerido.';
@@ -82,7 +84,20 @@ const irARuta = () => {
     destinoError.value = 'El destino es requerido.';
   }
 
-  if (!origen.value || !destino.value || !fechaSalida.value || !fechaVuelta.value) {
+  // Validación de fechas
+  if (!fechaSalida.value || !fechaVuelta.value) {
+    return;
+  }
+
+  const fechaSalidaObj = new Date(fechaSalida.value);
+  const fechaVueltaObj = new Date(fechaVuelta.value);
+
+  if (fechaVueltaObj < fechaSalidaObj) {
+    fechaVueltaError.value = 'La fecha de vuelta no puede ser anterior a la de salida.';
+    return;
+  }
+
+  if (!origen.value || !destino.value) {
     return;
   }
 
@@ -129,6 +144,7 @@ const irARuta = () => {
         <div class="mb-4">
           <label for="fechaVuelta" class="block text-sm font-medium">Fecha de Vuelta:</label>
           <input type="date" id="fechaVuelta" v-model="fechaVuelta" class="border border-gray-300 p-2 rounded w-full" required>
+          <p v-if="fechaVueltaError" class="text-red-500 text-sm">{{ fechaVueltaError }}</p>
         </div>
         <div class="flex justify-center">
           <BotonPrincipal type="submit">Buscar Vuelos</BotonPrincipal>

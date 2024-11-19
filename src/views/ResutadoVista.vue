@@ -11,6 +11,7 @@ const route = useRoute();
 const router = useRouter();
 const origen = route.query.origen;
 const destino = route.query.destino;
+const cargandoVuelta = ref(true); 
 const fechaSalida = route.query.fechaSalida;
 const fechaVuelta = route.query.fechaVuelta;
 
@@ -21,16 +22,24 @@ const errorMensaje = ref('');
 const hotelEconomico = ref(null);
 
 onMounted(async () => {
+  cargando.value = true; // Establecer cargando en true al inicio
+  
   try {
-
-    //vuelo
+    // Verificar que todos los parámetros sean válidos
     if (!origen || !destino || !fechaSalida || !fechaVuelta) {
       cargando.value = false;
       errorMensaje.value = 'Por favor, verifica que todos los parámetros se hayan ingresado correctamente.';
       return;
     }
 
-    const response = await axios.get(`http://localhost:3000/arcana/vuelos/resultados/${origen}/${destino}/${fechaSalida}/${fechaVuelta}`);
+    // Codificar los parámetros en la URL
+    const origenCodificado = encodeURIComponent(origen);
+    const destinoCodificado = encodeURIComponent(destino);
+    const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
+    const fechaVueltaCodificada = encodeURIComponent(fechaVuelta);
+
+    // Solicitar los vuelos
+    const response = await axios.get(`http://localhost:3000/arcana/vuelos/resultados/${origenCodificado}/${destinoCodificado}/${fechaSalidaCodificada}/${fechaVueltaCodificada}`);
     console.log(response.data);
 
     if (response.data && Array.isArray(response.data.vuelosIda)) {
@@ -45,18 +54,24 @@ onMounted(async () => {
       errorMensaje.value = 'No se encontraron vuelos de vuelta.';
     }
 
-    // hotles
+    // Solicitar los hoteles económicos
     const hotelResponse = await axios.get('http://localhost:3000/arcana/hoteles/precio/economico');
     console.log(hotelResponse.data);
-    hotelEconomico.value = hotelResponse.data;
+    
+    if (hotelResponse.data) {
+      hotelEconomico.value = hotelResponse.data;
+    } else {
+      errorMensaje.value = 'No se encontraron hoteles económicos.';
+    }
 
   } catch (error) {
     errorMensaje.value = 'Error al obtener los vuelos. Por favor, inténtalo de nuevo más tarde.';
     console.error('Error al obtener vuelos:', error);
   } finally {
-    cargando.value = false;
+    cargando.value = false; // Finalizar carga
   }
 });
+
 
 const calcularLlegada = (vuelo) => {
   const fechaSalida = new Date(vuelo.fechaSalida);
@@ -97,7 +112,7 @@ const obtenerFechaYHora = (fecha) => {
       <div v-else-if="Array.isArray(vuelosIda) && vuelosIda.length">
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosIda" :key="vuelo.numeroVuelo"
-            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6"> <!-- Aquí se agregó el mb-6 -->
+            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6"> 
             <div class="w-full mb-6">
               <div class="flex justify-between mb-6">
                 <div>
@@ -249,8 +264,8 @@ const obtenerFechaYHora = (fecha) => {
           </div>
         </div>
       </div>
+
       <p v-else>No hay opciones de vuelos de vuelta disponibles.</p>
     </div>
   </div>
 </template>
-
