@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import IconoMas from '../components/icons/IconoMas.vue';
+import Subtitulo from './Subtitulo.vue';
 
 const itinerarios = [
   { id: 1, img: '/img/86475-Jujuy.jpg',      alt: 'Imagen de Jujuy' },
@@ -13,13 +14,12 @@ const itinerarios = [
 <template>
   <div class="w-full mb-16">
     <div class="flex justify-between m-3">
-      <h2 class="text-lg font-semibold mb-2 ml-2.5">Mi itinerario:</h2>
+      <Subtitulo >Mi itinerario:</Subtitulo>
       <a href="#" class="text-blue-500 hover:underline">Ver más</a>
     </div>
 
     <div class="overflow-x-auto">
       <div class="flex gap-4 ml-3">
-        <!-- Recorrer itinerarios y hacer clic para ir al detalle -->
         <router-link
           v-for="itinerario in itinerarios"
           :key="itinerario.id"
@@ -28,10 +28,8 @@ const itinerarios = [
         >
           <img :src="itinerario.img" :alt="itinerario.alt" class="w-full h-full object-cover rounded-lg" />
         </router-link>
-
-        <!-- Ícono de agregar nuevo itinerario -->
         <div class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
-          <IconoMas class="w-20 h-20 text-gray-600" />
+        <IconoMas class="w-20 h-20 text-gray-600" />
         </div>
       </div>
     </div>

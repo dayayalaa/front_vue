@@ -1,7 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import TituloPrincipal from '../components/TituloPrincipal.vue';
-import IrAtras from '../components/IrAtras.vue';
+import { useRouter } from 'vue-router';
+import TituloPrincipal from './TituloPrincipal.vue';
+import IrAtras from './IrAtras.vue';
+
+const router = useRouter();
 
 const guias = ref([
   {
@@ -14,38 +17,42 @@ const guias = ref([
     id: 2,
     nombre: "Ana López",
     provincia: "Córdoba",
-    imagen: "/img/persona_2.jpeg", 
+    imagen: "/img/persona_2.jpeg",
   },
   {
     id: 3,
     nombre: "Carlos Gómez",
     provincia: "Mendoza",
-    imagen: "/img/persona_3.jpeg" 
+    imagen: "/img/persona_3.jpeg",
   },
   {
     id: 4,
     nombre: "Lucía Fernández",
     provincia: "Salta",
-    imagen: "/img/persona_4.jpeg", 
+    imagen: "/img/persona_4.jpeg",
   },
   {
     id: 5,
     nombre: "Roberto Díaz",
     provincia: "Santa Fe",
-    imagen: "/img/persona_5.jpeg", 
+    imagen: "/img/persona_5.jpeg",
   },
   {
     id: 6,
     nombre: "María Rodríguez",
     provincia: "Misiones",
-    imagen: "/img/persona_6.jpeg", 
+    imagen: "/img/persona_6.jpeg",
   },
 ]);
+
+const irADetalleGuia = (id) => {
+  router.push({ name: 'GuiasPerfilVista', params: { id } });
+};
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto p-4 mb-20"> 
-    <IrAtras/>
+  <div class="max-w-2xl mx-auto p-4 mb-20">
+    <IrAtras />
     <TituloPrincipal> Conocé a los guías locales </TituloPrincipal>
     <p class="text-center mb-6">
       Explorá Argentina con nuestros guías locales y descubrí los lugares de una forma más accesible.
@@ -55,9 +62,9 @@ const guias = ref([
       <div
         v-for="guia in guias"
         :key="guia.id"
-        class="bg-white shadow-md rounded-lg p-4 flex flex-col items-center"
+        class="bg-white shadow-md rounded-lg p-4 flex flex-col items-center cursor-pointer"
+        @click="irADetalleGuia(guia.id)"
       >
-      
         <img
           :src="guia.imagen"
           :alt="'Foto de ' + guia.nombre"
