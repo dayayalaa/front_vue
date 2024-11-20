@@ -68,7 +68,7 @@ onMounted(() => {
 
     <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
-      <RouterLink to="/guias"> 
+      <RouterLink to="/guiasTarjetas"> 
         <BotonPrincipal>Guías locales</BotonPrincipal> 
       </RouterLink>
     </section>

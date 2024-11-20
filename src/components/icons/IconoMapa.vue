@@ -1,38 +1,28 @@
 <template>
 <svg
    version="1.1"
-   id="svg165"
+   id="svg126"
    xml:space="preserve"
-   width="24"
-   height="24"
-   fill="grey"
+   width="32"
+   height="32"
    viewBox="0 0 32 32"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"><defs
-     id="defs169"><clipPath
+     id="defs130"><clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath179"><path
+       id="clipPath140"><path
          d="M 0,24 H 24 V 0 H 0 Z"
-         id="path177" /></clipPath></defs><g
-    id="g171"
-       transform="matrix(1.3333333,0,0,-1.3333333,0,32)"><g
-       id="g173"><g
-         id="g175"
-         clip-path="url(#clipPath179)"><g
-           id="g181"
-           transform="translate(9.1689,21.0859)"><path
-             d="m 0,0 c -0.399,-0.121 -0.825,-0.114 -1.221,0.02 l -4.177,1.738 c -1.319,0.55 -2.771,-0.419 -2.771,-1.846 v -17.998 l 7,-2 8,2 7,-1.705 v 18.222 c 0,0.892 -0.592,1.677 -1.45,1.923 L 8.028,1.811 C 7.635,1.942 7.211,1.948 6.813,1.828 Z"
-             style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path183" /></g><g
-           id="g185"
-           transform="translate(16,23)"><path
-             d="M 0,0 V -20"
-             style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path187" /></g><g
-           id="g189"
-           transform="translate(8,21)"><path
-             d="M 0,0 V -19"
-             style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path191" /></g></g></g></g></svg>
+         id="path138" /></clipPath></defs><g
+     id="g132"
+     transform="matrix(1.3333333,0,0,-1.3333333,0,32)"><g
+       id="g134"><g
+         id="g136"
+         clip-path="url(#clipPath140)"><g
+           id="g142"
+           transform="translate(21.8672,22.3877)"><path
+             d="m 0,0 -4.353,1.457 c -0.168,0.057 -0.341,0.094 -0.514,0.12 V -20.66 l 7,-1.706 V -2.871 C 2.133,-1.539 1.238,-0.353 0,0 m -14.867,0.195 -2.845,1.184 c -0.927,0.387 -1.983,0.285 -2.819,-0.272 -0.836,-0.558 -1.336,-1.491 -1.336,-2.497 v -18.752 l 7,-2 z m 8,-20.863 -6,-1.5 v 21.856 l 6,1.61 z"
+             style="fill:#3C4A28;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path144" /></g></g></g></g></svg>
+
 
 </template>

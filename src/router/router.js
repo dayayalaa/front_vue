@@ -3,7 +3,8 @@ import HomeView from "../views/InicioVista.vue";
 import Crear from "../views/ArmarViajeVista.vue";
 import Resultados from "../views/ResutadoVista.vue";
 import Perfil from "../views/PerfilVista.vue";
-import Guias from "../views/GuiasVista.vue";
+import GuiasTarjetas from "../components/GuiasTarjetas.vue";
+import GuiasPerfilVista from "../views/GuiasPerfilVista.vue";
 import Listas from "../views/ListaVista.vue";
 import ItinerarioDetalle from "../views/ItinerarioDetalle.vue";
 import DestinosArcana from "../components/DestinosArcana.vue";
@@ -14,7 +15,8 @@ const routes = [
   { path: "/crear",              name: "Crear",              component: Crear },
   { path: "/resultados",         name: "Resultados",         component: Resultados },
   { path: "/perfil",             name: "Perfil",             component: Perfil },
-  { path: "/guias",              name: "Guias",              component: Guias },
+  { path: "/guiasTarjetas",      name: "GuiasTarjetas",      component: GuiasTarjetas },
+  { path: "/guias/:id",          name: "GuiasPerfilVista",   component: GuiasPerfilVista },
   { path: "/listas",             name: "Listas",             component: Listas },
   { path: "/itinerario/:id",     name: "ItinerarioDetalle",  component: ItinerarioDetalle,},
   { path: '/arcana/lugares/:id', name: 'lugarDetalle',       component: DestinosArcana, },
