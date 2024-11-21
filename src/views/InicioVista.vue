@@ -49,16 +49,21 @@ onMounted(() => {
 
     <!-- Sección Destinos Arcana -->
     <section class="flex flex-col justify-center items-center mb-20">
-      <Subtitulo>Destinos Arcana</Subtitulo>
-      <div class="flex flex-wrap gap-5 justify-center m-2">
-        <TarjetaDestino 
-          v-for="destino in destinosArcana" 
-          :key="destino._id" 
-          :nombre="destino.nombre" 
-          :imagen="destino.imagen[0]" 
-        />
-      </div>
-    </section>
+  <Subtitulo>Destinos Arcana</Subtitulo>
+  <div class="flex flex-wrap gap-5 justify-center m-2">
+    <RouterLink 
+      v-for="destino in destinosArcana" 
+      :key="destino._id" 
+      :to="{ name: 'lugarDetalle', params: { id: destino._id } }"
+    >
+      <TarjetaDestino 
+        :nombre="destino.nombre" 
+        :imagen="destino.imagen[0]" 
+      />
+    </RouterLink>
+  </div>
+</section>
+
 
     <!-- Sección Conoce nuestros Guías -->
     <section class="flex flex-col justify-center items-center mb-20">
