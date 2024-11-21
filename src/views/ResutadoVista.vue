@@ -6,6 +6,7 @@ import TituloPrincipal from '../components/TituloPrincipal.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoAvion from '../components/icons/IconoAvion.vue';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -22,17 +23,15 @@ const errorMensaje = ref('');
 const hotelEconomico = ref(null);
 
 onMounted(async () => {
-  cargando.value = true; // Establecer cargando en true al inicio
+  cargando.value = true; 
+  
   
   try {
-    // Verificar que todos los parámetros sean válidos
     if (!origen || !destino || !fechaSalida || !fechaVuelta) {
       cargando.value = false;
       errorMensaje.value = 'Por favor, verifica que todos los parámetros se hayan ingresado correctamente.';
       return;
     }
-
-    // Codificar los parámetros en la URL
     const origenCodificado = encodeURIComponent(origen);
     const destinoCodificado = encodeURIComponent(destino);
     const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
@@ -102,7 +101,7 @@ const obtenerFechaYHora = (fecha) => {
       <p><strong>Destino:</strong> {{ destino }}</p>
 
       <div v-if="cargando">
-        <p>Cargando opciones de vuelos...</p>
+      <SpinnerCarga/>
       </div>
 
       <div v-else-if="errorMensaje">
@@ -200,7 +199,7 @@ const obtenerFechaYHora = (fecha) => {
       <p><strong>Destino:</strong> {{ origen }}</p>
 
       <div v-if="cargandoVuelta">
-        <p>Cargando opciones de vuelos de vuelta...</p>
+       <SpinnerCarga/>
       </div>
 
       <div v-else-if="errorMensaje">

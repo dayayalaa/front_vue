@@ -84,7 +84,6 @@ const irARuta = () => {
     destinoError.value = 'El destino es requerido.';
   }
 
-  // Validación de fechas
   if (!fechaSalida.value || !fechaVuelta.value) {
     return;
   }
