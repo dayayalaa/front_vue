@@ -37,8 +37,8 @@ onMounted(async () => {
     const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
     const fechaVueltaCodificada = encodeURIComponent(fechaVuelta);
 
-    // Solicitar los vuelos
-    const response = await axios.get(`http://localhost:3000/arcana/vuelos/resultados/${origenCodificado}/${destinoCodificado}/${fechaSalidaCodificada}/${fechaVueltaCodificada}`);
+    // Solicitar los vuelos desde el backend en Vercel
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/vuelos/resultados/${origenCodificado}/${destinoCodificado}/${fechaSalidaCodificada}/${fechaVueltaCodificada}`);
     console.log(response.data);
 
     if (response.data && Array.isArray(response.data.vuelosIda)) {
@@ -53,8 +53,8 @@ onMounted(async () => {
       errorMensaje.value = 'No se encontraron vuelos de vuelta.';
     }
 
-    // Solicitar los hoteles económicos
-    const hotelResponse = await axios.get('http://localhost:3000/arcana/hoteles/precio/economico');
+    // Solicitar los hoteles económicos desde el backend en Vercel
+    const hotelResponse = await axios.get('https://back-tesis-lovat.vercel.app/arcana/hoteles/precio/economico');
     console.log(hotelResponse.data);
     
     if (hotelResponse.data) {
@@ -67,7 +67,7 @@ onMounted(async () => {
     errorMensaje.value = 'Error al obtener los vuelos. Por favor, inténtalo de nuevo más tarde.';
     console.error('Error al obtener vuelos:', error);
   } finally {
-    cargando.value = false; 
+    cargando.value = false; // Finalizar carga
   }
 });
 
@@ -93,8 +93,8 @@ const obtenerFechaYHora = (fecha) => {
 
 <template>
   <!---Resultado Vuelos-->
-  <div class="max-w-md mx-auto p-4 mb-6"> 
   <IrAtras />
+  <div class="max-w-md mx-auto p-4 mb-6">
     <div>
       <TituloPrincipal>Resultado de viajes de ida</TituloPrincipal>
       <p><strong>Origen:</strong> {{ origen }}</p>
@@ -170,7 +170,7 @@ const obtenerFechaYHora = (fecha) => {
 
     <!-- Hoteles -->
     <div class="max-w-3xl mx-auto px-4 py-6 mb-12">
-      <TituloPrincipal class="text-center text-4xl text-gray-800 mb-6">Hoteles</TituloPrincipal>
+      <TituloPrincipal class="text-center text-4xl font-semibold text-gray-800 mb-6">Hoteles</TituloPrincipal>
       <div v-if="hotelEconomico" class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
         <img 
           :src="hotelEconomico.habitaciones[0].imgHabitacion" 
@@ -178,7 +178,7 @@ const obtenerFechaYHora = (fecha) => {
           class="w-full h-64 object-cover rounded-t-lg" 
         />
         <div class="px-6 py-4">
-          <h3 class="text-2xl text-gray-800">{{ hotelEconomico.nombre }}</h3>
+          <h3 class="text-2xl font-semibold text-gray-800">{{ hotelEconomico.nombre }}</h3>
           <p class="text-gray-600 text-sm mt-2">Tipo de habitación: {{ hotelEconomico.habitaciones[0].tipo }}</p>
           <p class="text-gray-600 text-sm">Precio por noche: ${{ hotelEconomico.habitaciones[0].precioPorNoche }}</p>
         </div>
@@ -194,12 +194,16 @@ const obtenerFechaYHora = (fecha) => {
 
     <!-- Resultados vuelos de vuelta -->
     <div class="mb-6">
-      <h2 class="text-2xl mb-4 text-center">Resultados de Vuelos de Vuelta</h2>
+      <h2 class="text-2xl font-bold mb-4 text-center">Resultados de Vuelos de Vuelta</h2>
       <p><strong>Origen:</strong> {{ destino }}</p>
       <p><strong>Destino:</strong> {{ origen }}</p>
 
       <div v-if="cargandoVuelta">
+<<<<<<< HEAD
        <SpinnerCarga/>
+=======
+        <p>Cargando vuelos de vuelta...</p>
+>>>>>>> 9a09c3477fc7f77f7e446b62fb0f5cdb99dc7c9b
       </div>
 
       <div v-else-if="errorMensaje">
@@ -209,62 +213,12 @@ const obtenerFechaYHora = (fecha) => {
       <div v-else-if="Array.isArray(vuelosVuelta) && vuelosVuelta.length">
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosVuelta" :key="vuelo.numeroVuelo"
-            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6"> 
-            <div class="w-full mb-6">
-              <div class="flex justify-between mb-6">
-                <div>
-                  <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.origen }}</p>
-                  <p>Origen</p>
-                </div>
-                <div class="text-end">
-                  <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.destino }}</p>
-                  <p>Destino</p>
-                </div>
-              </div>
-
-              <div class="flex justify-between mb-6">
-                <img :src="vuelo.imgAerolinea" alt="Logo de la aerolínea {{ vuelo.aerolinea }}"
-                  class="w-16 h-16 object-contain">
-                <div class="text-end">
-                  <p>Número de Vuelo:</p>
-                  <p class="font-medium text-2xl">{{ vuelo.numeroVuelo }}</p>
-                </div>
-              </div>
-
-              <div class="flex justify-between items-center mb-6">
-                <div class="flex justify-between items-center flex-col">
-                  <p>{{ obtenerFechaYHora(vuelo.fechaSalida).fecha }}</p>
-                  <p>{{ obtenerFechaYHora(vuelo.fechaSalida).hora }}</p>
-                </div>
-
-                <div class="flex-1 mx-2 relative">
-                  <div class="absolute left-1/2 transform -translate-x-1/2 -top-3 text-[#222725]">
-                    <IconoAvion />
-                  </div>
-                  <hr class="border-t border-dashed border-[#788B69]">
-                </div>
-
-                <div class="flex justify-between items-center flex-col">
-                  <p>{{ calcularLlegada(vuelo).fecha }}</p>
-                  <p>{{ calcularLlegada(vuelo).hora }}</p>
-                </div>
-              </div>
-
-              <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
-              <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
-
-              <div class="flex justify-between">
-                <p><strong>Precio:</strong></p>
-                <p class="font-black text-2xl text-[#4F6D3A]"> ${{ vuelo.precio }} ARS</p>
-              </div>
-            </div>
-
-            <BotonPrincipal @click="seleccionarVueloVuelta(vuelo)">Seleccionar vuelo</BotonPrincipal>
+            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
+            <!-- Similar a los vuelos de ida -->
           </div>
         </div>
       </div>
-
-      <p v-else>No hay opciones de vuelos de vuelta disponibles.</p>
+      <p v-else>No se encontraron vuelos de vuelta.</p>
     </div>
   </div>
 </template>

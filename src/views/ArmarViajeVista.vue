@@ -6,7 +6,6 @@ import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoDespegar from '../components/icons/IconoDespegar.vue';
 import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 import IrAtras from '../components/IrAtras.vue';
-
 const router = useRouter();
 const origen = ref('');
 const destino = ref('');
@@ -17,7 +16,6 @@ const destinoError = ref('');
 const fechaVueltaError = ref('');
 const sugerenciasOrigen = ref([]);
 const sugerenciasDestino = ref([]);
-
 const lugaresArgentinos = [
   'Buenos Aires - Aeroparque Jorge Newbery',
   'Buenos Aires - Aeropuerto Internacional Ministro Pistarini',
@@ -43,11 +41,9 @@ const lugaresArgentinos = [
   'Tremedal',
   'General Roca',
 ];
-
 const quitarAcentos = (texto) => {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
-
 const filtrarSugerencias = (campo) => {
   if (campo === 'origen') {
     sugerenciasOrigen.value = lugaresArgentinos.filter(lugar =>
@@ -61,7 +57,6 @@ const filtrarSugerencias = (campo) => {
     sugerenciasOrigen.value = []; 
   }
 };
-
 const seleccionarSugerencia = (sugerencia, tipo) => {
   if (tipo === 'origen') {
     origen.value = sugerencia;
@@ -71,35 +66,33 @@ const seleccionarSugerencia = (sugerencia, tipo) => {
     sugerenciasDestino.value = []; 
   }
 };
-
 const irARuta = () => {
   origenError.value = '';
   destinoError.value = '';
   fechaVueltaError.value = '';
-
   if (!origen.value) {
     origenError.value = 'El origen es requerido.';
   }
   if (!destino.value) {
     destinoError.value = 'El destino es requerido.';
   }
+<<<<<<< HEAD
 
+=======
+  // Validación de fechas
+>>>>>>> 9a09c3477fc7f77f7e446b62fb0f5cdb99dc7c9b
   if (!fechaSalida.value || !fechaVuelta.value) {
     return;
   }
-
   const fechaSalidaObj = new Date(fechaSalida.value);
   const fechaVueltaObj = new Date(fechaVuelta.value);
-
   if (fechaVueltaObj < fechaSalidaObj) {
     fechaVueltaError.value = 'La fecha de vuelta no puede ser anterior a la de salida.';
     return;
   }
-
   if (!origen.value || !destino.value) {
     return;
   }
-
   router.push({
     path: '/resultados',
     query: {
