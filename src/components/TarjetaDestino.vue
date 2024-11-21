@@ -14,7 +14,7 @@ import { defineProps } from 'vue';
 </script>
 
 <template>
-    <div class="relative w-[150px] h-[200px]">
+    <div class="relative w-[130px] h-[200px]">
       <img 
         :src="imagen" 
         :alt="`Imagen de ${nombre}`" 
