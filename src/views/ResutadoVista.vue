@@ -38,7 +38,6 @@ onMounted(async () => {
     const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
     const fechaVueltaCodificada = encodeURIComponent(fechaVuelta);
 
-    // Solicitar los vuelos desde el backend en Vercel
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/vuelos/resultados/${origenCodificado}/${destinoCodificado}/${fechaSalidaCodificada}/${fechaVueltaCodificada}`);
     console.log(response.data);
 
@@ -54,7 +53,6 @@ onMounted(async () => {
       errorMensaje.value = 'No se encontraron vuelos de vuelta.';
     }
 
-    // Solicitar los hoteles económicos desde el backend en Vercel
     const hotelResponse = await axios.get('https://back-tesis-lovat.vercel.app/arcana/hoteles/precio/economico');
     console.log(hotelResponse.data);
     
@@ -68,7 +66,7 @@ onMounted(async () => {
     errorMensaje.value = 'Error al obtener los vuelos. Por favor, inténtalo de nuevo más tarde.';
     console.error('Error al obtener vuelos:', error);
   } finally {
-    cargando.value = false; // Finalizar carga
+    cargando.value = false;
   }
 });
 

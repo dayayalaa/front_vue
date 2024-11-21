@@ -32,7 +32,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav class="fixed bottom-0 w-full bg-[#222725] border-4 border-[#222725] rounded-tl-xl rounded-tr-xl">
+  <nav class="fixed bottom-0 w-full bg-[#222725] border-4 border-[#222725] rounded-tl-xl rounded-tr-xl z-50">
     <div class="flex items-center justify-center h-14 w-full relative">
       <ul class="flex justify-around w-full">
         <li class="relative flex-grow text-center">

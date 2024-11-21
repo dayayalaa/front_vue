@@ -19,8 +19,8 @@ const obtenerDestinos = async () => {
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/lugares');
     const lugares = response.data.data;
     todosLosDestinos.value = lugares; 
-    destinosPopulares.value = lugares.filter(lugar => lugar.categoria = 'popular');
-    destinosArcana.value = lugares.filter(lugar => lugar.categoria = 'arcana');
+    destinosPopulares.value = lugares.filter(lugar => lugar.categoria == 'Popular');
+    destinosArcana.value = lugares.filter(lugar => lugar.categoria == 'Arcana');
   } catch (error) {
     console.error('Error al obtener lugares:', error);
   }
@@ -50,7 +50,7 @@ onMounted(() => {
     <!-- Sección Destinos Arcana -->
     <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>Destinos Arcana</Subtitulo>
-      <div class="flex flex-wrap gap-3 justify-center m-2">
+      <div class="flex flex-wrap gap-5 justify-center m-2">
         <TarjetaDestino 
           v-for="destino in destinosArcana" 
           :key="destino._id" 

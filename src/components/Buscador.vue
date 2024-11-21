@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import SpinnerCarga from './SpinnerCarga.vue'; // Spinner de carga
+import SpinnerCarga from './SpinnerCarga.vue'; 
 
-/* Importación de icono */
 import IconoBuscador from './icons/IconoBuscador.vue';
 
 const destinos = ref([]);
@@ -31,12 +30,13 @@ const resultadosFiltrados = computed(() => {
   if (!busqueda.value) return [];
 
   const term = busqueda.value.toLowerCase().trim();
-  return destinos.value.filter(destino =>
-    destino.nombre && destino.nombre.toLowerCase().includes(term) 
-  );
+  return destinos.value.filter(destino => {
+    const nombreCoincide = destino.nombre && destino.nombre.toLowerCase().includes(term);
+    const ubicacionCoincide = destino.ubicacion && destino.ubicacion.toLowerCase().includes(term);
+    return nombreCoincide || ubicacionCoincide;  // Devuelve si coincide en cualquiera de los dos
+  });
 });
 
-// Coincidencia
 const resaltarCoincidencias = (texto, termino) => {
   if (!termino) return texto;
 

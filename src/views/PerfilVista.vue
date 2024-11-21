@@ -35,7 +35,7 @@ const userName = 'Juan Pérez';
     <MiItinerario />
 
     <div class="flex justify-center mt-6">
-      <BotonPrincipal>Ver mi mapa</BotonPrincipal>
+      <!-- <BotonPrincipal>Ver mi mapa</BotonPrincipal> -->
     </div>
   </div>
 </template>

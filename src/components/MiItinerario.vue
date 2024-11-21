@@ -15,7 +15,7 @@ const itinerarios = [
   <div class="w-full mb-16">
     <div class="flex justify-between m-3">
       <TituloPrincipal >Mi itinerario:</TituloPrincipal>
-      <a href="#" class="text-blue-500 hover:underline">Ver más</a>
+      <!-- <a href="#" class="text-blue-500 hover:underline">Ver más</a> -->
     </div>
 
     <div class="overflow-x-auto">
