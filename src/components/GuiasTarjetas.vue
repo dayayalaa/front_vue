@@ -20,10 +20,15 @@ const irADetalleGuia = (id) => {
   router.push({ name: 'GuiasPerfilVista', params: { id } });
 };
 
+const removeAccents = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
 const filteredGuias = computed(() => {
-  const query = searchQuery.value.toLowerCase();
+  const query = removeAccents(searchQuery.value.toLowerCase());
   return guias.value.filter((guia) =>
-    guia.nombre.toLowerCase().includes(query)
+    removeAccents(guia.nombre.toLowerCase()).includes(query) ||
+    removeAccents(guia.provincia.toLowerCase()).includes(query)
   );
 });
 
