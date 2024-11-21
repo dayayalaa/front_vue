@@ -19,8 +19,8 @@ const obtenerDestinos = async () => {
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/lugares');
     const lugares = response.data.data;
     todosLosDestinos.value = lugares; 
-    destinosPopulares.value = lugares.filter(lugar => lugar.categoria === 'popular');
-    destinosArcana.value = lugares.filter(lugar => lugar.categoria === 'arcana');
+    destinosPopulares.value = lugares.filter(lugar => lugar.categoria = 'popular');
+    destinosArcana.value = lugares.filter(lugar => lugar.categoria = 'arcana');
   } catch (error) {
     console.error('Error al obtener lugares:', error);
   }

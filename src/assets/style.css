@@ -10,7 +10,7 @@ body{
 
 @font-face {
     font-family: 'Sableklish';
-    src: url('../font/Sableklish.ttf') format('truetype');
+    src: url('../fonts/Sableklish.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
   }
