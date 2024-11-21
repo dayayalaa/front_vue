@@ -46,7 +46,7 @@ const resaltarCoincidencias = (texto, termino) => {
 </script>
 
 <template>
-  <div class="relative w-full max-w-lg mx-auto px-4">
+  <div class="relative buscador w-full max-w-lg mx-auto px-4">
     <label class="w-full flex items-center border border-[#3C4A28] rounded-full overflow-hidden">
       <input 
         type="text"
@@ -105,7 +105,7 @@ const resaltarCoincidencias = (texto, termino) => {
 }
 
 @media (max-width: 768px) {
-  .w-full {
+  .buscador .w-full {
     width: 95%; 
   }
   .p-3 {

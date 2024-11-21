@@ -1,7 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import IconoMas from '../components/icons/IconoMas.vue';
-import Subtitulo from './Subtitulo.vue';
+import TituloPrincipal from './TituloPrincipal.vue';
 
 const itinerarios = [
   { id: 1, img: '/img/86475-Jujuy.jpg',      alt: 'Imagen de Jujuy' },
@@ -14,7 +14,7 @@ const itinerarios = [
 <template>
   <div class="w-full mb-16">
     <div class="flex justify-between m-3">
-      <Subtitulo >Mi itinerario:</Subtitulo>
+      <TituloPrincipal >Mi itinerario:</TituloPrincipal>
       <a href="#" class="text-blue-500 hover:underline">Ver más</a>
     </div>
 

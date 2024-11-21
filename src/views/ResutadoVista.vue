@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
+import Subtitulo from '../components/Subtitulo.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoAvion from '../components/icons/IconoAvion.vue';
 import IrAtras from '../components/IrAtras.vue';
@@ -170,7 +171,7 @@ const obtenerFechaYHora = (fecha) => {
 
     <!-- Hoteles -->
     <div class="max-w-3xl mx-auto px-4 py-6 mb-12">
-      <TituloPrincipal class="text-center text-4xl font-semibold text-gray-800 mb-6">Hoteles</TituloPrincipal>
+      <TituloPrincipal class="text-center text-3xl ">Hoteles</TituloPrincipal>
       <div v-if="hotelEconomico" class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
         <img 
           :src="hotelEconomico.habitaciones[0].imgHabitacion" 
@@ -178,7 +179,7 @@ const obtenerFechaYHora = (fecha) => {
           class="w-full h-64 object-cover rounded-t-lg" 
         />
         <div class="px-6 py-4">
-          <h3 class="text-2xl font-semibold text-gray-800">{{ hotelEconomico.nombre }}</h3>
+          <Subtitulo class="text-2xl" >{{ hotelEconomico.nombre }}</Subtitulo>
           <p class="text-gray-600 text-sm mt-2">Tipo de habitación: {{ hotelEconomico.habitaciones[0].tipo }}</p>
           <p class="text-gray-600 text-sm">Precio por noche: ${{ hotelEconomico.habitaciones[0].precioPorNoche }}</p>
         </div>
@@ -194,17 +195,15 @@ const obtenerFechaYHora = (fecha) => {
 
     <!-- Resultados vuelos de vuelta -->
     <div class="mb-6">
-      <h2 class="text-2xl font-bold mb-4 text-center">Resultados de Vuelos de Vuelta</h2>
+      <Subtitulo class="text-2xl text-center">Resultados de Vuelos de Vuelta </Subtitulo>
       <p><strong>Origen:</strong> {{ destino }}</p>
       <p><strong>Destino:</strong> {{ origen }}</p>
 
-      <div v-if="cargandoVuelta">
-<<<<<<< HEAD
-       <SpinnerCarga/>
-=======
-        <p>Cargando vuelos de vuelta...</p>
->>>>>>> 9a09c3477fc7f77f7e446b62fb0f5cdb99dc7c9b
+     
+      <div v-if="cargando">
+      <SpinnerCarga/>
       </div>
+   
 
       <div v-else-if="errorMensaje">
         <p>{{ errorMensaje }}</p>
@@ -214,7 +213,6 @@ const obtenerFechaYHora = (fecha) => {
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosVuelta" :key="vuelo.numeroVuelo"
             class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
-            <!-- Similar a los vuelos de ida -->
           </div>
         </div>
       </div>

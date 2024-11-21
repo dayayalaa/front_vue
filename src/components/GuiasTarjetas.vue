@@ -86,12 +86,11 @@ const highlightText = (text) => {
 </template>
 
 <style scoped>
-/* Estilo personalizado para que los resultados se ajusten bien */
+
 input:focus {
   outline: none;
 }
 
-/* Para las tarjetas de guías */
 .grid {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }

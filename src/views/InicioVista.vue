@@ -8,6 +8,7 @@ import TarjetaDestino from '../components/TarjetaDestino.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import NavSuperior from '../components/NavSuperior.vue';
 import Buscador from '../components/Buscador.vue';
+import { RouterLink } from 'vue-router';
 
 const destinosPopulares = ref([]); 
 const destinosArcana = ref([]);    
@@ -62,7 +63,7 @@ onMounted(() => {
     <!-- Sección Conoce nuestros Guías -->
     <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
-      <BotonPrincipal to="/guiasTarjetas">Guías locales</BotonPrincipal>
+     <RouterLink to="/guiasTarjetas"><BotonPrincipal>Guías locales</BotonPrincipal> </RouterLink>
     </section>
 
     <!-- Sección Destinos Populares -->
