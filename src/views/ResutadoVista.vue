@@ -208,12 +208,63 @@ const obtenerFechaYHora = (fecha) => {
       </div>
 
       <div v-else-if="Array.isArray(vuelosVuelta) && vuelosVuelta.length">
-        <div class="grid grid-cols-1 gap-4">
-          <div v-for="vuelo in vuelosVuelta" :key="vuelo.numeroVuelo"
-            class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
+  <div class="grid grid-cols-1 gap-4">
+    <div v-for="vuelo in vuelosVuelta" :key="vuelo.numeroVuelo"
+      class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
+      <div class="w-full mb-6">
+        <div class="flex justify-between mb-6">
+          <div>
+            <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.origen }}</p>
+            <p>Origen</p>
+          </div>
+          <div class="text-end">
+            <p class="font-black text-4xl text-[#4F6D3A]">{{ vuelo.destino }}</p>
+            <p>Destino</p>
           </div>
         </div>
+
+        <div class="flex justify-between mb-6">
+          <img :src="vuelo.imgAerolinea" alt="Logo de la aerolínea {{ vuelo.aerolinea }}"
+            class="w-16 h-16 object-contain">
+          <div class="text-end">
+            <p>Número de Vuelo:</p>
+            <p class="font-medium text-2xl">{{ vuelo.numeroVuelo }}</p>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex justify-between items-center flex-col">
+            <p>{{ obtenerFechaYHora(vuelo.fechaSalida).fecha }}</p>
+            <p>{{ obtenerFechaYHora(vuelo.fechaSalida).hora }}</p>
+          </div>
+
+          <div class="flex-1 mx-2 relative">
+            <div class="absolute left-1/2 transform -translate-x-1/2 -top-3 text-[#222725]">
+              <IconoAvion />
+            </div>
+            <hr class="border-t border-dashed border-[#788B69]">
+          </div>
+
+          <div class="flex justify-between items-center flex-col">
+            <p>{{ calcularLlegada(vuelo).fecha }}</p>
+            <p>{{ calcularLlegada(vuelo).hora }}</p>
+          </div>
+        </div>
+
+        <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
+        <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
+
+        <div class="flex justify-between">
+          <p><strong>Precio:</strong></p>
+          <p class="font-black text-2xl text-[#4F6D3A]"> ${{ vuelo.precio }} ARS</p>
+        </div>
       </div>
+
+      <BotonPrincipal @click="seleccionarVueloVuelta(vuelo)">Seleccionar vuelo de vuelta</BotonPrincipal>
+    </div>
+  </div>
+</div>
+
       <p v-else>No se encontraron vuelos de vuelta.</p>
     </div>
   </div>
