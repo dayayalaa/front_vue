@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import TituloPrincipal from './TituloPrincipal.vue';
+import Subtitulo from './Subtitulo.vue';
 import IrAtras from './IrAtras.vue';
 import BotonPrincipal from './BotonPrincipal.vue';
 
@@ -29,9 +30,9 @@ const descripcionConSaltos = computed(() => {
 });
 </script>
 
-<template>
+<template> 
+ <IrAtras />
   <div v-if="lugar" class="max-w-3xl mx-auto px-4 py-4 mb-12">
-    <IrAtras />
     <TituloPrincipal>{{ lugar.nombre }}</TituloPrincipal>
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
       <img :src="lugar.imagen" :alt="lugar.nombre" class="w-full h-60 object-cover"/>
@@ -41,7 +42,7 @@ const descripcionConSaltos = computed(() => {
       </div>
 
       <div class="text-center mb-4">
-        <h2 class="mb-2">Planificá tu viaje con Arcana</h2>
+        <Subtitulo class="mb-2">Planificá tu viaje con Arcana</Subtitulo>
         <RouterLink to="/crear">
           <BotonPrincipal>Planificar mi viaje</BotonPrincipal>
         </RouterLink>

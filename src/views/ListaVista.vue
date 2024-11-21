@@ -26,8 +26,9 @@ function removeItem(index) {
 
 
 <template>
+<IrAtras/>
   <div class="max-w-md mx-auto p-4">
-    <IrAtras/>
+    
     <TituloPrincipal> Checklist </TituloPrincipal>
     <p class="text-lg mb-4 text-left">No olvidarme de ...</p>
     <div class="mb-4">

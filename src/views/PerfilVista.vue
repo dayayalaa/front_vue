@@ -8,9 +8,9 @@ const userName = 'Juan Pérez';
 </script>
 
 <template>
-  
+  <IrAtras/>
   <div class="max-w-md mx-auto p-4 mb-20">
-    <IrAtras/>
+    
     <div class="relative mb-4">
       <img
         src="/img/neuquen.jpg"
