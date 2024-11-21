@@ -14,7 +14,7 @@ const checklistItems = reactive([
 
 function addItem() {
   if (nuevoItem.value.trim()) {  
-    checklistItems.push({ textoo: nuevoItem.value.trim(), checked: false });
+    checklistItems.push({ texto: nuevoItem.value.trim(), checked: false });
     nuevoItem.value = '';  
   }
 }

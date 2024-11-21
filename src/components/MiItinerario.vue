@@ -28,9 +28,12 @@ const itinerarios = [
         >
           <img :src="itinerario.img" :alt="itinerario.alt" class="w-full h-full object-cover rounded-lg" />
         </router-link>
-        <div class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
+        <router-link to="/crear">
+           <div class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center">
         <IconoMas class="w-20 h-20 text-gray-600" />
         </div>
+        </router-link>
+       
       </div>
     </div>
   </div>

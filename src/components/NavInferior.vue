@@ -66,7 +66,7 @@ onMounted(() => {
           </router-link>
         </li>
       </ul>
-      <!-- Círculo -->
+      
       <span class="w-16 h-16 bg-[#4F6D3A] border-[#222725] border-4 rounded-full absolute transition-all duration-300 ease-in-out"
         :style="{ transform: `translateX(${circlePosition}px) translateY(-30%)` }">
         <router-link v-if="isActive('/')" to="/">

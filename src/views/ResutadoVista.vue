@@ -91,7 +91,6 @@ const obtenerFechaYHora = (fecha) => {
 </script>
 
 <template>
-  <!---Resultado Vuelos-->
   <IrAtras />
   <div class="max-w-md mx-auto p-4 mb-6">
     <div>
@@ -191,7 +190,7 @@ const obtenerFechaYHora = (fecha) => {
       <p v-else class="text-center text-gray-600 italic">No se encontró un hotel económico.</p>
     </div>
 
-    <!-- Resultados vuelos de vuelta -->
+    <!-- vuelos de vuelta -->
     <div class="mb-6">
       <Subtitulo class="text-2xl text-center">Resultados de Vuelos de Vuelta </Subtitulo>
       <p><strong>Origen:</strong> {{ destino }}</p>

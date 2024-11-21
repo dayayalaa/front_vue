@@ -28,8 +28,8 @@ const userName = 'Juan Pérez';
     </div>
   
     <div class="text-center mb-4 mt-20">
-      <TituloPrincipal class="text-2xl">Perfil de Usuario</TituloPrincipal>
-      <p>¡Bienvenido, {{ userName }}!</p>
+      <TituloPrincipal class="text-2xl">{{ userName }}</TituloPrincipal>
+      <p>Perfil de viajero</p>
     </div>
 
     <MiItinerario />

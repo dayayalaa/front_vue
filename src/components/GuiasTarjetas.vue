@@ -24,7 +24,7 @@ const removeAccents = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
-const filteredGuias = computed(() => {
+const filtroGuias = computed(() => {
   const query = removeAccents(searchQuery.value.toLowerCase());
   return guias.value.filter((guia) =>
     removeAccents(guia.nombre.toLowerCase()).includes(query) ||
@@ -32,8 +32,7 @@ const filteredGuias = computed(() => {
   );
 });
 
-// Función para resaltar el texto en el nombre de la guía
-const highlightText = (text) => {
+const resaltadoTexto = (text) => {
   const query = searchQuery.value.toLowerCase();
   if (query === '') return text;
 
@@ -56,12 +55,12 @@ const highlightText = (text) => {
       Explorá Argentina con nuestros guías locales y descubrí los lugares de una forma más accesible.
     </p>
 
-    <!-- Campo de búsqueda con bordes más redondeados -->
+    <!-- Campo de búsqueda -->
     <div class="mb-4 relative">
       <input
         v-model="searchQuery"
         type="text"
-        placeholder="Buscar por nombre"
+        placeholder="Buscar guía"
         class="w-full p-3 pl-10 pr-14 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#3C4A28] transition duration-200 ease-in-out"
       />
       <!-- Redondel verde con ícono de lupa -->
@@ -70,10 +69,10 @@ const highlightText = (text) => {
       </span>
     </div>
 
-    <!-- Lista de guías filtradas -->
+    <!-- Lista de guías -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div
-        v-for="guia in filteredGuias"
+        v-for="guia in filtroGuias"
         :key="guia.id"
         class="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow duration-300"
         @click="irADetalleGuia(guia.id)"
@@ -83,7 +82,7 @@ const highlightText = (text) => {
           :alt="'Foto de ' + guia.nombre"
           class="w-24 h-24 rounded-full mb-4 object-cover"/>
 
-        <strong class="text-lg text-[#222725]" v-html="highlightText(guia.nombre)"></strong>
+        <strong class="text-lg text-[#222725]" v-html="resaltadoTexto(guia.nombre)"></strong>
         <p class="text-gray-600">{{ guia.provincia }}</p>
       </div>
     </div>
