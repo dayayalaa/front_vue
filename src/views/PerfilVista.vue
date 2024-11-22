@@ -8,9 +8,9 @@ const userName = 'Juan Pérez';
 </script>
 
 <template>
-  
+  <IrAtras/>
   <div class="max-w-md mx-auto p-4 mb-20">
-    <IrAtras/>
+    
     <div class="relative mb-4">
       <img
         src="/img/neuquen.jpg"
@@ -28,8 +28,8 @@ const userName = 'Juan Pérez';
     </div>
   
     <div class="text-center mb-4 mt-20">
-      <TituloPrincipal class="text-2xl">Perfil de Usuario</TituloPrincipal>
-      <p>¡Bienvenido, {{ userName }}!</p>
+      <TituloPrincipal class="text-2xl">{{ userName }}</TituloPrincipal>
+      <p>Perfil de viajero</p>
     </div>
 
     <MiItinerario />

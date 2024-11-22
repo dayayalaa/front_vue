@@ -14,7 +14,7 @@ const checklistItems = reactive([
 
 function addItem() {
   if (nuevoItem.value.trim()) {  
-    checklistItems.push({ textoo: nuevoItem.value.trim(), checked: false });
+    checklistItems.push({ texto: nuevoItem.value.trim(), checked: false });
     nuevoItem.value = '';  
   }
 }
@@ -26,8 +26,9 @@ function removeItem(index) {
 
 
 <template>
+<IrAtras/>
   <div class="max-w-md mx-auto p-4">
-    <IrAtras/>
+    
     <TituloPrincipal> Checklist </TituloPrincipal>
     <p class="text-lg mb-4 text-left">No olvidarme de ...</p>
     <div class="mb-4">

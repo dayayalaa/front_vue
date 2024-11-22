@@ -47,7 +47,7 @@ onMounted(() => {
       <MiItinerario />
     </div>
 
-    <!-- Sección Destinos Arcana -->
+    <!-- Destinos Arcana -->
     <section class="flex flex-col justify-center items-center mb-20">
   <Subtitulo>Destinos Arcana</Subtitulo>
   <div class="flex flex-wrap gap-5 justify-center m-2">
@@ -65,13 +65,13 @@ onMounted(() => {
 </section>
 
 
-    <!-- Sección Conoce nuestros Guías -->
+    <!-- Guías -->
     <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
      <RouterLink to="/guiasTarjetas"><BotonPrincipal>Guías locales</BotonPrincipal> </RouterLink>
     </section>
 
-    <!-- Sección Destinos Populares -->
+    <!-- Destinos Populares -->
     <section class="flex flex-col justify-center items-center mb-20">
       <Subtitulo>Destinos Populares</Subtitulo>
       <div class="flex flex-col gap-6 justify-center">

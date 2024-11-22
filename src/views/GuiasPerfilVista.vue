@@ -66,9 +66,9 @@ onMounted(() => {
 </script>
 
 <template>
- 
+  <IrAtras />
   <div class="max-w-2xl mx-auto p-4">
-    <IrAtras />
+   
     <TituloPrincipal>Perfil Guía</TituloPrincipal>
     <div v-if="guia" class="bg-white shadow-md rounded-lg p-4 text-center">
       <img

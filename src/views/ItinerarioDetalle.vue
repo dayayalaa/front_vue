@@ -46,8 +46,9 @@ onMounted(() => {
 </script>
 
 <template>
+<IrAtras />
   <div v-if="itinerario" class="max-w-3xl mx-auto px-4 py-6 mb-12">  
-    <IrAtras />
+    
     <TituloPrincipal class="text-center text-4xl ">{{ itinerario.nombre }}</TituloPrincipal>
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
       <img :src="itinerario.img" :alt="itinerario.nombre" class="w-full h-64 rounded-t-lg object-cover"/>

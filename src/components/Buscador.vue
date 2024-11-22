@@ -29,13 +29,20 @@ onMounted(async () => {
 const resultadosFiltrados = computed(() => {
   if (!busqueda.value) return [];
 
-  const term = busqueda.value.toLowerCase().trim();
-  return destinos.value.filter(destino => {
-    const nombreCoincide = destino.nombre && destino.nombre.toLowerCase().includes(term);
-    const ubicacionCoincide = destino.ubicacion && destino.ubicacion.toLowerCase().includes(term);
-    return nombreCoincide || ubicacionCoincide;  // Devuelve si coincide en cualquiera de los dos
+  const normalizar = (texto) =>
+    texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+  const term = normalizar(busqueda.value);
+
+  return destinos.value.filter((destino) => {
+    const nombreCoincide =
+      destino.nombre && normalizar(destino.nombre).includes(term);
+    const ubicacionCoincide =
+      destino.ubicacion && normalizar(destino.ubicacion).includes(term);
+    return nombreCoincide || ubicacionCoincide;
   });
 });
+
 
 const resaltarCoincidencias = (texto, termino) => {
   if (!termino) return texto;
@@ -74,7 +81,7 @@ const resaltarCoincidencias = (texto, termino) => {
           />
           <div>
             <p v-html="resaltarCoincidencias(resultado.nombre, busqueda)" class="font-semibold"></p>
-            <p class="text-sm text-gray-500">{{ resultado.descripcion || 'Sin descripción' }}</p>
+            <p class="text-sm text-gray-500">{{ resultado.ubicacion || 'Sin especificar' }}</p>
           </div>
         </router-link>
       </div>
