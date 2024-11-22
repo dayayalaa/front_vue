@@ -23,7 +23,7 @@ onMounted(async () => {
   }
 });
 
-// Reemplazar saltos de línea por <br>
+
 const descripcionConSaltos = computed(() => {
   return lugar.value?.descripcion?.replace(/\n/g, '<br>') || '';
 });
