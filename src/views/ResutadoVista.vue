@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import TituloPrincipal from '../components/TituloPrincipal.vue';
 import Subtitulo from '../components/Subtitulo.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 
@@ -153,7 +152,7 @@ const avanzarPaso = () => {
     <!-- Step 1: Vuelos de Ida -->
     <div v-if="pasoActual === 1" class="mb-6">
 
-      <TituloPrincipal>Resultado de viajes de ida</TituloPrincipal>
+      <Subtitulo>Resultado de viajes de ida</Subtitulo>
       <p><strong>Origen:</strong> {{ origen }}</p>
       <p><strong>Destino:</strong> {{ destino }}</p>
 
@@ -300,10 +299,10 @@ const avanzarPaso = () => {
 
     <!-- Step 3: Hoteles -->
 <div v-if="pasoActual === 3" class="mb-6">
-  <TituloPrincipal class="text-center">Hoteles</TituloPrincipal>
+  <Subtitulo class="text-center">Hoteles</Subtitulo>
   <div v-if="hotelEconomico && hotelEconomico.habitaciones && hotelEconomico.habitaciones.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Iterar sobre todas las habitaciones -->
-    <div v-for="(habitacion, index) in hotelEconomico.habitaciones" :key="index" class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div v-for="(habitacion, index) in hotelEconomico.habitaciones" :key="index" class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
       <img 
         :src="habitacion.imgHabitacion" 
         :alt="habitacion.tipo" 
@@ -322,8 +321,8 @@ const avanzarPaso = () => {
 
 <!-- Step 4: Guardados -->
 <div v-if="pasoActual === 4" class="mb-6">
-      <TituloPrincipal class="text-center">Lista de Guardados</TituloPrincipal>
-      <p>Se implementara en una proxioma actualizacion. En esta vista se veran todo lo que el usuario selecciono y se podra efectuar el pago.</p>
+      <Subtitulo class="text-center">Lista de Guardados</Subtitulo>
+      <p>Se implementará en una próxima actualización. En esta vista se verá todo lo que el usuario seleccionó y se podrá efectuar el pago.</p>
     </div>
   </div>
 </template>

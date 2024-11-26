@@ -4,7 +4,6 @@ import { RouterLink, useRoute } from 'vue-router';
 import TituloPrincipal from './TituloPrincipal.vue';
 import Subtitulo from './Subtitulo.vue';
 import IrAtras from './IrAtras.vue';
-import BotonPrincipal from './BotonPrincipal.vue';
 
 const lugar = ref(null);
 const route = useRoute();
@@ -41,11 +40,9 @@ const descripcionConSaltos = computed(() => {
         <p class="mt-4"><strong>Ubicado en: </strong>{{ lugar.ubicacion }}</p>
       </div>
 
-      <div class="text-center mb-4">
+      <div class="mb-6 text-center">
         <Subtitulo class="mb-2">Planificá tu viaje con Arcana</Subtitulo>
-        <RouterLink to="/crear">
-          <BotonPrincipal>Planificar mi viaje</BotonPrincipal>
-        </RouterLink>
+        <RouterLink to="/crear" class="px-6 py-3 font-semibold text-white rounded-full bg-[#3C4A28] hover:bg-[#788B69]">Planificar mi viaje </RouterLink>
       </div>
     </div>
   </div>

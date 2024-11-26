@@ -70,14 +70,15 @@ onMounted(() => {
   <div class="max-w-2xl mx-auto p-4">
    
     <TituloPrincipal>Perfil Guía</TituloPrincipal>
-    <div v-if="guia" class="bg-white shadow-md rounded-lg p-4 text-center">
+    <div v-if="guia" class="bg-white shadow-md rounded-lg p-4">
       <img
         :src="guia.imagen"
         :alt="'Foto de ' + guia.nombre"
         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
       />
-      <strong class="text-lg">{{ guia.nombre }}</strong>
-      <p class="text-gray-600">{{ guia.provincia }}</p>
+      <p class="text-center"><strong class="text-lg">{{ guia.nombre }}</strong></p>
+      
+      <p class="text-gray-600 text-center">{{ guia.provincia }}</p>
       <p class="mt-4">{{ guia.descripcion }}</p>
     </div>
     <div v-else class="text-center">
