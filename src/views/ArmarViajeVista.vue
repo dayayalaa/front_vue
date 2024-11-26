@@ -109,6 +109,7 @@ const irARuta = () => {
         <div class="mb-4 relative">
           <label for="origen" class="block text-sm font-medium">Origen:</label>
           <IconoDespegar class="absolute left-3 top-8 text-gray-500" />
+
           <input type="text" id="origen" v-model="origen" @input="filtrarSugerencias('origen')" class="border border-gray-300 pl-10 p-2 rounded w-full" required>
           <p v-if="origenError" class="text-red-500 text-sm">{{ origenError }}</p>
           <ul v-if="sugerenciasOrigen.length > 0" class="border border-gray-300 mt-1">

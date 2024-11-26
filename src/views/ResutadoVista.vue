@@ -6,9 +6,11 @@ import TituloPrincipal from '../components/TituloPrincipal.vue';
 import Subtitulo from '../components/Subtitulo.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoAvion from '../components/icons/IconoAvion.vue';
+
 import IconoDespegar from '../components/icons/IconoDespegar.vue';
 import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 import IconoInicio from '../components/icons/IconoInicio.vue';
+
 import IrAtras from '../components/IrAtras.vue';
 import SpinnerCarga from '../components/SpinnerCarga.vue';
 
@@ -16,6 +18,7 @@ const route = useRoute();
 const router = useRouter();
 const origen = route.query.origen;
 const destino = route.query.destino;
+
 const fechaSalida = route.query.fechaSalida;
 const fechaVuelta = route.query.fechaVuelta;
 
@@ -30,6 +33,7 @@ const pasoActual = ref(1); // Paso actual del stepper (1: Ida, 2: Vuelta, 3: Hot
 
 onMounted(async () => {
   cargando.value = true;
+
   
   try {
     if (!origen || !destino || !fechaSalida || !fechaVuelta) {
@@ -37,13 +41,13 @@ onMounted(async () => {
       errorMensaje.value = 'Por favor, verifica que todos los parámetros se hayan ingresado correctamente.';
       return;
     }
-
     const origenCodificado = encodeURIComponent(origen);
     const destinoCodificado = encodeURIComponent(destino);
     const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
     const fechaVueltaCodificada = encodeURIComponent(fechaVuelta);
 
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/vuelos/resultados/${origenCodificado}/${destinoCodificado}/${fechaSalidaCodificada}/${fechaVueltaCodificada}`);
+
     if (response.data) {
       vuelosIda.value = response.data.vuelosIda || [];
       vuelosVuelta.value = response.data.vuelosVuelta || [];
@@ -52,6 +56,7 @@ onMounted(async () => {
     }
 
     const hotelResponse = await axios.get('https://back-tesis-lovat.vercel.app/arcana/hoteles/precio/economico');
+
     if (hotelResponse.data) {
       hotelEconomico.value = hotelResponse.data;
     } else {
@@ -59,8 +64,10 @@ onMounted(async () => {
     }
 
   } catch (error) {
+
     errorMensaje.value = 'Error al obtener los datos. Intenta más tarde.';
     console.error(error);
+
   } finally {
     cargando.value = false;
   }
@@ -87,6 +94,7 @@ const obtenerFechaYHora = (fecha) => {
 
 <template>
   <IrAtras />
+
   <div class="max-w-3xl mx-auto px-4 py-6">
     <!-- Stepper -->
     <div class="flex justify-between mb-6">
@@ -103,11 +111,13 @@ const obtenerFechaYHora = (fecha) => {
 
     <!-- Step 1: Vuelos de Ida -->
     <div v-if="pasoActual === 1" class="mb-6">
+
       <TituloPrincipal>Resultado de viajes de ida</TituloPrincipal>
       <p><strong>Origen:</strong> {{ origen }}</p>
       <p><strong>Destino:</strong> {{ destino }}</p>
 
       <div v-if="cargando">
+
         <SpinnerCarga />
       </div>
       <div v-else-if="errorMensaje">
@@ -116,6 +126,7 @@ const obtenerFechaYHora = (fecha) => {
       <div v-else-if="vuelosIda.length">
         <div class="grid grid-cols-1 gap-4">
           <div v-for="vuelo in vuelosIda" :key="vuelo.numeroVuelo" class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
+
             <div class="w-full mb-6">
               <div class="flex justify-between mb-6">
                 <div>
@@ -129,7 +140,9 @@ const obtenerFechaYHora = (fecha) => {
               </div>
 
               <div class="flex justify-between mb-6">
+
                 <img :src="vuelo.imgAerolinea" alt="Logo de la aerolínea {{ vuelo.aerolinea }}" class="w-16 h-16 object-contain">
+
                 <div class="text-end">
                   <p>Número de Vuelo:</p>
                   <p class="font-medium text-2xl">{{ vuelo.numeroVuelo }}</p>
@@ -146,7 +159,9 @@ const obtenerFechaYHora = (fecha) => {
                   <div class="absolute left-1/2 transform -translate-x-1/2 -top-3 text-[#222725]">
                     <IconoAvion />
                   </div>
+
                   <hr class="border-t border-dashed border-[#788B69]" />
+
                 </div>
 
                 <div class="flex justify-between items-center flex-col">
@@ -165,6 +180,7 @@ const obtenerFechaYHora = (fecha) => {
             </div>
 
             <BotonPrincipal @click="seleccionarVueloIda(vuelo)">Seleccionar vuelo de ida</BotonPrincipal>
+
           </div>
         </div>
       </div>
@@ -268,4 +284,5 @@ const obtenerFechaYHora = (fecha) => {
 
   </div>
 </template>
+
 
