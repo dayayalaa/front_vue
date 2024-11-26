@@ -211,7 +211,6 @@ const avanzarPaso = () => {
               </div>
 
               <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
-              <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
 
               <div class="flex justify-between">
                 <p><strong>Precio:</strong></p>
@@ -282,7 +281,6 @@ const avanzarPaso = () => {
               </div>
 
               <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
-              <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
 
               <div class="flex justify-between">
                 <p><strong>Precio:</strong></p>
