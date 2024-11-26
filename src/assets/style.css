@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+body{
+    background-color: #fcf9f4;
+}
+
+@font-face {
+    font-family: 'Sableklish';
+    src: url('../fonts/Sableklish.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  
+  h1, h2 {
+    font-family: 'Sableklish', sans-serif;
+  }
