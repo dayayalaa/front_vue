@@ -5,11 +5,12 @@ import axios from 'axios';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import Subtitulo from '../components/Subtitulo.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
-import IconoAvion from '../components/icons/IconoAvion.vue';
 
+import IconoAvion from '../components/icons/IconoAvion.vue';
 import IconoDespegar from '../components/icons/IconoDespegar.vue';
 import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 import IconoInicio from '../components/icons/IconoInicio.vue';
+import IconoLista from '../components/icons/IconoLista.vue';
 
 import IrAtras from '../components/IrAtras.vue';
 import SpinnerCarga from '../components/SpinnerCarga.vue';
@@ -29,7 +30,7 @@ const vuelosIda = ref([]);
 const vuelosVuelta = ref([]);
 const hotelEconomico = ref(null);
 
-const pasoActual = ref(1); // Paso actual del stepper (1: Ida, 2: Vuelta, 3: Hoteles)
+const pasoActual = ref(1); // Paso actual del stepper (1: Ida, 2: Vuelta, 3: Hoteles, 4: Reserva)
 
 onMounted(async () => {
   cargando.value = true;
@@ -41,8 +42,38 @@ onMounted(async () => {
       errorMensaje.value = 'Por favor, verifica que todos los parámetros se hayan ingresado correctamente.';
       return;
     }
-    const origenCodificado = encodeURIComponent(origen);
-    const destinoCodificado = encodeURIComponent(destino);
+
+    // Función para obtener el código IATA
+    function obtenerCodigoIATA(nombre) {
+      const lugaresArgentinos = {
+        'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
+        'Buenos Aires - Aeroparque Jorge Newbery': 'AEP',
+        'Córdoba': 'COR',
+        'Mendoza': 'MDZ',
+        'Mar del Plata': 'MDQ',
+        'Ushuaia': 'USH',
+        'Bariloche': 'BRC',
+        'Salta': 'SLA',
+        'Rosario': 'ROS',
+        'Tucumán': 'TUC',
+        'Iguazú': 'IGR',
+        'Neuquén': 'NQN',
+        'Misiones': 'MIR',
+        'Posadas': 'PSS',
+        'San Fernando del Valle de Catamarca': 'CTC',
+        'San Juan': 'UAQ',
+        'Río Gallegos': 'RGL',
+        'Río Grande': 'RGA',
+        'El Calafate': 'FTE',
+        'San Luis': 'LUQ',
+        'Resistencia': 'RES',
+      };
+
+      return lugaresArgentinos[nombre] || nombre;
+    }
+
+    const origenCodificado = obtenerCodigoIATA(origen);
+    const destinoCodificado = obtenerCodigoIATA(destino);
     const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
     const fechaVueltaCodificada = encodeURIComponent(fechaVuelta);
 
@@ -90,12 +121,19 @@ const obtenerFechaYHora = (fecha) => {
     hora: date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false })
   };
 };
+
+const avanzarPaso = () => {
+  if (pasoActual.value < 4) {
+    pasoActual.value++;
+  }
+};
 </script>
 
 <template>
   <IrAtras />
 
   <div class="max-w-3xl mx-auto px-4 py-6">
+
     <!-- Stepper -->
     <div class="flex justify-between mb-6">
       <div :class="{'text-blue-600': pasoActual === 1, 'text-gray-400': pasoActual !== 1}" @click="pasoActual = 1">
@@ -106,6 +144,9 @@ const obtenerFechaYHora = (fecha) => {
       </div>
       <div :class="{'text-blue-600': pasoActual === 3, 'text-gray-400': pasoActual !== 3}" @click="pasoActual = 3">
         <IconoInicio class="w-6 h-6" />
+      </div>
+      <div :class="{'text-blue-600': pasoActual == 4, 'text-gray-400': pasoActual !== 4}" @click="pasoActual = 4">
+        <IconoLista class="w-6 h-6" />
       </div>
     </div>
 
@@ -179,7 +220,7 @@ const obtenerFechaYHora = (fecha) => {
               </div>
             </div>
 
-            <BotonPrincipal @click="seleccionarVueloIda(vuelo)">Seleccionar vuelo de ida</BotonPrincipal>
+            <BotonPrincipal @click="avanzarPaso">Seleccionar vuelo de ida</BotonPrincipal>
 
           </div>
         </div>
@@ -250,7 +291,7 @@ const obtenerFechaYHora = (fecha) => {
               </div>
             </div>
 
-            <BotonPrincipal @click="seleccionarVueloVuelta(vuelo)">Seleccionar vuelo de vuelta</BotonPrincipal>
+            <BotonPrincipal @click="avanzarPaso">Seleccionar vuelo de vuelta</BotonPrincipal>
           </div>
         </div>
       </div>
@@ -272,17 +313,18 @@ const obtenerFechaYHora = (fecha) => {
         <Subtitulo class="text-2xl" >{{ hotelEconomico.nombre }}</Subtitulo>
         <p class="text-gray-600 text-sm mt-2">Tipo de habitación: {{ habitacion.tipo }}</p>
         <p class="text-gray-600 text-sm">Precio por noche: ${{ habitacion.precioPorNoche }}</p>
-      </div>
+      </div>    
+
+      <BotonPrincipal @click="avanzarPaso">Seleccionar habitación</BotonPrincipal>
     </div>
   </div>
-  <section class="flex justify-center items-center mb-6">
-    <RouterLink to="/hoteles">
-      <BotonPrincipal>Ver más hoteles</BotonPrincipal>
-    </RouterLink>
-  </section>
 </div>
 
+<!-- Step 4: Guardados -->
+<div v-if="pasoActual === 4" class="mb-6">
+      <TituloPrincipal class="text-center">Lista de Guardados</TituloPrincipal>
+      <p>Se implementara en una proxioma actualizacion. En esta vista se veran todo lo que el usuario selecciono y se podra efectuar el pago.</p>
+    </div>
   </div>
 </template>
-
 
