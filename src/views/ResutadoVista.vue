@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import Subtitulo from '../components/Subtitulo.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 
 import IconoAvion from '../components/icons/IconoAvion.vue';
@@ -152,7 +152,7 @@ const avanzarPaso = () => {
     <!-- Step 1: Vuelos de Ida -->
     <div v-if="pasoActual === 1" class="mb-6">
 
-      <Subtitulo>Resultado de viajes de ida</Subtitulo>
+      <TituloSecundario>Resultado de viajes de ida</TituloSecundario>
       <p><strong>Origen:</strong> {{ origen }}</p>
       <p><strong>Destino:</strong> {{ destino }}</p>
 
@@ -229,7 +229,7 @@ const avanzarPaso = () => {
 
     <!-- Step 2: Vuelos de Vuelta -->
     <div v-if="pasoActual === 2" class="mb-6">
-      <Subtitulo>Resultados de Vuelos de Vuelta</Subtitulo>
+      <TituloSecundario>Resultados de Vuelos de Vuelta</TituloSecundario>
       <p><strong>Origen:</strong> {{ destino }}</p>
       <p><strong>Destino:</strong> {{ origen }}</p>
 
@@ -299,7 +299,7 @@ const avanzarPaso = () => {
 
     <!-- Step 3: Hoteles -->
 <div v-if="pasoActual === 3" class="mb-6">
-  <Subtitulo class="text-center">Hoteles</Subtitulo>
+  <TituloSecundario class="text-center">Hoteles</TituloSecundario>
   <div v-if="hotelEconomico && hotelEconomico.habitaciones && hotelEconomico.habitaciones.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Iterar sobre todas las habitaciones -->
     <div v-for="(habitacion, index) in hotelEconomico.habitaciones" :key="index" class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
@@ -309,7 +309,7 @@ const avanzarPaso = () => {
         class="w-full h-64 object-cover rounded-t-lg" 
       />
       <div class="px-6 py-4">
-        <Subtitulo class="text-2xl" >{{ hotelEconomico.nombre }}</Subtitulo>
+        <TituloSecundario class="text-2xl" >{{ hotelEconomico.nombre }}</TituloSecundario>
         <p class="text-gray-600 text-sm mt-2">Tipo de habitación: {{ habitacion.tipo }}</p>
         <p class="text-gray-600 text-sm">Precio por noche: ${{ habitacion.precioPorNoche }}</p>
       </div>    
@@ -321,7 +321,7 @@ const avanzarPaso = () => {
 
 <!-- Step 4: Guardados -->
 <div v-if="pasoActual === 4" class="mb-6">
-      <Subtitulo class="text-center">Lista de Guardados</Subtitulo>
+      <TituloSecundario class="text-center">Lista de Guardados</TituloSecundario>
       <p>Se implementará en una próxima actualización. En esta vista se verá todo lo que el usuario seleccionó y se podrá efectuar el pago.</p>
     </div>
   </div>

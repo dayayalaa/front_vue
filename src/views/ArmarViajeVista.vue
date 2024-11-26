@@ -1,11 +1,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import TituloPrincipal from '../components/TituloPrincipal.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoDespegar from '../components/icons/IconoDespegar.vue';
 import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 import IrAtras from '../components/IrAtras.vue';
+
 const router = useRouter();
 const origen = ref('');
 const destino = ref('');
@@ -16,6 +17,7 @@ const destinoError = ref('');
 const fechaVueltaError = ref('');
 const sugerenciasOrigen = ref([]);
 const sugerenciasDestino = ref([]);
+
 const lugaresArgentinos = [
   'Buenos Aires - Aeroparque Jorge Newbery',
   'Buenos Aires - Aeropuerto Internacional Ministro Pistarini',
@@ -41,6 +43,7 @@ const lugaresArgentinos = [
   'Tremedal',
   'General Roca',
 ];
+
 const quitarAcentos = (texto) => {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
@@ -104,7 +107,7 @@ const irARuta = () => {
   <IrAtras/>
   <div class="flex items-center justify-center pt-6 pb-8"> 
     <div class="max-w-md p-4 bg-white rounded shadow-lg">
-      <TituloPrincipal>Buscar vuelos</TituloPrincipal>
+      <TituloSecundario>Buscar vuelos</TituloSecundario>
       <form @submit.prevent="irARuta">
         <div class="mb-4 relative">
           <label for="origen" class="block text-sm font-medium">Origen:</label>

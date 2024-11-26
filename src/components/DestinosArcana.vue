@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
-import TituloPrincipal from './TituloPrincipal.vue';
-import Subtitulo from './Subtitulo.vue';
+import TituloSecundario from './TituloSecundario.vue';
+import TituloTerciario from './TituloTerciario.vue';
 import IrAtras from './IrAtras.vue';
 
 const lugar = ref(null);
@@ -32,7 +32,7 @@ const descripcionConSaltos = computed(() => {
 <template> 
  <IrAtras />
   <div v-if="lugar" class="max-w-3xl mx-auto px-4 py-4 mb-12">
-    <TituloPrincipal>{{ lugar.nombre }}</TituloPrincipal>
+    <TituloSecundario>{{ lugar.nombre }}</TituloSecundario>
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
       <img :src="lugar.imagen" :alt="lugar.nombre" class="w-full h-60 object-cover"/>
       <div class="px-6 py-4">
@@ -41,7 +41,7 @@ const descripcionConSaltos = computed(() => {
       </div>
 
       <div class="mb-6 text-center">
-        <Subtitulo class="mb-2">Planificá tu viaje con Arcana</Subtitulo>
+        <TituloTerciario class="mb-2">Planificá tu viaje con Arcana</TituloTerciario>
         <RouterLink to="/crear" class="px-6 py-3 font-semibold text-white rounded-full bg-[#3C4A28] hover:bg-[#788B69]">Planificar mi viaje </RouterLink>
       </div>
     </div>

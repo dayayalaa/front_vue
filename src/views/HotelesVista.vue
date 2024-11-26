@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import IrAtras from '../components/IrAtras.vue';
-import TituloPrincipal from '../components/TituloPrincipal.vue';
-import Subtitulo from '../components/Subtitulo.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
+import TituloTerciario from '../components/TituloSecundario.vue';
 
 const hoteles = ref([]); 
 onMounted(async () => {
@@ -24,11 +24,11 @@ onMounted(async () => {
 <template>
   <IrAtras/>
     <div class="hoteles-container">
-    <TituloPrincipal> Hoteles</TituloPrincipal>
+    <TituloSecundario>Hoteles</TituloSecundario>
       <div v-if="hoteles.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="hotel in hoteles" :key="hotel._id" class="bg-white rounded-lg shadow-md p-4">
           <img :src="hotel.habitaciones[0].imgHabitacion" alt="Imagen del hotel" class="w-full h-40 object-cover rounded-md mb-4">
-         <Subtitulo>{{ hotel.titulo }}</Subtitulo>
+         <TituloTerciario>{{ hotel.titulo }}</TituloTerciario>
           <p class="text-sm text-gray-600">{{ hotel.descripcion }}</p>
           <div class="mt-2">
             <p><strong>Ubicación:</strong> {{ hotel.ubicacion.direccion }}, {{ hotel.ubicacion.ciudad }}, {{ hotel.ubicacion.pais }}</p>

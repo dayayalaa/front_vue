@@ -1,6 +1,6 @@
 <script setup>
-import TituloPrincipal from '../components/TituloPrincipal.vue';
-import BotonPrincipal from '../components/BotonPrincipal.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
+// import BotonPrincipal from '../components/BotonPrincipal.vue';
 import MiItinerario from '../components/MiItinerario.vue';
 import IrAtras from '../components/IrAtras.vue';
 
@@ -28,7 +28,7 @@ const userName = 'Juan Pérez';
     </div>
   
     <div class="text-center mb-4 mt-20">
-      <TituloPrincipal class="text-2xl">{{ userName }}</TituloPrincipal>
+      <TituloSecundario class="text-2xl">{{ userName }}</TituloSecundario>
       <p>Perfil de viajero</p>
     </div>
 

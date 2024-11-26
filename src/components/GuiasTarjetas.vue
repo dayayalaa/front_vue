@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import TituloPrincipal from './TituloPrincipal.vue';
+import TituloSecundario from './TituloSecundario.vue';
 import IrAtras from './IrAtras.vue';
 import IconoBuscador from './icons/IconoBuscador.vue';
 
@@ -50,7 +50,7 @@ const resaltadoTexto = (text) => {
 <template>
   <div class="max-w-2xl mx-auto p-4 mb-20">
     <IrAtras />
-    <TituloPrincipal> Conocé a los guías locales </TituloPrincipal>
+    <TituloSecundario> Conocé a los guías locales </TituloSecundario>
     <p class="mb-6">
       Explorá Argentina con nuestros guías locales y descubrí los lugares de una forma más accesible.
     </p>
