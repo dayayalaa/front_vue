@@ -9,6 +9,10 @@ import Listas from "../views/ListaVista.vue";
 import ItinerarioDetalle from "../views/ItinerarioDetalle.vue";
 import DestinosArcana from "../components/DestinosArcana.vue";
 import HotelesVista from "../views/HotelesVista.vue";
+import InicioSesion from "../views/InicioSesion.vue";
+import OpcionInicio from "../views/OpcionInicio.vue";
+import Registro from "../views/Registro.vue";
+import RegistroGuia from "../views/RegistroGuia.vue";
 
 const routes = [
   { path: "/",                   name: "Home",               component: HomeView },
@@ -21,7 +25,11 @@ const routes = [
   { path: "/itinerario/:id",     name: "ItinerarioDetalle",  component: ItinerarioDetalle,},
   { path: '/arcana/lugares/:id', name: 'lugarDetalle',       component: DestinosArcana, },
   { path: '/hoteles',            name: 'opcionesHoteles',    component: HotelesVista},
-  ];
+  { path: '/login',              name: 'login',              component: InicioSesion},
+  { path: '/opcion',             name: 'opcion',             component: OpcionInicio},
+  { path: '/registroUsuario',    name: 'registroUsuario',    component: Registro},
+  { path: '/registroGuia',    name: 'registroGuia',    component: RegistroGuia},
+  ]; 
 
 const router = createRouter({
   history: createWebHistory(),
