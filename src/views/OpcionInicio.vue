@@ -1,10 +1,12 @@
 <script setup>
+import IrAtras from '../components/IrAtras.vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import IconoUsuario from '../components/icons/IconoUsuario.vue';
 import IconoMapa from '../components/icons/IconoMapa.vue';
 </script>
 
 <template>
+    <IrAtras/>
     <div class="flex items-center justify-center h-screen bg-gray-50 pt-6 pb-8">
       <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
         

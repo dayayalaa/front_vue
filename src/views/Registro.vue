@@ -13,6 +13,7 @@ const contrasenia = ref('');
 const loading = ref(false);
 const backendError = ref('');
 const errors = ref({ nombre: '', email: '', contrasenia: '' });
+const isPasswordVisible = ref(false);
 
 const validateForm = () => {
   let isValid = true;
@@ -45,6 +46,10 @@ const validateForm = () => {
   return isValid;
 };
 
+const togglePasswordVisibility = () => {
+  isPasswordVisible.value = !isPasswordVisible.value;
+};
+
 const registroUsuario = async () => {
   if (!validateForm()) {
     return;
@@ -54,35 +59,34 @@ const registroUsuario = async () => {
   backendError.value = '';
 
   try {
-  const response = await Axios.post('https://back-tesis-lovat.vercel.app/arcana/usuarios/usuarios', {
-    nombre: nombre.value,
-    email: email.value,
-    contrasenia: contrasenia.value,
-  });
+    const response = await Axios.post('https://back-tesis-lovat.vercel.app/arcana/usuarios/usuarios', {
+      nombre: nombre.value,
+      email: email.value,
+      contrasenia: contrasenia.value,
+    });
 
-  if (response.data && response.data.token) {
-    localStorage.setItem('token', response.data.token);
-    router.push('/');
-    nombre.value = '';
-    email.value = '';
-    contrasenia.value = '';
+    if (response.data && response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      router.push('/');
+      nombre.value = '';
+      email.value = '';
+      contrasenia.value = '';
+    }
+  } catch (error) {
+    console.error('Error ocurrido: ', error);
+    if (error.response) {
+      backendError.value = error.response.data.msg || 'Error al registrar el usuario';
+    } else {
+      backendError.value = 'Error desconocido de red: ' + error.message;
+    }
+  } finally {
+    loading.value = false;
   }
-} catch (error) {
-  console.error('Error ocurrido: ', error);
-  if (error.response) {
-    console.log('Status:', error.response.status);
-    console.log('Response Data:', error.response.data);
-    backendError.value = error.response.data.msg || 'Error al registrar el usuario';
-  } else {
-    backendError.value = 'Error desconocido de red: ' + error.message;
-  }
-} finally {
-  loading.value = false;
-}
 };
 </script>
+
 <template>
-    <IrAtras/>
+  <IrAtras />
   <div class="flex items-center justify-center h-screen bg-gray-50 pt-6 pb-8">
     <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
       <TituloSecundario class="text-center mb-6">Crea una cuenta</TituloSecundario>
@@ -96,7 +100,6 @@ const registroUsuario = async () => {
             v-model="nombre"
             placeholder="Ingresa tu nombre de usuario"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-            
           />
           <p class="text-red-500">{{ errors.nombre }}</p>
         </div>
@@ -109,21 +112,27 @@ const registroUsuario = async () => {
             v-model="email"
             placeholder="Ingresa tu correo electrónico"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-            
           />
           <p class="text-red-500">{{ errors.email }}</p>
         </div>
 
-        <div class="mb-4">
+        <div class="mb-4 relative">
           <label for="contrasenia" class="block text-sm font-medium text-gray-600">Contraseña</label>
           <input
-            type="password"
+            :type="isPasswordVisible ? 'text' : 'password'"
             id="contrasenia"
             v-model="contrasenia"
             placeholder="Ingresa tu contraseña"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-            
           />
+          <button
+            type="button"
+            @click="togglePasswordVisibility"
+            class="absolute right-3 top-10"
+          >
+            <span v-if="isPasswordVisible">👁️</span>
+            <span v-else>👁️‍🗨️</span>
+          </button>
           <p class="text-red-500">{{ errors.contrasenia }}</p>
         </div>
 

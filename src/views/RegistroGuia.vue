@@ -11,11 +11,15 @@ const nombre = ref('');
 const email = ref('');
 const contrasenia = ref('');
 const provincia = ref('');
+const loading = ref(false);
+const backendError = ref('');
 
 const errorNombre = ref('');
 const errorEmail = ref('');
 const errorContrasenia = ref('');
 const errorProvincia = ref('');
+
+const isPasswordVisible = ref(false); 
 
 const lugaresArgentinos = [
   'Buenos Aires - Aeroparque Jorge Newbery',
@@ -43,6 +47,10 @@ const lugaresArgentinos = [
   'General Roca',
 ];
 
+const togglePasswordVisibility = () => {
+  isPasswordVisible.value = !isPasswordVisible.value;
+};
+
 const registroUsuario = async () => {
   if (!validateForm()) {
     return;
@@ -52,7 +60,7 @@ const registroUsuario = async () => {
   backendError.value = '';
 
   try {
-    const response = await Axios.post('https://back-tesis-lovat.vercel.app/arcana/usuarios/guias', {
+    const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/usuarios/guias', {
       nombre: nombre.value,
       email: email.value,
       contrasenia: contrasenia.value,
@@ -66,7 +74,7 @@ const registroUsuario = async () => {
       contrasenia.value = '';
     }
   } catch (error) {
-    console.error('Detalles del error:', error); 
+    console.error('Detalles del error:', error);
     if (error.response && error.response.data.msg) {
       backendError.value = error.response.data.msg;
     } else {
@@ -76,13 +84,50 @@ const registroUsuario = async () => {
     loading.value = false;
   }
 };
+
+const validateForm = () => {
+  let isValid = true;
+  errorNombre.value = '';
+  errorEmail.value = '';
+  errorContrasenia.value = '';
+  errorProvincia.value = '';
+
+  // Valida el nombre
+  if (!nombre.value) {
+    errorNombre.value = 'Por favor, ingresa tu nombre';
+    isValid = false;
+  }
+
+  // Valida el email
+  if (!email.value) {
+    errorEmail.value = 'Por favor, ingresa tu correo electrónico';
+    isValid = false;
+  }
+
+  // Valida la contraseña
+  if (!contrasenia.value) {
+    errorContrasenia.value = 'Por favor, ingresa una contraseña';
+    isValid = false;
+  } else if (contrasenia.value.length < 6) {
+    errorContrasenia.value = 'La contraseña debe tener al menos 6 caracteres';
+    isValid = false;
+  }
+
+  // Valida la provincia
+  if (!provincia.value) {
+    errorProvincia.value = 'Por favor, selecciona una provincia';
+    isValid = false;
+  }
+
+  return isValid;
+};
 </script>
 
 <template>
-    <IrAtras/>
+  <IrAtras />
   <div class="flex items-center justify-center h-screen bg-gray-50 pt-6 pb-8">
-      <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
-        
+    <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
+      
       <TituloSecundario class="text-center mb-6">Crea una cuenta de guía</TituloSecundario>
       
       <!-- Formulario de Registro -->
@@ -97,9 +142,8 @@ const registroUsuario = async () => {
             v-model="nombre"
             placeholder="Ingresa tu nombre de usuario"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-            
           />
-          <p class="text-red-500 text-sm mt-1" v-if="errorNombre">{{ errorNombre }}</p> <!-- Mensaje de error -->
+          <p class="text-red-500 text-sm mt-1" v-if="errorNombre">{{ errorNombre }}</p>
         </div>
 
         <!-- Email -->
@@ -111,23 +155,29 @@ const registroUsuario = async () => {
             v-model="email"
             placeholder="Ingresa tu correo electrónico"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-            
           />
-          <p class="text-red-500 text-sm mt-1" v-if="errorEmail">{{ errorEmail }}</p> <!-- Mensaje de error -->
+          <p class="text-red-500 text-sm mt-1" v-if="errorEmail">{{ errorEmail }}</p>
         </div>
 
         <!-- Contraseña -->
-        <div class="mb-4">
+        <div class="mb-4 relative">
           <label for="contrasenia" class="block text-sm font-medium text-gray-600">Contraseña</label>
           <input
-            type="password"
+            :type="isPasswordVisible ? 'text' : 'password'"
             id="contrasenia"
             v-model="contrasenia"
             placeholder="Ingresa tu contraseña"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-            
           />
-          <p class="text-red-500 text-sm mt-1" v-if="errorContrasenia">{{ errorContrasenia }}</p> <!-- Mensaje de error -->
+          <button
+            type="button"
+            @click="togglePasswordVisibility"
+            class="absolute right-3 top-10"
+          >
+            <span v-if="isPasswordVisible">👁️</span>
+            <span v-else>👁️‍🗨️</span>
+          </button>
+          <p class="text-red-500 text-sm mt-1" v-if="errorContrasenia">{{ errorContrasenia }}</p>
         </div>
 
         <!-- Provincia -->
@@ -137,19 +187,18 @@ const registroUsuario = async () => {
             id="provincia"
             v-model="provincia"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-            
           >
             <option value="" disabled selected>Selecciona tu provincia</option>
             <option v-for="lugar in lugaresArgentinos" :key="lugar" :value="lugar">
               {{ lugar }}
             </option>
           </select>
-          <p class="text-red-500 text-sm mt-1" v-if="errorProvincia">{{ errorProvincia }}</p> <!-- Mensaje de error -->
+          <p class="text-red-500 text-sm mt-1" v-if="errorProvincia">{{ errorProvincia }}</p>
         </div>
 
         <!-- Botón de Registro -->
         <div class="flex justify-center">
-          <BotonPrincipal>Registrarse</BotonPrincipal>
+          <BotonPrincipal :disabled="loading">{{ loading ? 'Registrando...' : 'Registrarse' }}</BotonPrincipal>
         </div>
       </form>
     </div>
