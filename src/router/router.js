@@ -28,7 +28,7 @@ const routes = [
   { path: '/login',              name: 'login',              component: InicioSesion},
   { path: '/opcion',             name: 'opcion',             component: OpcionInicio},
   { path: '/registroUsuario',    name: 'registroUsuario',    component: Registro},
-  { path: '/registroGuia',    name: 'registroGuia',    component: RegistroGuia},
+  { path: '/registroGuia',       name: 'registroGuia',       component: RegistroGuia},
   ]; 
 
 const router = createRouter({

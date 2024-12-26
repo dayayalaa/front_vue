@@ -24,7 +24,7 @@ import IconoArcana from '../components/icons/IconoArcana.vue';
 
                 <div class="flex flex-col justify-center mt-5">
                     <BotonPrincipal>Iniciar Sesión</BotonPrincipal>
-                    <a href="" class="text-center text-[#788B69]">
+                    <a href="/opcion" class="text-center text-[#788B69]">
                         ¿No tienes cuenta?
                     </a>
                 </div>
