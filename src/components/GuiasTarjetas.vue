@@ -1,13 +1,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios'; // Asegúrate de importar axios
+import axios from 'axios'; 
 import TituloSecundario from './TituloSecundario.vue';
 import IrAtras from './IrAtras.vue';
 import IconoBuscador from './icons/IconoBuscador.vue';
 
 const router = useRouter();
-const guias = ref([]); // Cambiado a un array vacío para almacenar guías desde el servidor
+const guias = ref([]); 
 const searchQuery = ref('');
 
 const irADetalleGuia = (id) => {
@@ -18,7 +18,6 @@ const removeAccents = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
-// Computed para filtrar guías
 const filtroGuias = computed(() => {
   const query = removeAccents(searchQuery.value.toLowerCase());
   return guias.value.filter((guia) =>
@@ -27,7 +26,6 @@ const filtroGuias = computed(() => {
   );
 });
 
-// Resaltar texto en la búsqueda
 const resaltadoTexto = (text) => {
   const query = searchQuery.value.toLowerCase();
   if (query === '') return text;
@@ -42,17 +40,15 @@ const resaltadoTexto = (text) => {
   return text;
 };
 
-// Función para obtener guías desde el servidor
 const obtenerGuias = async () => {
   try {
-    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/usuarios/guia'); // Asegúrate de que esta ruta sea la correcta
-    guias.value = response.data.data; // Asumiendo que la respuesta tiene un formato { data: [...guías] }
+    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/usuarios/guia'); 
+    guias.value = response.data.data; 
   } catch (error) {
-    console.error('Error al obtener guías:', error); // Manejo de errores
+    console.error('Error al obtener guías:', error); 
   }
 };
 
-// Llamar a la función al montar el componente
 onMounted(() => {
   obtenerGuias();
 });
@@ -87,11 +83,7 @@ onMounted(() => {
         class="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow duration-300"
         @click="irADetalleGuia(guia.id)"
       >
-        <img
-          :src="guia.imagen"
-          :alt="'Foto de ' + guia.nombre"
-          class="w-24 h-24 rounded-full mb-4 object-cover"
-        />
+      <img :src="guia.fotoPerfil" :alt="'Foto de ' + guia.nombre" class="w-24 h-24 rounded-full mb-4 object-cover" />
 
         <strong class="text-lg text-[#222725]" v-html="resaltadoTexto(guia.nombre)"></strong>
         <p class="text-gray-600">{{ guia.provincia }}</p>

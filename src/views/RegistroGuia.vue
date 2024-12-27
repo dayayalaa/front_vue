@@ -64,14 +64,24 @@ const registroUsuario = async () => {
       nombre: nombre.value,
       email: email.value,
       contrasenia: contrasenia.value,
+      provincia: provincia.value,  // Incluye la provincia aquí
     });
 
+    // Verifica si el token fue recibido
     if (response.data && response.data.token) {
+      console.log('Token recibido:', response.data.token);  // Verifica el token recibido en consola
+
+      // Guarda el token en localStorage
       localStorage.setItem('token', response.data.token);
-      router.push('/');
+
+      // Redirige al home después del registro
+      router.push('/'); 
+      
+      // Limpia los campos del formulario
       nombre.value = '';
       email.value = '';
       contrasenia.value = '';
+      provincia.value = '';  // Limpia la provincia también
     }
   } catch (error) {
     console.error('Detalles del error:', error);
