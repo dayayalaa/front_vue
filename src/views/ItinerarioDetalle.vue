@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import TituloPrincipal from '../components/TituloPrincipal.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
 import IrAtras from '../components/IrAtras.vue';
 
 // Importacion de iconos
@@ -49,7 +49,7 @@ onMounted(() => {
 <IrAtras />
   <div v-if="itinerario" class="max-w-3xl mx-auto px-4 py-6 mb-12">  
     
-    <TituloPrincipal class="text-center text-4xl ">{{ itinerario.nombre }}</TituloPrincipal>
+    <TituloSecundario class="text-center text-4xl ">{{ itinerario.nombre }}</TituloSecundario>
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
       <img :src="itinerario.img" :alt="itinerario.nombre" class="w-full h-64 rounded-t-lg object-cover"/>
       <div class="px-6 py-4">

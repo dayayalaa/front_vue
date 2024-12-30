@@ -1,14 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './**/*.html',   
-    './**/*.js',
-    './**/*.vue', 
+    './src/**/*.{html,js,vue}',  
+    './public/**/*.{html,js}',   
   ],
   theme: {
     extend: {
       fontFamily: {
-        sableklish: ['Sableklish', 'sans-serif'], 
+        sableklish: ['Sableklish', 'sans-serif'],
       },
     },
   },

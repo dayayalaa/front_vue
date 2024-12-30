@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue';
-import TituloPrincipal from '../components/TituloPrincipal.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoBorrar from '../components/icons/IconoBorrar.vue';
 import IrAtras from '../components/IrAtras.vue';
@@ -29,7 +29,7 @@ function removeItem(index) {
 <IrAtras/>
   <div class="max-w-md mx-auto p-4">
     
-    <TituloPrincipal> Checklist </TituloPrincipal>
+    <TituloSecundario> Checklist </TituloSecundario>
     <p class="text-lg mb-4 text-left">No olvidarme de ...</p>
     <div class="mb-4">
       <input

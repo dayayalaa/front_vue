@@ -2,8 +2,8 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
 import MiItinerario from '../components/MiItinerario.vue';
-import Subtitulo from '../components/Subtitulo.vue';
 import TarjetaDestino from '../components/TarjetaDestino.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import NavSuperior from '../components/NavSuperior.vue';
@@ -49,7 +49,7 @@ onMounted(() => {
 
     <!-- Destinos Arcana -->
     <section class="flex flex-col justify-center items-center mb-20">
-  <Subtitulo>Destinos Arcana</Subtitulo>
+  <TituloSecundario>Destinos Arcana</TituloSecundario>
   <div class="flex flex-wrap gap-5 justify-center m-2">
     <RouterLink 
       v-for="destino in destinosArcana" 
@@ -67,13 +67,13 @@ onMounted(() => {
 
     <!-- Guías -->
     <section class="flex flex-col justify-center items-center mb-20">
-      <Subtitulo>¡Conocé nuestros guías!</Subtitulo>
+      <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
      <RouterLink to="/guiasTarjetas"><BotonPrincipal>Guías locales</BotonPrincipal> </RouterLink>
     </section>
 
     <!-- Destinos Populares -->
     <section class="flex flex-col justify-center items-center mb-20">
-      <Subtitulo>Destinos Populares</Subtitulo>
+      <TituloSecundario>Destinos Populares</TituloSecundario>
       <div class="flex flex-col gap-6 justify-center">
         <RouterLink 
           v-for="destino in destinosPopulares" 

@@ -2,14 +2,14 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import TituloPrincipal from '../components/TituloPrincipal.vue';
-import Subtitulo from '../components/Subtitulo.vue';
+import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
-import IconoAvion from '../components/icons/IconoAvion.vue';
 
+import IconoAvion from '../components/icons/IconoAvion.vue';
 import IconoDespegar from '../components/icons/IconoDespegar.vue';
 import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 import IconoInicio from '../components/icons/IconoInicio.vue';
+import IconoLista from '../components/icons/IconoLista.vue';
 
 import IrAtras from '../components/IrAtras.vue';
 import SpinnerCarga from '../components/SpinnerCarga.vue';
@@ -29,7 +29,7 @@ const vuelosIda = ref([]);
 const vuelosVuelta = ref([]);
 const hotelEconomico = ref(null);
 
-const pasoActual = ref(1); // Paso actual del stepper (1: Ida, 2: Vuelta, 3: Hoteles)
+const pasoActual = ref(1); // Paso actual del stepper (1: Ida, 2: Vuelta, 3: Hoteles, 4: Reserva)
 
 onMounted(async () => {
   cargando.value = true;
@@ -41,8 +41,38 @@ onMounted(async () => {
       errorMensaje.value = 'Por favor, verifica que todos los parámetros se hayan ingresado correctamente.';
       return;
     }
-    const origenCodificado = encodeURIComponent(origen);
-    const destinoCodificado = encodeURIComponent(destino);
+
+    // Función para obtener el código IATA
+    function obtenerCodigoIATA(nombre) {
+      const lugaresArgentinos = {
+        'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
+        'Buenos Aires - Aeroparque Jorge Newbery': 'AEP',
+        'Córdoba': 'COR',
+        'Mendoza': 'MDZ',
+        'Mar del Plata': 'MDQ',
+        'Ushuaia': 'USH',
+        'Bariloche': 'BRC',
+        'Salta': 'SLA',
+        'Rosario': 'ROS',
+        'Tucumán': 'TUC',
+        'Iguazú': 'IGR',
+        'Neuquén': 'NQN',
+        'Misiones': 'MIR',
+        'Posadas': 'PSS',
+        'San Fernando del Valle de Catamarca': 'CTC',
+        'San Juan': 'UAQ',
+        'Río Gallegos': 'RGL',
+        'Río Grande': 'RGA',
+        'El Calafate': 'FTE',
+        'San Luis': 'LUQ',
+        'Resistencia': 'RES',
+      };
+
+      return lugaresArgentinos[nombre] || nombre;
+    }
+
+    const origenCodificado = obtenerCodigoIATA(origen);
+    const destinoCodificado = obtenerCodigoIATA(destino);
     const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
     const fechaVueltaCodificada = encodeURIComponent(fechaVuelta);
 
@@ -90,12 +120,19 @@ const obtenerFechaYHora = (fecha) => {
     hora: date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false })
   };
 };
+
+const avanzarPaso = () => {
+  if (pasoActual.value < 4) {
+    pasoActual.value++;
+  }
+};
 </script>
 
 <template>
   <IrAtras />
 
   <div class="max-w-3xl mx-auto px-4 py-6">
+
     <!-- Stepper -->
     <div class="flex justify-between mb-6">
       <div :class="{'text-blue-600': pasoActual === 1, 'text-gray-400': pasoActual !== 1}" @click="pasoActual = 1">
@@ -107,12 +144,15 @@ const obtenerFechaYHora = (fecha) => {
       <div :class="{'text-blue-600': pasoActual === 3, 'text-gray-400': pasoActual !== 3}" @click="pasoActual = 3">
         <IconoInicio class="w-6 h-6" />
       </div>
+      <div :class="{'text-blue-600': pasoActual == 4, 'text-gray-400': pasoActual !== 4}" @click="pasoActual = 4">
+        <IconoLista class="w-6 h-6" />
+      </div>
     </div>
 
     <!-- Step 1: Vuelos de Ida -->
     <div v-if="pasoActual === 1" class="mb-6">
 
-      <TituloPrincipal>Resultado de viajes de ida</TituloPrincipal>
+      <TituloSecundario>Resultado de viajes de ida</TituloSecundario>
       <p><strong>Origen:</strong> {{ origen }}</p>
       <p><strong>Destino:</strong> {{ destino }}</p>
 
@@ -171,7 +211,6 @@ const obtenerFechaYHora = (fecha) => {
               </div>
 
               <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
-              <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
 
               <div class="flex justify-between">
                 <p><strong>Precio:</strong></p>
@@ -179,7 +218,7 @@ const obtenerFechaYHora = (fecha) => {
               </div>
             </div>
 
-            <BotonPrincipal @click="seleccionarVueloIda(vuelo)">Seleccionar vuelo de ida</BotonPrincipal>
+            <BotonPrincipal @click="avanzarPaso">Seleccionar vuelo de ida</BotonPrincipal>
 
           </div>
         </div>
@@ -189,7 +228,7 @@ const obtenerFechaYHora = (fecha) => {
 
     <!-- Step 2: Vuelos de Vuelta -->
     <div v-if="pasoActual === 2" class="mb-6">
-      <Subtitulo>Resultados de Vuelos de Vuelta</Subtitulo>
+      <TituloSecundario>Resultados de Vuelos de Vuelta</TituloSecundario>
       <p><strong>Origen:</strong> {{ destino }}</p>
       <p><strong>Destino:</strong> {{ origen }}</p>
 
@@ -242,7 +281,6 @@ const obtenerFechaYHora = (fecha) => {
               </div>
 
               <p><strong>Duración:</strong> {{ vuelo.duracion }} Minutos</p>
-              <p><strong>Escala:</strong> {{ vuelo.escala }}</p>
 
               <div class="flex justify-between">
                 <p><strong>Precio:</strong></p>
@@ -250,7 +288,7 @@ const obtenerFechaYHora = (fecha) => {
               </div>
             </div>
 
-            <BotonPrincipal @click="seleccionarVueloVuelta(vuelo)">Seleccionar vuelo de vuelta</BotonPrincipal>
+            <BotonPrincipal @click="avanzarPaso">Seleccionar vuelo de vuelta</BotonPrincipal>
           </div>
         </div>
       </div>
@@ -259,30 +297,31 @@ const obtenerFechaYHora = (fecha) => {
 
     <!-- Step 3: Hoteles -->
 <div v-if="pasoActual === 3" class="mb-6">
-  <TituloPrincipal class="text-center">Hoteles</TituloPrincipal>
+  <TituloSecundario class="text-center">Hoteles</TituloSecundario>
   <div v-if="hotelEconomico && hotelEconomico.habitaciones && hotelEconomico.habitaciones.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Iterar sobre todas las habitaciones -->
-    <div v-for="(habitacion, index) in hotelEconomico.habitaciones" :key="index" class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div v-for="(habitacion, index) in hotelEconomico.habitaciones" :key="index" class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between items-center mb-6">
       <img 
         :src="habitacion.imgHabitacion" 
         :alt="habitacion.tipo" 
         class="w-full h-64 object-cover rounded-t-lg" 
       />
       <div class="px-6 py-4">
-        <Subtitulo class="text-2xl" >{{ hotelEconomico.nombre }}</Subtitulo>
+        <TituloSecundario class="text-2xl" >{{ hotelEconomico.nombre }}</TituloSecundario>
         <p class="text-gray-600 text-sm mt-2">Tipo de habitación: {{ habitacion.tipo }}</p>
         <p class="text-gray-600 text-sm">Precio por noche: ${{ habitacion.precioPorNoche }}</p>
-      </div>
+      </div>    
+
+      <BotonPrincipal @click="avanzarPaso">Seleccionar habitación</BotonPrincipal>
     </div>
   </div>
-  <section class="flex justify-center items-center mb-6">
-    <RouterLink to="/hoteles">
-      <BotonPrincipal>Ver más hoteles</BotonPrincipal>
-    </RouterLink>
-  </section>
 </div>
 
+<!-- Step 4: Guardados -->
+<div v-if="pasoActual === 4" class="mb-6">
+      <TituloSecundario class="text-center">Lista de Guardados</TituloSecundario>
+      <p>Se implementará en una próxima actualización. En esta vista se verá todo lo que el usuario seleccionó y se podrá efectuar el pago.</p>
+    </div>
   </div>
 </template>
-
 
