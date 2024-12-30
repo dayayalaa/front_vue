@@ -35,7 +35,7 @@ onMounted(() => {
   <div>
     <NavSuperior />
     <div class="flex flex-col justify-center items-center bg-cover bg-center h-40">
-      <TituloPrincipal>¡Descubre nuevos destinos!</TituloPrincipal>
+      <TituloPrincipal>¡Descubrí nuevos destinos!</TituloPrincipal>
 
 
       <div class="mt-4 w-full max-w-lg">
@@ -67,7 +67,7 @@ onMounted(() => {
 
     <!-- Guías -->
     <section class="flex flex-col justify-center items-center mb-20">
-      <Subtitulo>¡Conoce nuestros guías!</Subtitulo>
+      <Subtitulo>¡Conocé nuestros guías!</Subtitulo>
      <RouterLink to="/guiasTarjetas"><BotonPrincipal>Guías locales</BotonPrincipal> </RouterLink>
     </section>
 
