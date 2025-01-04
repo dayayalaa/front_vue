@@ -13,6 +13,7 @@ import InicioSesion from "../views/InicioSesion.vue";
 import OpcionInicio from "../views/OpcionInicio.vue";
 import Registro from "../views/Registro.vue";
 import RegistroGuia from "../views/RegistroGuia.vue";
+import CraerTur from "../views/CrearTur.vue";
 
 const routes = [
   { path: "/",                   name: "Home",              component: HomeView,          meta: { requiresAuth: true } },
@@ -29,6 +30,7 @@ const routes = [
   { path: "/opcion",             name: "opcion",            component: OpcionInicio,      meta: { publicRoutes: true }},
   { path: "/registroUsuario",    name: "registroUsuario",   component: Registro,          meta: { publicRoutes: true }},
   { path: "/registroGuia",       name: "registroGuia",      component: RegistroGuia,      meta: { publicRoutes: true }},
+  { path: "/crearTur",       name: "crearTur",      component: CraerTur},
 ];
 
 const router = createRouter({
