@@ -22,8 +22,7 @@ const errorProvincia = ref('');
 const isPasswordVisible = ref(false); 
 
 const lugaresArgentinos = [
-  'Buenos Aires - Aeroparque Jorge Newbery',
-  'Buenos Aires - Aeropuerto Internacional Ministro Pistarini',
+  'Buenos Aires',
   'Córdoba',
   'Mendoza',
   'Mar del Plata',

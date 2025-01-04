@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import IconoInicio from './icons/IconoInicio.vue';
 import IconoMas from './icons/IconoMas.vue';
 import IconoUsuario from './icons/IconoUsuario.vue';
@@ -21,6 +21,7 @@ const setActive = (link) => {
 const isActive = (link) => activeLink.value === link;
 
 const userId = ref('');
+const userRole = ref(''); // Para almacenar el rol del usuario
 
 const getIndex = (link) => {
   if (link === '/') return 0;
@@ -40,6 +41,12 @@ const decodeJWT = (token) => {
   return JSON.parse(jsonPayload); 
 };
 
+const getProfileLink = computed(() => {
+  return userRole.value === 'guia' 
+    ? { name: 'GuiaPerfil', params: { id: userId.value } } 
+    : { name: 'Perfil', params: { id: userId.value } };
+});
+
 onMounted(() => {
   const token = localStorage.getItem('token');
   
@@ -47,7 +54,13 @@ onMounted(() => {
     try {
       const decodedToken = decodeJWT(token);
       userId.value = decodedToken.userId;
+      userRole.value = decodedToken.rols;  // Asumimos que el campo se llama `rols` en el token
       // console.log('User ID:', userId.value);
+      if (userRole.value === 'guia') {
+        activeLink.value = `/perfil/guia/${userId.value}`;
+      } else {
+        activeLink.value = `/perfil/${userId.value}`;
+      }
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
@@ -81,7 +94,7 @@ onMounted(() => {
         </li>
         <li class="relative flex-grow text-center" v-if="userId">
           <router-link
-            :to="{ name: 'Perfil', params: { id: userId } }"
+            :to="getProfileLink"
             class="relative block"
             :class="{ 'text-[#4F6D3A]': isActive(`/perfil/${userId}`), 'text-[#788B69]': !isActive(`/perfil/${userId}`) }"
             @click="setActive(`/perfil/${userId}`)">
@@ -98,7 +111,7 @@ onMounted(() => {
         <router-link v-if="isActive('/crear')" to="/crear">
           <IconoMas class="h-8 w-8 text-white absolute inset-0 m-auto"/>
         </router-link>
-        <router-link v-if="isActive(`/perfil/${userId}`)" :to="{ name: 'Perfil', params: { id: userId } }">
+        <router-link v-if="isActive(`/perfil/${userId}`)" :to="getProfileLink">
           <IconoUsuario class="h-8 w-8 text-white absolute inset-0 m-auto"/>
         </router-link>
       </span>

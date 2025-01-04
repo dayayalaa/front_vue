@@ -1,305 +1,187 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import Axios from 'axios';
-import IrAtras from '../components/IrAtras.vue';
-import TituloSecundario from '../components/TituloSecundario.vue';
-import BotonPrincipal from '../components/BotonPrincipal.vue';
+<script>
+import axios from 'axios';
 
-// Referencias de los campos del formulario
-const titulo = ref('');
-const descripcion = ref('');
-const precio = ref('');
-const provincia = ref('');
-const duracion = ref('');
-const fechasDisponibles = ref([]);
-const fotoPortada = ref('/img/default_portada.png');
-const politicaCancelacion = ref('');
-const loading = ref(false);
-const backendError = ref('');
-const errors = ref({
-  titulo: '',
-  descripcion: '',
-  precio: '',
-  provincia: '',
-  duracion: '',
-  fechasDisponibles: '',
-});
-
-// Lista de lugares argentinos
 const lugaresArgentinos = [
-  'Buenos Aires - Aeroparque Jorge Newbery',
-  'Buenos Aires - Aeropuerto Internacional Ministro Pistarini',
-  'Córdoba',
-  'Mendoza',
-  'Mar del Plata',
-  'Ushuaia',
-  'Bariloche',
-  'Salta',
-  'Rosario',
-  'Tucumán',
-  'Iguazú',
-  'Neuquén',
-  'Misiones',
-  'Posadas',
-  'San Fernando del Valle de Catamarca',
-  'San Juan',
-  'Río Gallegos',
-  'Río Grande',
-  'El Calafate',
-  'San Luis',
-  'Resistencia',
-  'Tremedal',
-  'General Roca',
+  'Buenos Aires', 'Córdoba', 'Mendoza', 'Mar del Plata', 'Ushuaia', 
+  'Bariloche', 'Salta', 'Rosario', 'Tucumán', 'Iguazú', 'Neuquén', 
+  'Misiones', 'Posadas', 'San Fernando del Valle de Catamarca', 'San Juan', 
+  'Río Gallegos', 'Río Grande', 'El Calafate', 'San Luis', 'Resistencia', 
+  'Tremedal', 'General Roca'
 ];
 
-const validateForm = () => {
-  let isValid = true;
-  errors.value = {
-    titulo: '',
-    descripcion: '',
-    precio: '',
-    provincia: '',
-    duracion: '',
-    fechasDisponibles: '',
-  };
-
-  if (!titulo.value) {
-    errors.value.titulo = 'Por favor, ingresa el título del tour';
-    isValid = false;
-  }
-
-  if (!descripcion.value) {
-    errors.value.descripcion = 'Por favor, ingresa una descripción';
-    isValid = false;
-  }
-
-  if (!precio.value || isNaN(precio.value)) {
-    errors.value.precio = 'Por favor, ingresa un precio válido';
-    isValid = false;
-  }
-
-  if (!provincia.value) {
-    errors.value.provincia = 'Por favor, selecciona una provincia';
-    isValid = false;
-  }
-
-  if (!duracion.value) {
-    errors.value.duracion = 'Por favor, ingresa la duración';
-    isValid = false;
-  }
-
-  if (!fechasDisponibles.value.length) {
-    errors.value.fechasDisponibles = 'Por favor, ingresa las fechas disponibles';
-    isValid = false;
-  }
-
-  return isValid;
-};
-
-// Función para obtener el ID del guía desde el token
-const obtenerGuia = async () => {
-  const token = localStorage.getItem('token');  // O lo que sea tu mecanismo para obtener el token
-
-  if (!token) {
-    backendError.value = 'No se ha encontrado el token de autenticación';
-    return;
-  }
-
-  try {
-    const response = await Axios.get('https://back-tesis-lovat.vercel.app/arcana/verifica-token', {
-      headers: {
-        Authorization: `Bearer ${token}`,
+export default {
+  data() {
+    return {
+      loading: false,
+      token: localStorage.getItem('token'), // Token almacenado en localStorage
+      tourData: {
+        titulo: '',
+        descripcion: '',
+        precio: '',
+        provincia: '', // Inicializamos como cadena vacía
+        duracion: '',
+        fechasDisponibles: [],
+        fotoPortada: '',
+        politicaCancelacion: ''
       },
-    });
+      provincias: lugaresArgentinos
+    };
+  },
+  methods: {
+    async crearTour() {
+      console.log("Validando el formulario...");
 
-    // Asignamos el ID del usuario autenticado (guía)
-    if (response.data && response.data.user) {
-      return response.data.user._id;  // Devolvemos el ID del usuario (guía)
+      if (this.formIsValid()) {
+        console.log("Formulario válido. Creando el tour...");
+        
+        try {
+          this.loading = true;
+          console.log("Guía ID obtenida del token:", this.token); 
+
+          const datosTour = {
+            ...this.tourData,
+            guia: this.token  
+          };
+
+          console.log("Enviando datos del tour al backend...", datosTour);
+
+          const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/tur', datosTour, {
+            headers: { Authorization: `Bearer ${this.token}` }
+          });
+
+          console.log("Respuesta del backend:", response.data);
+
+          this.loading = false;
+          alert("Tour creado con éxito!");
+
+        } catch (error) {
+          console.error("Error ocurrido:", error);
+          this.loading = false;
+
+          if (error.response && error.response.status === 401) {
+            alert("No autorizado, verifica tu sesión.");
+          } else {
+            alert("Hubo un problema al crear el tour.");
+          }
+        } finally {
+          console.log("Finalización de la solicitud");
+        }
+      } else {
+        console.log("Formulario no válido.");
+      }
+    },
+    formIsValid() {
+      // Validar que todos los campos estén llenos
+      return this.tourData.titulo &&
+             this.tourData.descripcion &&
+             this.tourData.precio &&
+             this.tourData.provincia &&
+             this.tourData.duracion &&
+             this.tourData.fechasDisponibles.length > 0;
     }
-  } catch (error) {
-    console.error('Error al verificar el token: ', error);
-    backendError.value = 'Error al verificar el token de autenticación';
-    return null;
   }
 };
-
-const crearTour = async () => {
-  if (!validateForm()) {
-    return;
-  }
-
-  loading.value = true;
-  backendError.value = '';
-
-  try {
-    const guiaId = await obtenerGuia();
-
-    if (!guiaId) {
-      backendError.value = 'No se ha encontrado el ID del guía';
-      return;
-    }
-
-    const response = await Axios.post('https://back-tesis-lovat.vercel.app/arcana/tur', {
-      guia: guiaId,  // Ahora se incluye el ID del guía automáticamente
-      titulo: titulo.value,
-      descripcion: descripcion.value,
-      precio: precio.value,
-      provincia: provincia.value,
-      duracion: duracion.value,
-      fechasDisponibles: fechasDisponibles.value,
-      fotoPortada: fotoPortada.value,
-      politicaCancelacion: politicaCancelacion.value,
-    });
-
-    if (response.data) {
-      // Resetear campos después de éxito
-      titulo.value = '';
-      descripcion.value = '';
-      precio.value = '';
-      provincia.value = '';
-      duracion.value = '';
-      fechasDisponibles.value = [];
-      fotoPortada.value = '';
-      politicaCancelacion.value = '';
-
-      router.push('/tus-turs');
-    }
-  } catch (error) {
-    console.error('Error ocurrido: ', error);
-    if (error.response) {
-      backendError.value = error.response.data.msg || 'Error al crear el tour';
-    } else {
-      backendError.value = 'Error desconocido de red: ' + error.message;
-    }
-  } finally {
-    loading.value = false;
-  }
-};
-
-// Obtener el ID del guía al cargar el componente
-onMounted(() => {
-  obtenerGuia();
-});
 </script>
-
 <template>
-  <IrAtras />
-  <div class="flex items-center justify-center h-screen bg-gray-50 pt-6 pb-8">
-    <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
-      <TituloSecundario class="text-center mb-6">Crear un Tour</TituloSecundario>
-
-      <form @submit.prevent="crearTour" class="w-full">
+  <div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <form @submit.prevent="crearTour" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div v-if="loading" class="text-center text-gray-500">Cargando...</div>
+      <div v-else>
         <!-- Título del Tour -->
-        <div class="mb-4">
-          <label for="titulo" class="block text-sm font-medium text-gray-600">Título del Tour</label>
-          <input
-            type="text"
-            id="titulo"
-            v-model="titulo"
-            placeholder="Ingresa el título del tour"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <p class="text-red-500">{{ errors.titulo }}</p>
-        </div>
+        <label for="titulo" class="block text-lg font-semibold text-gray-700">Título del Tour:</label>
+        <input
+          type="text"
+          v-model="tourData.titulo"
+          id="titulo"
+          required
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
         <!-- Descripción del Tour -->
-        <div class="mb-4">
-          <label for="descripcion" class="block text-sm font-medium text-gray-600">Descripción</label>
-          <textarea
-            id="descripcion"
-            v-model="descripcion"
-            placeholder="Ingresa una descripción del tour"
-            rows="4"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          ></textarea>
-          <p class="text-red-500">{{ errors.descripcion }}</p>
-        </div>
+        <label for="descripcion" class="block text-lg font-semibold text-gray-700 mt-4">Descripción del Tour:</label>
+        <textarea
+          v-model="tourData.descripcion"
+          id="descripcion"
+          required
+          rows="4"
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        ></textarea>
 
-        <!-- Precio -->
-        <div class="mb-4">
-          <label for="precio" class="block text-sm font-medium text-gray-600">Precio</label>
-          <input
-            type="number"
-            id="precio"
-            v-model="precio"
-            placeholder="Ingresa el precio del tour"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <p class="text-red-500">{{ errors.precio }}</p>
-        </div>
+        <!-- Precio del Tour -->
+        <label for="precio" class="block text-lg font-semibold text-gray-700 mt-4">Precio del Tour:</label>
+        <input
+          type="number"
+          v-model="tourData.precio"
+          id="precio"
+          required
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
         <!-- Provincia -->
-        <div class="mb-4">
-          <label for="provincia" class="block text-sm font-medium text-gray-600">Provincia</label>
-          <select
-            id="provincia"
-            v-model="provincia"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="" disabled>Selecciona una provincia</option>
-            <option v-for="lugar in lugaresArgentinos" :key="lugar" :value="lugar">{{ lugar }}</option>
-          </select>
-          <p class="text-red-500">{{ errors.provincia }}</p>
-        </div>
+        <label for="provincia" class="block text-lg font-semibold text-gray-700 mt-4">Provincia:</label>
+        <select
+          v-model="tourData.provincia"
+          id="provincia"
+          required
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="" disabled selected>Selecciona una provincia</option>
+          <option v-for="provincia in provincias" :key="provincia" :value="provincia">
+            {{ provincia }}
+          </option>
+        </select>
 
-        <!-- Duración -->
-        <div class="mb-4">
-          <label for="duracion" class="block text-sm font-medium text-gray-600">Duración</label>
-          <input
-            type="text"
-            id="duracion"
-            v-model="duracion"
-            placeholder="Ingresa la duración del tour (ej. 2 horas)"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <p class="text-red-500">{{ errors.duracion }}</p>
-        </div>
+        <!-- Duración del Tour -->
+        <label for="duracion" class="block text-lg font-semibold text-gray-700 mt-4">Duración del Tour:</label>
+        <input
+          type="text"
+          v-model="tourData.duracion"
+          id="duracion"
+          required
+          placeholder="Ejemplo: 2 horas 30 minutos"
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
         <!-- Fechas Disponibles -->
-        <div class="mb-4">
-          <label for="fechasDisponibles" class="block text-sm font-medium text-gray-600">Fechas Disponibles</label>
-          <input
-            type="date"
-            id="fechasDisponibles"
-            v-model="fechasDisponibles"
-            multiple
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <p class="text-red-500">{{ errors.fechasDisponibles }}</p>
-        </div>
+        <label for="fechasDisponibles" class="block text-lg font-semibold text-gray-700 mt-4">Fechas Disponibles:</label>
+        <input
+          type="date"
+          v-model="tourData.fechasDisponibles"
+          id="fechasDisponibles"
+          required
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-        <!-- Foto de portada -->
-        <div class="mb-4">
-          <label for="fotoPortada" class="block text-sm font-medium text-gray-600">Foto de Portada</label>
-          <input
-            type="file"
-            id="fotoPortada"
-            @change="handleFileChange"
-            class="border border-gray-300 p-3 rounded w-full mt-2"
-          />
-        </div>
+        <!-- Foto de Portada -->
+        <label for="fotoPortada" class="block text-lg font-semibold text-gray-700 mt-4">Foto de Portada:</label>
+        <input
+          type="text"
+          v-model="tourData.fotoPortada"
+          id="fotoPortada"
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="/ruta/a/imagen.png"
+        />
 
-        <!-- Política de cancelación -->
-        <div class="mb-4">
-          <label for="politicaCancelacion" class="block text-sm font-medium text-gray-600">Política de cancelación</label>
-          <textarea
-            id="politicaCancelacion"
-            v-model="politicaCancelacion"
-            placeholder="Ingresa la política de cancelación"
-            rows="3"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          ></textarea>
-        </div>
+        <!-- Política de Cancelación -->
+        <label for="politicaCancelacion" class="block text-lg font-semibold text-gray-700 mt-4">Política de Cancelación:</label>
+        <textarea
+          v-model="tourData.politicaCancelacion"
+          id="politicaCancelacion"
+          rows="4"
+          class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        ></textarea>
 
-        <!-- Error de backend -->
-        <p class="text-red-500 text-center">{{ backendError }}</p>
-
-        <!-- Botón para enviar el formulario -->
-        <div class="mb-4">
-          <BotonPrincipal :loading="loading" texto="Crear Tour" />
+        <!-- Botón de Enviar -->
+        <div class="mt-6">
+          <button
+            :disabled="loading"
+            type="submit"
+            class="w-full py-3 bg-green-500 text-white font-semibold text-lg rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:bg-gray-400"
+          >
+            {{ loading ? 'Cargando...' : 'Crear Tour' }}
+          </button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
 </template>
