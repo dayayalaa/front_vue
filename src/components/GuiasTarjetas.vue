@@ -39,7 +39,6 @@ const resaltadoTexto = (text) => {
 
   return text;
 };
-
 const obtenerGuias = async () => {
   try {
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/usuarios/guia'); 
@@ -81,9 +80,9 @@ onMounted(() => {
         v-for="guia in filtroGuias"
         :key="guia.id"
         class="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow duration-300"
-        @click="irADetalleGuia(guia.id)"
+        @click="irADetalleGuia(guia._id)" 
       >
-      <img :src="guia.fotoPerfil" :alt="'Foto de ' + guia.nombre" class="w-24 h-24 rounded-full mb-4 object-cover" />
+        <img :src="guia.fotoPerfil" :alt="'Foto de ' + guia.nombre" class="w-24 h-24 rounded-full mb-4 object-cover" />
 
         <strong class="text-lg text-[#222725]" v-html="resaltadoTexto(guia.nombre)"></strong>
         <p class="text-gray-600">{{ guia.provincia }}</p>
@@ -91,33 +90,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-input:focus {
-  outline: none;
-}
-
-.grid {
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-}
-
-.shadow-lg:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.transition-shadow {
-  transition: box-shadow 0.3s ease;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.hover\:shadow-xl:hover {
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
-
-.bg-white {
-  background-color: white;
-}
-</style>

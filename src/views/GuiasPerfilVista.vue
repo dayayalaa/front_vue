@@ -1,86 +1,72 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import TituloSecundario from '../components/TituloSecundario.vue';
+import TituloTerciario from '../components/TituloTerciario.vue';
 import IrAtras from '../components/IrAtras.vue';
 
 const route = useRoute();
-const guiaId = ref(null);
 const guia = ref(null);
 
-const guias = [
-  {
-    id: 1,
-    nombre: "Juan Pérez",
-    provincia: "Buenos Aires",
-    imagen: "/img/persona_1.jpeg",
-    descripcion:
-      "Guía especializado en tours urbanos en Buenos Aires. Con más de 10 años de experiencia, Juan ofrece recorridos únicos por barrios icónicos como San Telmo, La Boca y Recoleta, compartiendo historias fascinantes y detalles poco conocidos.",
-  },
-  {
-    id: 2,
-    nombre: "Ana López",
-    provincia: "Córdoba",
-    imagen: "/img/persona_2.jpeg",
-    descripcion:
-      "Experta en turismo de aventura en las sierras de Córdoba. Ana organiza actividades como trekking, escalada y paseos en bicicleta, asegurando una experiencia segura y emocionante mientras exploras la belleza natural de la región.",
-  },
-  {
-    id: 3,
-    nombre: "Carlos Gómez",
-    provincia: "Mendoza",
-    imagen: "/img/persona_3.jpeg",
-    descripcion:
-      "Conocedor de bodegas y turismo enológico en Mendoza. Carlos te lleva a explorar las mejores bodegas de la región, combinando catas de vino, paisajes increíbles y explicaciones sobre el proceso de producción del vino.",
-  },
-  {
-    id: 4,
-    nombre: "Lucía Fernández",
-    provincia: "Salta",
-    imagen: "/img/persona_4.jpeg",
-    descripcion:
-      "Especialista en recorridos por el norte argentino. Lucía ofrece experiencias culturales y paisajísticas, como visitas a los Valles Calchaquíes, excursiones a Cafayate y recorridos por el centro histórico de Salta.",
-  },
-  {
-    id: 5,
-    nombre: "Roberto Díaz",
-    provincia: "Santa Fe",
-    imagen: "/img/persona_5.jpeg",
-    descripcion:
-      "Guía de tours históricos en Santa Fe. Roberto se especializa en mostrar la rica historia de la ciudad, incluyendo el legado colonial, los hitos de la Constitución Nacional y recorridos por el casco antiguo.",
-  },
-  {
-    id: 6,
-    nombre: "María Rodríguez",
-    provincia: "Misiones",
-    imagen: "/img/persona_6.jpeg",
-    descripcion:
-      "Guía en las Cataratas del Iguazú y la selva misionera. María ofrece tours personalizados que incluyen caminatas por senderos de la selva, visitas a comunidades locales y experiencias inolvidables en una de las maravillas naturales del mundo.",
-  },
-];
+const obtenerGuia = async (id) => {
+  try {
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${id}`);
+    guia.value = response.data.data; 
+  } catch (error) {
+    console.error('Error al obtener los detalles del guía:', error);
+  }
+};
 
 onMounted(() => {
-  guiaId.value = parseInt(route.params.id, 10);
-  guia.value = guias.find((g) => g.id === guiaId.value);
+  const id = route.params.id; 
+  obtenerGuia(id); 
 });
 </script>
 
 <template>
   <IrAtras />
   <div class="max-w-2xl mx-auto p-4">
-   
     <TituloSecundario>Perfil Guía</TituloSecundario>
     <div v-if="guia" class="bg-white shadow-md rounded-lg p-4">
-      <img
-        :src="guia.imagen"
-        :alt="'Foto de ' + guia.nombre"
-        class="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-      />
-      <p class="text-center"><strong class="text-lg">{{ guia.nombre }}</strong></p>
-      
-      <p class="text-gray-600 text-center">{{ guia.provincia }}</p>
-      <p class="mt-4">{{ guia.descripcion }}</p>
+
+      <!-- Imagen de portada del perfil -->
+    <div class="relative mb-4">
+      <img :src="guia.fotoPortada" alt="Banner de perfil"
+        class="w-full h-32 object-cover rounded-lg border-2 border-gray-300" />
+
+      <div class="absolute inset-x-0 top-16 flex justify-center">
+        <img :src="guia.fotoPerfil" alt="Foto de perfil"
+          class="w-32 h-32 rounded-full border-4 border-white shadow-md" />
+      </div>
     </div>
+      
+    <!-- Nombre del guía -->
+    <div class="text-center mb-4 mt-20">
+      <TituloSecundario class="text-2xl">{{ loading ? 'Cargando...' : guia.nombre }}</TituloSecundario>
+      <p><strong>Provincia:</strong> {{ guia.provincia }}</p>
+      <p>{{ guia.descripcion }}</p>
+      <TituloTerciario>Datos de contacto</TituloTerciario>
+      <ul>
+        <li>{{ guia.email }}</li>
+        <li>{{ guia.telefono }}</li>
+      </ul>
+    </div>
+
+    <!-- Sección de tours -->
+    <div v-if="guia.tours && guia.tours.length > 0" class="mt-6">
+      <TituloSecundario class="text-xl">Tours Disponibles</TituloSecundario>
+      <ul class="space-y-4 mt-4">
+        <li v-for="tour in guia.tours" :key="tour.id" class="bg-white p-4 rounded-lg shadow-md">
+          <strong class="text-lg">{{ tour.nombre }}</strong>
+          <p class="text-gray-600">{{ tour.descripcion }}</p>
+        </li>
+      </ul>
+    </div>
+
+    </div>
+
+
     <div v-else class="text-center">
       <p class="text-red-500">Guía no encontrado</p>
     </div>
