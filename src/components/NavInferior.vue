@@ -21,7 +21,7 @@ const setActive = (link) => {
 const isActive = (link) => activeLink.value === link;
 
 const userId = ref('');
-const userRole = ref(''); // Para almacenar el rol del usuario
+const userRole = ref('');
 
 const getIndex = (link) => {
   if (link === '/') return 0;
@@ -54,7 +54,7 @@ onMounted(() => {
     try {
       const decodedToken = decodeJWT(token);
       userId.value = decodedToken.userId;
-      userRole.value = decodedToken.rols;  // Asumimos que el campo se llama `rols` en el token
+      userRole.value = decodedToken.rols;  
       // console.log('User ID:', userId.value);
       if (userRole.value === 'guia') {
         activeLink.value = `/perfil/guia/${userId.value}`;

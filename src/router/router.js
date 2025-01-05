@@ -16,6 +16,7 @@ import Registro from "../views/Registro.vue";
 import RegistroGuia from "../views/RegistroGuia.vue";
 import CraerTur from "../views/CrearTur.vue";
 import VistaTur from "../views/VistaTur.vue";
+import Ajustes from "../components/Ajustes.vue";
 
 const routes = [
   { path: "/",                   name: "Home",              component: HomeView,          meta: { requiresAuth: true } },
@@ -35,6 +36,7 @@ const routes = [
   { path: "/registroGuia",       name: "registroGuia",      component: RegistroGuia,      meta: { publicRoutes: true }},
   { path: "/crearTur",           name: "crearTur",          component: CraerTur},
   { path: "/vistaTur/:id",       name: "vistaTur",          component: VistaTur},
+  { path: "/ajustes",            name: "ajustes",           component: Ajustes},
 ];
 
 const router = createRouter({
