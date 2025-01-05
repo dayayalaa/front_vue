@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">arcana</string>
+    <string name="title_activity_main">arcana</string>
+    <string name="package_name">ar.arcana.app</string>
+    <string name="custom_url_scheme">ar.arcana.app</string>
+</resources>
