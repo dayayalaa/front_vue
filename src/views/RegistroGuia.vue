@@ -63,24 +63,20 @@ const registroUsuario = async () => {
       nombre: nombre.value,
       email: email.value,
       contrasenia: contrasenia.value,
-      provincia: provincia.value,  // Incluye la provincia aquí
+      provincia: provincia.value,  
     });
 
-    // Verifica si el token fue recibido
     if (response.data && response.data.token) {
-      console.log('Token recibido:', response.data.token);  // Verifica el token recibido en consola
+      // console.log('Token recibido:', response.data.token); 
 
-      // Guarda el token en localStorage
       localStorage.setItem('token', response.data.token);
 
-      // Redirige al home después del registro
       router.push('/'); 
       
-      // Limpia los campos del formulario
       nombre.value = '';
       email.value = '';
       contrasenia.value = '';
-      provincia.value = '';  // Limpia la provincia también
+      provincia.value = ''; 
     }
   } catch (error) {
     console.error('Detalles del error:', error);
@@ -101,19 +97,17 @@ const validateForm = () => {
   errorContrasenia.value = '';
   errorProvincia.value = '';
 
-  // Valida el nombre
+  //Validaciones
   if (!nombre.value) {
     errorNombre.value = 'Por favor, ingresa tu nombre';
     isValid = false;
   }
 
-  // Valida el email
   if (!email.value) {
     errorEmail.value = 'Por favor, ingresa tu correo electrónico';
     isValid = false;
   }
 
-  // Valida la contraseña
   if (!contrasenia.value) {
     errorContrasenia.value = 'Por favor, ingresa una contraseña';
     isValid = false;
@@ -122,7 +116,6 @@ const validateForm = () => {
     isValid = false;
   }
 
-  // Valida la provincia
   if (!provincia.value) {
     errorProvincia.value = 'Por favor, selecciona una provincia';
     isValid = false;
@@ -138,8 +131,7 @@ const validateForm = () => {
     <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
       
       <TituloSecundario class="text-center mb-6">Crea una cuenta de guía</TituloSecundario>
-      
-      <!-- Formulario de Registro -->
+
       <form @submit.prevent="registroUsuario" class="w-full">
 
         <!-- Nombre de Usuario -->
