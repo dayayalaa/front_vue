@@ -1,6 +1,7 @@
 <script setup>
-
+import ModalAjustes from './ModalAjustes.vue';
 </script>
+
 <template>
   <nav class="bg-transparent py-4 flex justify-between items-center">
     <div class="flex justify-center">
@@ -8,9 +9,7 @@
     </div>
     
     <div>
-      <router-link to="/ajustes">
-        opciones
-      </router-link>
+     <ModalAjustes/>
     </div>
   </nav>
 </template>
