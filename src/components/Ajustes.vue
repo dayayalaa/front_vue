@@ -62,12 +62,13 @@ const cerrarSesion = () => {
         </li>
         <li>
             <router-link to="/">Preguntas frecuentes</router-link>
+        </li>    
         <li>
             <button @click.prevent="cerrarSesion">
                 Cerrar sesión
             </button>
         </li>
-
+        <li>
         <router-link to="/">Eliminar cuenta</router-link>
         </li>
     </ul>
