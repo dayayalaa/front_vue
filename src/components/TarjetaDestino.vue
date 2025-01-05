@@ -1,7 +1,5 @@
 <script setup>
-import { defineProps } from 'vue';
-  
-  const props = defineProps({
+const props = defineProps({
     nombre: {
       type: String,
       required: true
