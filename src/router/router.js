@@ -15,13 +15,14 @@ import OpcionInicio from "../views/OpcionInicio.vue";
 import Registro from "../views/Registro.vue";
 import RegistroGuia from "../views/RegistroGuia.vue";
 import CraerTur from "../views/CrearTur.vue";
+import VistaTur from "../views/VistaTur.vue";
 
 const routes = [
   { path: "/",                   name: "Home",              component: HomeView,          meta: { requiresAuth: true } },
   { path: "/crear",              name: "Crear",             component: Crear,             meta: { requiresAuth: true } },
   { path: "/resultados",         name: "Resultados",        component: Resultados,        meta: { requiresAuth: true } },
   { path: "/perfil/:id",         name: "Perfil",            component: Perfil,            meta: { requiresAuth: true } },
-  { path: "/perfil/guia/:id",         name: "GuiaPerfil",            component: GuiaPerfil,            meta: { requiresAuth: true } },
+  { path: "/perfil/guia/:id",    name: "GuiaPerfil",        component: GuiaPerfil,        meta: { requiresAuth: true } },
   { path: "/guiasTarjetas",      name: "GuiasTarjetas",     component: GuiasTarjetas,     meta: { requiresAuth: true } },
   { path: "/guias/:id",          name: "GuiasPerfilVista",  component: GuiasPerfilVista,  meta: { requiresAuth: true } },
   { path: "/listas",             name: "Listas",            component: Listas,            meta: { requiresAuth: true } },
@@ -32,7 +33,8 @@ const routes = [
   { path: "/opcion",             name: "opcion",            component: OpcionInicio,      meta: { publicRoutes: true }},
   { path: "/registroUsuario",    name: "registroUsuario",   component: Registro,          meta: { publicRoutes: true }},
   { path: "/registroGuia",       name: "registroGuia",      component: RegistroGuia,      meta: { publicRoutes: true }},
-  { path: "/crearTur",       name: "crearTur",      component: CraerTur},
+  { path: "/crearTur",           name: "crearTur",          component: CraerTur},
+  { path: "/vistaTur/:id",       name: "vistaTur",          component: VistaTur},
 ];
 
 const router = createRouter({

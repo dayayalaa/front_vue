@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const decodeJWT = (token) => {
@@ -11,6 +12,7 @@ const decodeJWT = (token) => {
   return JSON.parse(jsonPayload);
 };
 
+const router = useRouter();
 const loading = ref(false);
 const token = localStorage.getItem('token');
 const userId = ref(null);
@@ -136,8 +138,9 @@ const crearTour = async () => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    console.log('Respuesta del backend:', response.data);
-    alert('¡Tour creado con éxito!');
+    // console.log('Respuesta del backend:', response.data);
+    const tourId = response.data.tour._id; 
+    router.push({ name: 'vistaTur', params: { id: tourId } });
   } catch (error) {
     console.error('Error creando el tour:', error);
     alert('Ocurrió un error al crear el tour.');
