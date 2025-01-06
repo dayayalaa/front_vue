@@ -4,6 +4,7 @@ import Crear from "../views/ArmarViajeVista.vue";
 import Resultados from "../views/ResutadoVista.vue";
 import Perfil from "../views/PerfilVista.vue";
 import GuiaPerfil from "../views/PerfilGuiaVista.vue";
+import EditarPerfil from "../components/EditarPerfil.vue";
 import GuiasTarjetas from "../components/GuiasTarjetas.vue";
 import GuiasPerfilVista from "../views/GuiasPerfilVista.vue";
 import Listas from "../views/ListaVista.vue";
@@ -24,6 +25,7 @@ const routes = [
   { path: "/resultados",         name: "Resultados",        component: Resultados,        meta: { requiresAuth: true } },
   { path: "/perfil/:id",         name: "Perfil",            component: Perfil,            meta: { requiresAuth: true } },
   { path: "/perfil/guia/:id",    name: "GuiaPerfil",        component: GuiaPerfil,        meta: { requiresAuth: true } },
+  { path: "/editar/:id",         name: "EditarPerfil",      component: EditarPerfil,      meta: { requiresAuth: true } },
   { path: "/guiasTarjetas",      name: "GuiasTarjetas",     component: GuiasTarjetas,     meta: { requiresAuth: true } },
   { path: "/guias/:id",          name: "GuiasPerfilVista",  component: GuiasPerfilVista,  meta: { requiresAuth: true } },
   { path: "/listas",             name: "Listas",            component: Listas,            meta: { requiresAuth: true } },

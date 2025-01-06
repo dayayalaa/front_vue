@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
+import TituloTerciario from '../components/TituloTerciario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IrAtras from '../components/IrAtras.vue';
 import { useRouter } from 'vue-router'; 
@@ -8,6 +9,10 @@ import { useRouter } from 'vue-router';
 const userName = ref('');
 const userProfileImage = ref('');
 const userCoverImage = ref('');
+const descripcion = ref('');
+const email = ref('');
+const provincia = ref('');
+const telefono = ref('');
 const userId = ref('');
 const loading = ref(true);
 
@@ -35,6 +40,10 @@ const fetchUserData = async () => {
     userName.value = data.data.nombre;
     userProfileImage.value = data.data.fotoPerfil;
     userCoverImage.value = data.data.fotoPortada;
+    descripcion.value = data.data.descripcion;
+    email.value = data.data.email;
+    telefono.value = data.data.telefono;
+    provincia.value = data.data.provincia;
 
     loading.value = false;
   } catch (error) {
@@ -88,7 +97,15 @@ const goToCreateTour = () => {
 
     <div class="text-center mb-4 mt-20">
       <TituloSecundario class="text-2xl">{{ loading ? 'Cargando...' : userName }}</TituloSecundario>
+      <p>{{ descripcion }}</p>
+      <p><strong>{{ provincia }}</strong></p>
+      <TituloTerciario>Datos personales</TituloTerciario>
+        <ul>
+          <li>{{ email }}</li>
+          <li>{{ telefono }}</li>
+        </ul>
     </div>
+    
 
     <div class="flex justify-center mt-24">
       <BotonPrincipal @click="goToCreateTour">

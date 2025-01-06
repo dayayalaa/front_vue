@@ -55,21 +55,23 @@ const cerrarSesion = () => {
 <template>
     <ul>
         <li>
-            <router-link :to="activeLink">Perfil</router-link>
+            <router-link v-if="activeLink" :to="activeLink">Perfil</router-link>
         </li>
         <li>
-            <router-link to="/">Editar perfil</router-link>
+            <router-link v-if="userId" :to="{ name: 'EditarPerfil', params: { id: userId } }">
+                Editar Perfil
+            </router-link>
         </li>
         <li>
             <router-link to="/">Preguntas frecuentes</router-link>
         </li>    
         <li>
-            <button @click.prevent="cerrarSesion">
+            <button @click.prevent="cerrarSesion" aria-label="Cerrar sesión">
                 Cerrar sesión
             </button>
         </li>
         <li>
-        <router-link to="/">Eliminar cuenta</router-link>
+            <router-link to="/">Eliminar cuenta</router-link>
         </li>
     </ul>
 </template>
