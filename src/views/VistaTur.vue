@@ -1,14 +1,11 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import { useRoute } from "vue-router"; // Importa useRoute desde vue-router
+import { useRoute } from "vue-router"; 
 import axios from "axios";
 
-// Simulación de obtener la información del usuario
-// Esto dependerá de cómo estés manejando la autenticación en tu aplicación.
-const user = ref(null); // Simulamos que el usuario puede estar autenticado
-const isUser = computed(() => user.value?.role === 'user'); // Suponiendo que el rol está en 'role'
+const user = ref(null);
+const isUser = computed(() => user.value?.role === 'user');
 
-// Estado del tour
 const tour = ref({
   titulo: "",
   descripcion: "",
@@ -20,7 +17,6 @@ const tour = ref({
   politicaCancelacion: "",
 });
 
-// Obtener datos del tour
 const route = useRoute();
 const formattedFecha = computed(() => {
   if (tour.value.fechasDisponibles.length > 0) {
@@ -63,7 +59,7 @@ onMounted(async () => {
       <span class="font-semibold">Política de cancelación:</span> {{ tour.politicaCancelacion }}
     </p>
 
-    <!-- Mostrar el botón de reserva solo si el usuario es un 'user' -->
+  
     <div v-if="isUser" class="mt-6">
       <button 
         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"

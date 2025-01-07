@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import IrAtras from '../components/IrAtras.vue';
+
 
 const decodeJWT = (token) => {
     const base64Url = token.split('.')[1];
@@ -36,7 +38,6 @@ const fotoPortadaPreview = ref(null);
 
 const router = useRouter();
 
-// Función para manejar la vista previa de las imágenes
 const previewFotoPerfil = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -106,22 +107,18 @@ const actualizarPerfil = async () => {
         formData.append('telefono', telefono.value);
         formData.append('provincia', provincia.value);
 
-        // Solo agregar la foto de perfil si el usuario la ha cambiado
         if (fotoPerfil.value) {
             formData.append('fotoPerfil', fotoPerfil.value);
         } 
 
-        // Solo agregar la foto de portada si el usuario la ha cambiado
         if (fotoPortada.value) {
             formData.append('fotoPortada', fotoPortada.value);
         }
 
-        // Solo agregar la contraseña si el usuario la ha cambiado
         if (contrasenia.value) {
             formData.append('contrasenia', contrasenia.value);
         }
 
-        // Verifica los datos antes de enviarlos
         console.log('Datos a enviar:', {
             nombre: nombre.value,
             email: email.value,
@@ -144,7 +141,7 @@ const actualizarPerfil = async () => {
             }
         );
 
-        console.log('Respuesta del servidor:', response); // Verifica la respuesta del servidor
+        console.log('Respuesta del servidor:', response);
 
         successMessage.value = 'Perfil actualizado con éxito.';
         const usuario = response.data.data;
@@ -154,7 +151,7 @@ const actualizarPerfil = async () => {
             router.push(`/perfil/${userId.value}`);
         }
     } catch (error) {
-        console.error('Error al actualizar perfil:', error); // Verifica si hay algún error
+        console.error('Error al actualizar perfil:', error);
         errorMessage.value = 'Error al actualizar el perfil.';
     }
 };
@@ -185,6 +182,7 @@ onMounted(() => {
 </script>
 
 <template>
+    <IrAtras />
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4 text-center">Editar Perfil</h2>
         <div v-if="loading" class="text-center text-gray-500">Cargando...</div>

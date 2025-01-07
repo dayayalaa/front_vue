@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import IrAtras from '../components/IrAtras.vue';
 
 const decodeJWT = (token) => {
   const base64Url = token.split('.')[1];
@@ -151,6 +152,7 @@ const crearTour = async () => {
 </script>
 
 <template>
+  <IrAtras />
   <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
     <h1 class="text-2xl font-bold mb-4 text-gray-800">Crear Tour</h1>
 
