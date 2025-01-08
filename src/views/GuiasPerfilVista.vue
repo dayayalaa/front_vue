@@ -14,7 +14,7 @@ const loading = ref(true);
 const obtenerGuia = async (id) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${id}`);
-    guia.value = response.data.data; 
+    guia.value = response.data.data;
   } catch (error) {
     console.error('Error al obtener los detalles del guía:', error);
   }
@@ -23,7 +23,7 @@ const obtenerGuia = async (id) => {
 const obtenerTours = async (id) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/segunGuia?id=${id}`);
-    tours.value = response.data; 
+    tours.value = response.data;
   } catch (error) {
     console.error('Error al obtener los tours del guía:', error);
   } finally {
@@ -32,9 +32,9 @@ const obtenerTours = async (id) => {
 };
 
 onMounted(() => {
-  const id = route.params.id; 
-  obtenerGuia(id); 
-  obtenerTours(id); 
+  const id = route.params.id;
+  obtenerGuia(id);
+  obtenerTours(id);
 });
 </script>
 
@@ -67,7 +67,6 @@ onMounted(() => {
         </ul>
       </div>
 
-      <!-- Sección de tours -->
       <div v-if="tours.length > 0" class="mt-6">
         <TituloSecundario class="text-xl">Tours Disponibles</TituloSecundario>
         <ul class="space-y-4 mt-4">
@@ -76,6 +75,13 @@ onMounted(() => {
             <p class="text-gray-600">{{ tour.descripcion }}</p>
             <p><strong>Precio:</strong> {{ tour.precio }} ARS</p>
             <p><strong>Duración:</strong> {{ tour.duracion }}</p>
+
+            <div class="mt-4 text-right">
+              <router-link :to="`/vistaTur/${tour._id}`"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">
+                Ver más
+              </router-link>
+            </div>
           </li>
         </ul>
       </div>

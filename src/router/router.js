@@ -15,8 +15,9 @@ import InicioSesion from "../views/InicioSesion.vue";
 import OpcionInicio from "../views/OpcionInicio.vue";
 import Registro from "../views/Registro.vue";
 import RegistroGuia from "../views/RegistroGuia.vue";
-import CraerTur from "../views/CrearTur.vue";
+import CraerTur from "../components/CrearTur.vue";
 import VistaTur from "../views/VistaTur.vue";
+import EditarTur from "../components/EditarTur.vue";
 import Ajustes from "../components/Ajustes.vue";
 
 const routes = [
@@ -38,6 +39,7 @@ const routes = [
   { path: "/registroGuia",       name: "registroGuia",      component: RegistroGuia,      meta: { publicRoutes: true }},
   { path: "/crearTur",           name: "crearTur",          component: CraerTur},
   { path: "/vistaTur/:id",       name: "vistaTur",          component: VistaTur},
+  { path: "/editarTur/:id",      name: "editarTur",         component: EditarTur},
   { path: "/ajustes",            name: "ajustes",           component: Ajustes},
 ];
 

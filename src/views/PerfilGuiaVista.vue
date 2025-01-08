@@ -116,20 +116,12 @@ const eliminarTour = async (tourId) => {
   <IrAtras />
   <div class="max-w-md mx-auto p-4 mb-20">
     <div class="relative mb-4">
-      <img
-        v-if="userCoverImage"
-        :src="userCoverImage"
-        alt="Banner de perfil"
-        class="w-full h-32 object-cover rounded-lg border-2 border-gray-300"
-      />
+      <img v-if="userCoverImage" :src="userCoverImage" alt="Banner de perfil"
+        class="w-full h-32 object-cover rounded-lg border-2 border-gray-300" />
 
       <div class="absolute inset-x-0 top-16 flex justify-center">
-        <img
-          v-if="userProfileImage"
-          :src="userProfileImage"
-          alt="Foto de perfil"
-          class="w-32 h-32 rounded-full border-4 border-white shadow-md"
-        />
+        <img v-if="userProfileImage" :src="userProfileImage" alt="Foto de perfil"
+          class="w-32 h-32 rounded-full border-4 border-white shadow-md" />
       </div>
     </div>
 
@@ -151,41 +143,35 @@ const eliminarTour = async (tourId) => {
     </div>
 
     <div v-if="tours.length > 0" class="mt-6">
-      <TituloSecundario class="text-xl">Tours Disponibles</TituloSecundario>
-      <ul class="space-y-4 mt-4">
-        <li
-          v-for="tour in tours"
-          :key="tour._id"
-          class="bg-white p-4 rounded-lg shadow-md"
-        >
-          <div class="flex justify-between">
-            <div>
-              <strong class="text-lg">{{ tour.titulo }}</strong>
-              <p class="text-gray-600">{{ tour.descripcion }}</p>
-              <p><strong>Precio:</strong> {{ tour.precio }} ARS</p>
-              <p><strong>Duración:</strong> {{ tour.duracion }}</p>
-            </div>
+  <TituloSecundario class="text-xl">Tours Disponibles</TituloSecundario>
+  <ul class="space-y-4 mt-4">
+    <li v-for="tour in tours" :key="tour._id" class="bg-white p-4 rounded-lg shadow-md">
+      <div class="flex justify-between">
+        <div>
+          <strong class="text-lg">{{ tour.titulo }}</strong>
+          <p class="text-gray-600">{{ tour.descripcion }}</p>
+        </div>
 
-            <div class="flex space-x-4 mt-4">
-              <!-- Botón Editar -->
-              <router-link to="">
-                <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                  Editar
-                </button>
-              </router-link>
+        <div class="flex space-x-4 mt-4">
+          <router-link :to="`/vistaTur/${tour._id}`" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Ver
+          </router-link>
 
-              <!-- Botón Eliminar -->
-              <button
-                @click="eliminarTour(tour._id)"
-                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-    
+          <router-link :to="`/editarTur/${tour._id}`">
+            <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Editar
+            </button>
+          </router-link>
+
+          <button @click="eliminarTour(tour._id)" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+
   </div>
 </template>
