@@ -88,73 +88,27 @@ const provincias = [
 ];
 
 const actualizarPerfil = async () => {
-    if (contrasenia.value !== confirmarContrasenia.value) {
-        errorMessage.value = 'Las contraseñas no coinciden.';
-        return;
-    }
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-        errorMessage.value = 'No se encontró un token válido.';
-        return;
-    }
+    const datosAEnviar = {
+        nombre: nombre.value,
+        email: email.value,
+        descripcion: descripcion.value,
+        telefono: telefono.value,
+        provincia: provincia.value,
+    };
 
     try {
-        const formData = new FormData();
-        formData.append('nombre', nombre.value);
-        formData.append('email', email.value);
-        formData.append('descripcion', descripcion.value);
-        formData.append('telefono', telefono.value);
-        formData.append('provincia', provincia.value);
-
-        if (fotoPerfil.value) {
-            formData.append('fotoPerfil', fotoPerfil.value);
-        } 
-
-        if (fotoPortada.value) {
-            formData.append('fotoPortada', fotoPortada.value);
-        }
-
-        if (contrasenia.value) {
-            formData.append('contrasenia', contrasenia.value);
-        }
-
-        console.log('Datos a enviar:', {
-            nombre: nombre.value,
-            email: email.value,
-            descripcion: descripcion.value,
-            telefono: telefono.value,
-            provincia: provincia.value,
-            fotoPerfil: fotoPerfil.value,
-            fotoPortada: fotoPortada.value,
-            contrasenia: contrasenia.value
-        });
-
-        const response = await axios.put(
-            `https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`,
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        );
-
-        console.log('Respuesta del servidor:', response);
-
-        successMessage.value = 'Perfil actualizado con éxito.';
-        const usuario = response.data.data;
-        if (usuario.tipo === 'guia') {
-            router.push(`/perfil/guia/${userId.value}`);
-        } else {
-            router.push(`/perfil/${userId.value}`);
+        const respuesta = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, datosAEnviar);
+        console.log('Respuesta del servidor:', respuesta);
+        if (respuesta.status === 200) {
+            
+            nombre.value = respuesta.data.data.nombre; 
+            
         }
     } catch (error) {
-        console.error('Error al actualizar perfil:', error);
-        errorMessage.value = 'Error al actualizar el perfil.';
+        console.error('Error al actualizar el perfil:', error);
     }
 };
+
 
 onMounted(() => {
     const token = localStorage.getItem('token');
@@ -196,7 +150,7 @@ onMounted(() => {
 
             <div class="mb-4">
                 <label for="email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
-                <input v-model="email" type="email" id="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required />
+                <input v-model="email" type="email" id="email" autocomplete="username"  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required />
                 <div v-if="!email" class="text-red-500 text-sm">El email es obligatorio.</div>
             </div>
 
@@ -238,12 +192,12 @@ onMounted(() => {
 
             <div class="mb-4">
                 <label for="contrasenia" class="block text-sm font-medium text-gray-700">Contraseña</label>
-                <input v-model="contrasenia" type="password" id="contrasenia" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                <input v-model="contrasenia" type="password" id="contrasenia" autocomplete="new-password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
             </div>
 
             <div class="mb-4">
                 <label for="confirmarContrasenia" class="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
-                <input v-model="confirmarContrasenia" type="password" id="confirmarContrasenia" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                <input v-model="confirmarContrasenia" type="password" id="confirmarContrasenia"  autocomplete="new-password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                 <div v-if="contrasenia && confirmarContrasenia && contrasenia !== confirmarContrasenia" class="text-red-500 text-sm">Las contraseñas no coinciden.</div>
             </div>
 
