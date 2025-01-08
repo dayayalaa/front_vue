@@ -20,6 +20,8 @@ import VistaTur from "../views/VistaTur.vue";
 import EditarTur from "../components/EditarTur.vue";
 import Ajustes from "../components/Ajustes.vue";
 
+import pruebaAPI from "../components/pruebaAPI.vue";
+
 const routes = [
   { path: "/",                   name: "Home",              component: HomeView,          meta: { requiresAuth: true } },
   { path: "/crear",              name: "Crear",             component: Crear,             meta: { requiresAuth: true } },
@@ -41,6 +43,8 @@ const routes = [
   { path: "/vistaTur/:id",       name: "vistaTur",          component: VistaTur},
   { path: "/editarTur/:id",      name: "editarTur",         component: EditarTur},
   { path: "/ajustes",            name: "ajustes",           component: Ajustes},
+
+  { path: "/prueba",            name: "prueba",           component: pruebaAPI},
 ];
 
 const router = createRouter({

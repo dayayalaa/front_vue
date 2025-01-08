@@ -19,16 +19,16 @@ const tur = reactive({
   politicaCancelacion: '',
 });
 
-const fotoPreview = ref(''); 
+const fotoPreview = ref('');
 const loading = ref(true);
 const fotoArchivo = ref(null);
-const fechaTemp = ref(''); 
+const fechaTemp = ref('');
 
 const fetchTour = async () => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`);
     Object.assign(tur, response.data);
-    fotoPreview.value = tur.fotoPortada; 
+    fotoPreview.value = tur.fotoPortada;
   } catch (error) {
     console.error('Error al obtener el tour:', error);
   } finally {
@@ -50,7 +50,7 @@ const handleFileChange = (event) => {
     fotoArchivo.value = file;
     const reader = new FileReader();
     reader.onload = (e) => {
-      fotoPreview.value = e.target.result; 
+      fotoPreview.value = e.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -59,7 +59,7 @@ const handleFileChange = (event) => {
 const agregarFecha = () => {
   if (fechaTemp.value) {
     tur.fechasDisponibles.push(fechaTemp.value);
-    fechaTemp.value = ''; 
+    fechaTemp.value = '';
   }
 };
 
@@ -144,93 +144,53 @@ onMounted(() => {
     <form v-else @submit.prevent="updateTour" class="space-y-4">
       <div>
         <label for="titulo" class="block font-medium">Título</label>
-        <input
-          id="titulo"
-          v-model="tur.titulo"
-          type="text"
-          class="w-full p-2 border rounded"
-          required
-        />
+        <input id="titulo" v-model="tur.titulo" type="text" class="w-full p-2 border rounded" required />
       </div>
 
       <div>
         <label for="descripcion" class="block font-medium">Descripción</label>
-        <textarea
-          id="descripcion"
-          v-model="tur.descripcion"
-          class="w-full p-2 border rounded"
-          rows="4"
-          required
-        ></textarea>
+        <textarea id="descripcion" v-model="tur.descripcion" class="w-full p-2 border rounded" rows="4"
+          required></textarea>
       </div>
 
       <div>
         <label for="precio" class="block font-medium">Precio (ARS)</label>
-        <input
-          id="precio"
-          v-model.number="tur.precio"
-          type="number"
-          class="w-full p-2 border rounded"
-          required
-        />
+        <input id="precio" v-model.number="tur.precio" type="number" class="w-full p-2 border rounded" required />
       </div>
 
       <div>
-  <label for="provincia" class="block font-medium">Provincia</label>
-  <select
-    id="provincia"
-    v-model="tur.provincia"
-    class="w-full p-2 border rounded"
-    required
-  >
-    <option value="" disabled selected>Seleccionar provincia</option>
-    <option v-for="provincia in provincias" :key="provincia" :value="provincia">
-      {{ provincia }}
-    </option>
-  </select>
-</div>
+        <label for="provincia" class="block font-medium">Provincia</label>
+        <select id="provincia" v-model="tur.provincia" class="w-full p-2 border rounded" required>
+          <option value="" disabled selected>Seleccionar provincia</option>
+          <option v-for="provincia in provincias" :key="provincia" :value="provincia">
+            {{ provincia }}
+          </option>
+        </select>
+      </div>
 
 
       <div>
         <label for="duracion" class="block font-medium">Duración</label>
-        <input
-          id="duracion"
-          v-model="tur.duracion"
-          type="text"
-          class="w-full p-2 border rounded"
-          placeholder="Ejemplo: 2 horas 30 minutos"
-          required
-        />
+        <input id="duracion" v-model="tur.duracion" type="text" class="w-full p-2 border rounded"
+          placeholder="Ejemplo: 2 horas 30 minutos" required />
       </div>
 
       <div>
         <label for="fechas" class="block font-medium">Fechas Disponibles</label>
         <div class="flex items-center space-x-2">
-          <input
-            type="date"
-            v-model="fechaTemp"
-            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          />
-          <button
-            type="button"
-            @click="agregarFecha"
-            class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none"
-          >
+          <input type="date" v-model="fechaTemp"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+          <button type="button" @click="agregarFecha"
+            class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none">
             Agregar
           </button>
         </div>
         <ul class="mt-2 space-y-1">
-          <li
-            v-for="(fecha, index) in tur.fechasDisponibles"
-            :key="index"
-            class="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md"
-          >
+          <li v-for="(fecha, index) in tur.fechasDisponibles" :key="index"
+            class="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md">
             {{ fecha }}
-            <button
-              type="button"
-              @click="eliminarFecha(index)"
-              class="text-red-500 hover:text-red-700 focus:outline-none"
-            >
+            <button type="button" @click="eliminarFecha(index)"
+              class="text-red-500 hover:text-red-700 focus:outline-none">
               Eliminar
             </button>
           </li>
@@ -239,13 +199,8 @@ onMounted(() => {
 
       <div>
         <label for="fotoPortada" class="block font-medium">Foto de Portada</label>
-        <input
-          id="fotoPortada"
-          type="file"
-          @change="handleFileChange"
-          class="w-full p-2 border rounded"
-          accept="image/*"
-        />
+        <input id="fotoPortada" type="file" @change="handleFileChange" class="w-full p-2 border rounded"
+          accept="image/*" />
         <div v-if="fotoPreview" class="mt-4">
           <p class="font-medium">Vista previa:</p>
           <img :src="fotoPreview" alt="Foto de portada" class="w-full h-32 object-cover rounded border" />
@@ -254,19 +209,11 @@ onMounted(() => {
 
       <div>
         <label for="politica" class="block font-medium">Política de Cancelación</label>
-        <textarea
-          id="politica"
-          v-model="tur.politicaCancelacion"
-          class="w-full p-2 border rounded"
-          rows="4"
-        ></textarea>
+        <textarea id="politica" v-model="tur.politicaCancelacion" class="w-full p-2 border rounded" rows="4"></textarea>
       </div>
 
       <div class="flex justify-end">
-        <button
-          type="submit"
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
+        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
           Guardar Cambios
         </button>
       </div>

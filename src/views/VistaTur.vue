@@ -3,7 +3,6 @@ import { onMounted, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
 import IrAtras from '../components/IrAtras.vue';
-import TituloSecundario from "../components/TituloSecundario.vue";
 import TituloTerciario from "../components/TituloTerciario.vue";
 
 const user = ref(null);
@@ -31,7 +30,7 @@ const formattedFecha = computed(() => {
 });
 
 onMounted(async () => {
-  const tourId = route.params.id;  
+  const tourId = route.params.id;
   if (!tourId) {
     console.error("ID no proporcionado.");
     return;
@@ -48,13 +47,12 @@ onMounted(async () => {
 
       if (guiaId) {
         const responseGuia = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${guiaId}`);
-        
+
         if (responseGuia.data) {
           console.log("Info del guía:", responseGuia.data);
-          console.log("Nombre del guía:", responseGuia.data.nombre);
-          
-          tour.value.guia = responseGuia.data;
-          console.log("Guía nombre:", tour.value.guia.nombre);
+          console.log("Nombre del guía:", responseGuia.data.data.nombre);
+          tour.value.guia = responseGuia.data.data;
+          console.log("Guía nombre:", tour.value.guia.data.nombre);
         } else {
           console.error("No se encontraron datos para el guía.");
         }
@@ -68,8 +66,6 @@ onMounted(async () => {
     console.error('Error al obtener el tour o guía:', error);
   }
 });
-
-
 
 </script>
 
@@ -88,8 +84,8 @@ onMounted(async () => {
       <TituloTerciario>Información</TituloTerciario>
       <p class="text-lg text-gray-700 mb-4">{{ tour.descripcion }}</p>
 
-      <p><strong>Guía:</strong>
-        <router-link v-if="tour.guia._id" :to="`/perfil/guia/${tour.guia._id}`" class="text-blue-500 hover:underline">
+      <p><strong>Guía: </strong>
+        <router-link v-if="tour.guia._id" :to="`/guias/${tour.guia._id}`" class="text-blue-500 hover:underline">
           {{ tour.guia.nombre }}
         </router-link>
         <span v-else>Guía no disponible</span>
