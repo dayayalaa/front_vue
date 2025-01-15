@@ -1,89 +1,124 @@
-<script setup>
-import { ref } from 'vue';
-import axios from 'axios';
 
-// Definimos un estado reactivo para los lugares y errores
-const lugares = ref([]);
-const provincia = ref('');
-const error = ref('');
-const loading = ref(false); // Para mostrar un indicador de carga
+<script>
+import axios from "axios";
 
-// Función para obtener lugares de la API
-const obtenerLugares = async () => {
-  if (!provincia.value.trim()) {
-    error.value = 'Por favor, ingresa una provincia.';
-    return;
-  }
-
-  loading.value = true;
-  error.value = ''; // Limpiamos errores previos
-
-  try {
-    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/prueba/lugares?provincia=${provincia.value}`);
-    console.log("Respuesta completa:", response);
-    console.log("Información:", response.data.place_results);
-
-    if (response.data && response.data.place_results) {
-      if (response.data.place_results.length > 0) {
-        lugares.value = response.data.place_results;
-      } else {
-        lugares.value = [];  // Si no hay lugares, aseguramos que la lista sea vacía
+export default {
+  data() {
+    return {
+      provincia: "", 
+      lugares: [],
+      loading: false, 
+      error: false,  
+    };
+  },
+  methods: {
+    async fetchLugares() {
+      if (!this.provincia.trim()) {
+        this.error = true;
+        this.lugares = [];
+        return;
       }
-    } else {
-      error.value = 'La respuesta de la API no contiene los lugares esperados o el campo place_results no existe.';
-      lugares.value = [];  // En caso de un error en la respuesta de la API, vaciamos los lugares
-    }
-  } catch (err) {
-    console.error('Error en el frontend:', err);
-    error.value = err.response?.data?.error || err.message || 'Hubo un problema al obtener los lugares. Intenta de nuevo.';
-    lugares.value = [];  // Si hay un error en la solicitud, vaciamos la lista de lugares
-  } finally {
-    loading.value = false;
-  }
+
+      try {
+    
+        this.loading = true;
+        this.error = false;
+        this.lugares = []; 
+        const response = await axios.get(
+          "https://back-tesis-lovat.vercel.app/arcana/prueba/lugares",
+          {
+            params: {
+              provincia: this.provincia, 
+            },
+          }
+        );
+
+        console.log("Respuesta completa:", response);
+
+        
+        const placeResults = response.data.place_results;
+
+        if (placeResults && Object.keys(placeResults).length > 0) {
+          console.log("Lugares obtenidos:", placeResults);
+          this.lugares = [placeResults]; 
+        } else {
+          console.log("No se encontraron lugares para la provincia ingresada.");
+          this.error = true; 
+        }
+      } catch (error) {
+        console.error("Error al obtener los lugares:", error);
+        this.error = true; 
+      } finally {
+        this.loading = false; 
+      }
+    },
+  },
 };
 </script>
 
-<template>
-  <div class="container mx-auto p-4 max-w-3xl">
-    <h1 class="text-3xl font-bold text-center mb-4">Buscar Lugares por Provincia</h1>
 
-    <!-- Input para la provincia -->
-    <div class="mb-4">
+<template>
+  <div class="max-w-4xl mx-auto p-6">
+
+    <div class="mb-6 flex items-center">
       <input
         v-model="provincia"
         type="text"
-        placeholder="Ingresa el nombre de la provincia"
-        class="p-3 border border-gray-300 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Ingresa una provincia"
+        @keyup.enter="fetchLugares"
+        class="p-3 border border-gray-300 rounded-lg w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
+      <button
+        @click="fetchLugares"
+        class="ml-4 bg-green-600 text-white p-3 rounded-lg shadow-md hover:bg-green-700 transition"
+      >
+        Buscar
+      </button>
     </div>
 
-    <!-- Botón para buscar -->
-    <button
-      @click="obtenerLugares"
-      class="bg-blue-500 text-white p-3 rounded hover:bg-blue-600 w-full md:w-auto"
-      :disabled="loading.value"
-    >
-      {{ loading.value ? 'Cargando...' : 'Buscar Lugares' }}
-    </button>
+    <!-- Mensaje de carga o error -->
+    <div v-if="loading" class="text-center text-gray-500">Cargando...</div>
+    <div v-else-if="error" class="text-center text-red-500 font-semibold">No se encontraron lugares para la provincia ingresada.</div>
 
-    <!-- Mensaje de error -->
-    <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>
+    <!-- Mostrar lugares si los datos existen -->
+    <div v-else v-for="lugar in lugares" :key="lugar.place_id" class="mb-8 p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transition">
+      <h3 class="text-2xl font-semibold text-green-600">{{ lugar.title }}</h3>
+      <p class="text-sm text-gray-600 mt-2">{{ lugar.address }}</p>
 
-    <!-- Información de la provincia -->
-    <div v-if="lugares.length === 0 && !loading.value && !error.value" class="text-gray-500 mt-2">
-      No se encontraron lugares para esta provincia, pero se realizó la búsqueda.
-    </div>
+      <!-- Mostrar imagen -->
+      <div class="mt-4">
+        <img :src="lugar.thumbnail" alt="Imagen del lugar" class="rounded-lg shadow-sm w-full h-auto" />
+      </div>
 
-    <!-- Lista de lugares -->
-    <div v-if="lugares.length > 0 && !error.value" class="mt-4">
-      <ul class="space-y-4">
-        <li v-for="(lugar, index) in lugares" :key="index" class="border-b pb-2">
-          <h2 class="text-xl font-semibold">{{ lugar.title }}</h2>
-          <p>{{ lugar.description.snippet }}</p>
-          <a :href="lugar.photos_link" target="_blank" class="text-blue-500 hover:underline">Ver más</a>
-        </li>
-      </ul>
+      <!-- Descripción del lugar -->
+      <p v-if="lugar.description && lugar.description.snippet" class="mt-4 text-gray-700">
+        <strong class="text-green-600">Descripción:</strong> {{ lugar.description.snippet }}
+      </p>
+
+    
+      <div class="mt-4 space-x-4">
+        <a :href="lugar.website" target="_blank" class="text-blue-500 hover:underline">Visitar página oficial</a>
+      </div>
     </div>
   </div>
 </template>
 
+
+<style scoped>
+
+button {
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2c6f39; /* Sombra más oscura en hover */
+}
+
+h3 {
+  color: #2f855a; /* Verde más fuerte */
+}
+
+p {
+  color: #4a5568; /* Color gris oscuro para los textos */
+}
+</style>
