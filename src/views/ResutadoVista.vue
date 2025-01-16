@@ -76,7 +76,7 @@ onMounted(async () => {
     const fechaSalidaCodificada = encodeURIComponent(fechaSalida);
     const fechaVueltaCodificada = encodeURIComponent(fechaVuelta);
 
-    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/vuelos/resultados/${origenCodificado}/${destinoCodificado}/${fechaSalidaCodificada}/${fechaVueltaCodificada}`);
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/vuelos/buscar/resultados?engine=google_flights&departure_id=${origenCodificado}&arrival_id=${destinoCodificado}&outbound_date=${fechaSalidaCodificada}&return_date=${fechaVueltaCodificada}`);
 
     if (response.data) {
       vuelosIda.value = response.data.vuelosIda || [];

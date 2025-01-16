@@ -47,19 +47,22 @@ const lugaresArgentinos = [
 const quitarAcentos = (texto) => {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
+
 const filtrarSugerencias = (campo) => {
+  const input = campo === 'origen' ? origen.value : destino.value;
+  const sugerencias = lugaresArgentinos.filter(lugar =>
+    quitarAcentos(lugar.toLowerCase()).includes(quitarAcentos(input.toLowerCase()))
+  );
+
   if (campo === 'origen') {
-    sugerenciasOrigen.value = lugaresArgentinos.filter(lugar =>
-      quitarAcentos(lugar.toLowerCase()).includes(quitarAcentos(origen.value.toLowerCase()))
-    );
+    sugerenciasOrigen.value = sugerencias;
     sugerenciasDestino.value = []; 
   } else {
-    sugerenciasDestino.value = lugaresArgentinos.filter(lugar =>
-      quitarAcentos(lugar.toLowerCase()).includes(quitarAcentos(destino.value.toLowerCase()))
-    );
+    sugerenciasDestino.value = sugerencias;
     sugerenciasOrigen.value = []; 
   }
 };
+
 const seleccionarSugerencia = (sugerencia, tipo) => {
   if (tipo === 'origen') {
     origen.value = sugerencia;
@@ -69,28 +72,40 @@ const seleccionarSugerencia = (sugerencia, tipo) => {
     sugerenciasDestino.value = []; 
   }
 };
+
 const irARuta = () => {
   origenError.value = '';
   destinoError.value = '';
   fechaVueltaError.value = '';
+
   if (!origen.value) {
     origenError.value = 'El origen es requerido.';
   }
   if (!destino.value) {
     destinoError.value = 'El destino es requerido.';
   }
+
   if (!fechaSalida.value || !fechaVuelta.value) {
     return;
   }
+
   const fechaSalidaObj = new Date(fechaSalida.value);
   const fechaVueltaObj = new Date(fechaVuelta.value);
+
   if (fechaVueltaObj < fechaSalidaObj) {
     fechaVueltaError.value = 'La fecha de vuelta no puede ser anterior a la de salida.';
     return;
   }
+
+  if (fechaSalidaObj < new Date()) {
+    fechaSalidaError.value = 'La fecha de salida no puede ser en el pasado.';
+    return;
+  }
+
   if (!origen.value || !destino.value) {
     return;
   }
+
   router.push({
     path: '/resultados',
     query: {
@@ -112,7 +127,6 @@ const irARuta = () => {
         <div class="mb-4 relative">
           <label for="origen" class="block text-sm font-medium">Origen:</label>
           <IconoDespegar class="absolute left-3 top-8 text-gray-500" />
-
           <input type="text" id="origen" v-model="origen" @input="filtrarSugerencias('origen')" class="border border-gray-300 pl-10 p-2 rounded w-full" required>
           <p v-if="origenError" class="text-red-500 text-sm">{{ origenError }}</p>
           <ul v-if="sugerenciasOrigen.length > 0" class="border border-gray-300 mt-1">
