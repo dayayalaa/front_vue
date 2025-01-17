@@ -3,156 +3,119 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
-import IconoDespegar from '../components/icons/IconoDespegar.vue';
-import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 import IrAtras from '../components/IrAtras.vue';
 
 const router = useRouter();
-const origen = ref('');
-const destino = ref('');
-const fechaSalida = ref('');
-const fechaVuelta = ref('');
-const origenError = ref('');
-const destinoError = ref('');
-const fechaVueltaError = ref('');
-const sugerenciasOrigen = ref([]);
-const sugerenciasDestino = ref([]);
+const arrival_id = ref('');
+const departure_id = ref('');
+const outbound_date = ref('');
+const return_date = ref('');
+const arrival_idError = ref('');
+const departure_idError = ref('');
+const return_dateError = ref('');
 
-const lugaresArgentinos = [
-  'Buenos Aires - Aeroparque Jorge Newbery',
-  'Buenos Aires - Aeropuerto Internacional Ministro Pistarini',
-  'Córdoba',
-  'Mendoza',
-  'Mar del Plata',
-  'Ushuaia',
-  'Bariloche',
-  'Salta',
-  'Rosario',
-  'Tucumán',
-  'Iguazú',
-  'Neuquén',
-  'Misiones',
-  'Posadas',
-  'San Fernando del Valle de Catamarca',
-  'San Juan',
-  'Río Gallegos',
-  'Río Grande',
-  'El Calafate',
-  'San Luis',
-  'Resistencia',
-  'Tremedal',
-  'General Roca',
-];
-
-const quitarAcentos = (texto) => {
-  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-};
-
-const filtrarSugerencias = (campo) => {
-  const input = campo === 'origen' ? origen.value : destino.value;
-  const sugerencias = lugaresArgentinos.filter(lugar =>
-    quitarAcentos(lugar.toLowerCase()).includes(quitarAcentos(input.toLowerCase()))
-  );
-
-  if (campo === 'origen') {
-    sugerenciasOrigen.value = sugerencias;
-    sugerenciasDestino.value = []; 
-  } else {
-    sugerenciasDestino.value = sugerencias;
-    sugerenciasOrigen.value = []; 
-  }
-};
-
-const seleccionarSugerencia = (sugerencia, tipo) => {
-  if (tipo === 'origen') {
-    origen.value = sugerencia;
-    sugerenciasOrigen.value = []; 
-  } else {
-    destino.value = sugerencia;
-    sugerenciasDestino.value = []; 
-  }
+const lugaresArgentinos = {
+  'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
+  'Buenos Aires - Aeroparque Jorge Newbery': 'AEP',
+  'Córdoba': 'COR',
+  'Mendoza': 'MDZ',
+  'Mar del Plata': 'MDQ',
+  'Ushuaia': 'USH',
+  'Bariloche': 'BRC',
+  'Salta': 'SLA',
+  'Rosario': 'ROS',
+  'Tucumán': 'TUC',
+  'Iguazú': 'IGR',
+  'Neuquén': 'NQN',
+  'Misiones': 'MIR',
+  'Posadas': 'PSS',
+  'San Fernando del Valle de Catamarca': 'CTC',
+  'San Juan': 'UAQ',
+  'Río Gallegos': 'RGL',
+  'Río Grande': 'RGA',
+  'El Calafate': 'FTE',
+  'San Luis': 'LUQ',
+  'Resistencia': 'RES',
 };
 
 const irARuta = () => {
-  origenError.value = '';
-  destinoError.value = '';
-  fechaVueltaError.value = '';
+  arrival_idError.value = '';
+  departure_idError.value = '';
+  return_dateError.value = '';
 
-  if (!origen.value) {
-    origenError.value = 'El origen es requerido.';
+  if (!arrival_id.value) {
+    arrival_idError.value = 'Por favor selecciona un lugar de llegada.';
   }
-  if (!destino.value) {
-    destinoError.value = 'El destino es requerido.';
+  if (!departure_id.value) {
+    departure_idError.value = 'Por favor selecciona un lugar de salida.';
   }
-
-  if (!fechaSalida.value || !fechaVuelta.value) {
+  if (!outbound_date.value || !return_date.value) {
     return;
   }
 
-  const fechaSalidaObj = new Date(fechaSalida.value);
-  const fechaVueltaObj = new Date(fechaVuelta.value);
+  const outbound_dateObj = new Date(outbound_date.value);
+  const return_dateObj = new Date(return_date.value);
 
-  if (fechaVueltaObj < fechaSalidaObj) {
-    fechaVueltaError.value = 'La fecha de vuelta no puede ser anterior a la de salida.';
+  if (return_dateObj < outbound_dateObj) {
+    return_dateError.value = 'La fecha de vuelta no puede ser anterior a la de salida.';
     return;
   }
 
-  if (fechaSalidaObj < new Date()) {
-    fechaSalidaError.value = 'La fecha de salida no puede ser en el pasado.';
+  if (outbound_dateObj < new Date()) {
+    return_dateError.value = 'La fecha de salida no puede ser en el pasado.';
     return;
   }
 
-  if (!origen.value || !destino.value) {
+  if (arrival_idError.value || departure_idError.value) {
     return;
   }
 
   router.push({
     path: '/resultados',
     query: {
-      origen: origen.value,
-      destino: destino.value,
-      fechaSalida: fechaSalida.value,
-      fechaVuelta: fechaVuelta.value,
-    }
+      engine: 'google_flights',
+      arrival_id: lugaresArgentinos[arrival_id.value],
+      departure_id: lugaresArgentinos[departure_id.value],
+      outbound_date: outbound_date.value,
+      return_date: return_date.value,
+    },
   });
 };
 </script>
 
 <template>
-  <IrAtras/>
-  <div class="flex items-center justify-center pt-6 pb-8"> 
+  <IrAtras />
+  <div class="flex items-center justify-center pt-6 pb-8">
     <div class="max-w-md p-4 bg-white rounded shadow-lg">
       <TituloSecundario>Buscar vuelos</TituloSecundario>
       <form @submit.prevent="irARuta">
-        <div class="mb-4 relative">
-          <label for="origen" class="block text-sm font-medium">Origen:</label>
-          <IconoDespegar class="absolute left-3 top-8 text-gray-500" />
-          <input type="text" id="origen" v-model="origen" @input="filtrarSugerencias('origen')" class="border border-gray-300 pl-10 p-2 rounded w-full" required>
-          <p v-if="origenError" class="text-red-500 text-sm">{{ origenError }}</p>
-          <ul v-if="sugerenciasOrigen.length > 0" class="border border-gray-300 mt-1">
-            <li v-for="(sugerencia, index) in sugerenciasOrigen" :key="index" @click="seleccionarSugerencia(sugerencia, 'origen')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
-          </ul>
-        </div>
-        <div class="mb-4 relative">
-          <label for="destino" class="block text-sm font-medium">Destino:</label>
-          <IconoAterrizaje class="absolute left-3 top-8 text-gray-500" />
-          <input type="text" id="destino" v-model="destino" @input="filtrarSugerencias('destino')" class="border border-gray-300 pl-10 p-2 rounded w-full" required>
-          <p v-if="destinoError" class="text-red-500 text-sm">{{ destinoError }}</p>
-          <ul v-if="sugerenciasDestino.length > 0" class="border border-gray-300 mt-1">
-            <li v-for="(sugerencia, index) in sugerenciasDestino" :key="index" @click="seleccionarSugerencia(sugerencia, 'destino')" class="p-2 cursor-pointer hover:bg-gray-200">{{ sugerencia }}</li>
-          </ul>
+        <div class="mb-4">
+          <label for="departure_id" class="block text-sm font-medium">Lugar de salida:</label>
+          <select id="departure_id" v-model="departure_id" class="border border-gray-300 p-2 rounded w-full" required>
+            <option value="" disabled>Selecciona un lugar</option>
+            <option v-for="(iata, lugar) in lugaresArgentinos" :key="iata" :value="lugar">{{ lugar }}</option>
+          </select>
+          <p v-if="departure_idError" class="text-red-500 text-sm">{{ departure_idError }}</p>
         </div>
         <div class="mb-4">
-          <label for="fechaSalida" class="block text-sm font-medium">Fecha de Ida:</label>
-          <input type="date" id="fechaSalida" v-model="fechaSalida" class="border border-gray-300 p-2 rounded w-full" required>
+          <label for="arrival_id" class="block text-sm font-medium">Lugar de llegada:</label>
+          <select id="arrival_id" v-model="arrival_id" class="border border-gray-300 p-2 rounded w-full" required>
+            <option value="" disabled>Selecciona un lugar</option>
+            <option v-for="(iata, lugar) in lugaresArgentinos" :key="iata" :value="lugar">{{ lugar }}</option>
+          </select>
+          <p v-if="arrival_idError" class="text-red-500 text-sm">{{ arrival_idError }}</p>
         </div>
         <div class="mb-4">
-          <label for="fechaVuelta" class="block text-sm font-medium">Fecha de Vuelta:</label>
-          <input type="date" id="fechaVuelta" v-model="fechaVuelta" class="border border-gray-300 p-2 rounded w-full" required>
-          <p v-if="fechaVueltaError" class="text-red-500 text-sm">{{ fechaVueltaError }}</p>
+          <label for="outbound_date" class="block text-sm font-medium">Fecha de ida:</label>
+          <input type="date" id="outbound_date" v-model="outbound_date" class="border border-gray-300 p-2 rounded w-full" required>
+        </div>
+        <div class="mb-4">
+          <label for="return_date" class="block text-sm font-medium">Fecha de vuelta:</label>
+          <input type="date" id="return_date" v-model="return_date" class="border border-gray-300 p-2 rounded w-full" required>
+          <p v-if="return_dateError" class="text-red-500 text-sm">{{ return_dateError }}</p>
         </div>
         <div class="flex justify-center">
-          <BotonPrincipal type="submit">Buscar Vuelos</BotonPrincipal>
+          <BotonPrincipal type="submit">Buscar vuelos</BotonPrincipal>
         </div>
       </form>
     </div>
