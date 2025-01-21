@@ -13,7 +13,7 @@ import DestinosArcana from "../components/DestinosArcana.vue";
 import HotelesVista from "../views/HotelesVista.vue";
 import InicioSesion from "../views/InicioSesion.vue";
 import OpcionInicio from "../views/OpcionInicio.vue";
-import Registro from "../views/Registro.vue";
+import RegistroUsuario from "../views/RegistroUsuario.vue";
 import RegistroGuia from "../views/RegistroGuia.vue";
 import CraerTur from "../components/CrearTur.vue";
 import VistaTur from "../views/VistaTur.vue";
@@ -37,7 +37,7 @@ const routes = [
   { path: "/hoteles",            name: "opcionesHoteles",   component: HotelesVista,      meta: { requiresAuth: true }},
   { path: "/login",              name: "login",             component: InicioSesion},
   { path: "/opcion",             name: "opcion",            component: OpcionInicio,      meta: { publicRoutes: true }},
-  { path: "/registroUsuario",    name: "registroUsuario",   component: Registro,          meta: { publicRoutes: true }},
+  { path: "/registroUsuario",    name: "registroUsuario",   component: RegistroUsuario,          meta: { publicRoutes: true }},
   { path: "/registroGuia",       name: "registroGuia",      component: RegistroGuia,      meta: { publicRoutes: true }},
   { path: "/crearTur",           name: "crearTur",          component: CraerTur},
   { path: "/vistaTur/:id",       name: "vistaTur",          component: VistaTur},

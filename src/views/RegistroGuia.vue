@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import IrAtras from '../components/IrAtras.vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 
@@ -19,7 +18,7 @@ const errorEmail = ref('');
 const errorContrasenia = ref('');
 const errorProvincia = ref('');
 
-const isPasswordVisible = ref(false); 
+const isPasswordVisible = ref(false);
 
 const lugaresArgentinos = [
   'Buenos Aires',
@@ -63,20 +62,17 @@ const registroUsuario = async () => {
       nombre: nombre.value,
       email: email.value,
       contrasenia: contrasenia.value,
-      provincia: provincia.value,  
+      provincia: provincia.value,
     });
 
     if (response.data && response.data.token) {
-      // console.log('Token recibido:', response.data.token); 
-
       localStorage.setItem('token', response.data.token);
+      router.push('/');
 
-      router.push('/'); 
-      
       nombre.value = '';
       email.value = '';
       contrasenia.value = '';
-      provincia.value = ''; 
+      provincia.value = '';
     }
   } catch (error) {
     console.error('Detalles del error:', error);
@@ -97,7 +93,6 @@ const validateForm = () => {
   errorContrasenia.value = '';
   errorProvincia.value = '';
 
-  //Validaciones
   if (!nombre.value) {
     errorNombre.value = 'Por favor, ingresa tu nombre';
     isValid = false;
@@ -126,10 +121,9 @@ const validateForm = () => {
 </script>
 
 <template>
-  <IrAtras />
-  <div class="flex items-center justify-center h-screen bg-gray-50 pt-6 pb-8">
-    <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
-      
+  <div class="flex items-center justify-center ">
+    <div class="flex items-center justify-center flex-col max-w-md w-full bg-white rounded-lg shadow-lg p-6">
+
       <TituloSecundario class="text-center mb-6">Crea una cuenta de guía</TituloSecundario>
 
       <form @submit.prevent="registroUsuario" class="w-full">
@@ -137,46 +131,33 @@ const validateForm = () => {
         <!-- Nombre de Usuario -->
         <div class="mb-4">
           <label for="nombre" class="block text-sm font-medium text-gray-600">Nombre de Usuario</label>
-          <input
-            type="text"
-            id="nombre"
-            v-model="nombre"
-            placeholder="Ingresa tu nombre de usuario"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
+          <input type="text" id="nombre" v-model="nombre" placeholder="Ingresa tu nombre de usuario"
+            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           <p class="text-red-500 text-sm mt-1" v-if="errorNombre">{{ errorNombre }}</p>
         </div>
 
         <!-- Email -->
         <div class="mb-4">
           <label for="email" class="block text-sm font-medium text-gray-600">Correo Electrónico</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            placeholder="Ingresa tu correo electrónico"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
+          <input type="email" id="email" v-model="email" placeholder="Ingresa tu correo electrónico"
+            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           <p class="text-red-500 text-sm mt-1" v-if="errorEmail">{{ errorEmail }}</p>
         </div>
 
         <!-- Contraseña -->
         <div class="mb-4 relative">
           <label for="contrasenia" class="block text-sm font-medium text-gray-600">Contraseña</label>
-          <input
-            :type="isPasswordVisible ? 'text' : 'password'"
-            id="contrasenia"
-            v-model="contrasenia"
+          <input :type="isPasswordVisible ? 'text' : 'password'" id="contrasenia" v-model="contrasenia"
             placeholder="Ingresa tu contraseña"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="button"
-            @click="togglePasswordVisibility"
-            class="absolute right-3 top-10"
-          >
-            <span v-if="isPasswordVisible">👁️</span>
-            <span v-else>👁️‍🗨️</span>
+            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          <button type="button" @click="togglePasswordVisibility"
+            class="absolute right-3 top-1/2 transform  flex items-center justify-center">
+            <span v-if="isPasswordVisible">
+              <i class="fas fa-eye text-gray-500"></i>
+            </span>
+            <span v-else>
+              <i class="fas fa-eye-slash text-gray-500"></i>
+            </span>
           </button>
           <p class="text-red-500 text-sm mt-1" v-if="errorContrasenia">{{ errorContrasenia }}</p>
         </div>
@@ -184,11 +165,8 @@ const validateForm = () => {
         <!-- Provincia -->
         <div class="mb-4">
           <label for="provincia" class="block text-sm font-medium text-gray-600">Provincia</label>
-          <select
-            id="provincia"
-            v-model="provincia"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          >
+          <select id="provincia" v-model="provincia"
+            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
             <option value="" disabled selected>Selecciona tu provincia</option>
             <option v-for="lugar in lugaresArgentinos" :key="lugar" :value="lugar">
               {{ lugar }}

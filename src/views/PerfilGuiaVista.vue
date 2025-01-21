@@ -115,56 +115,96 @@ const eliminarTour = async (tourId) => {
 <template>
   <IrAtras />
   <div class="max-w-md mx-auto p-4 mb-20">
-    <div class="relative mb-4">
-      <img v-if="userCoverImage" :src="userCoverImage" alt="Banner de perfil"
-        class="w-full h-32 object-cover rounded-lg border-2 border-gray-300" />
-
-      <div class="absolute inset-x-0 top-16 flex justify-center">
-        <img v-if="userProfileImage" :src="userProfileImage" alt="Foto de perfil"
-          class="w-32 h-32 rounded-full border-4 border-white shadow-md" />
+    <!-- Banner de perfil -->
+    <div class="relative mb-8">
+      <img
+        v-if="userCoverImage"
+        :src="userCoverImage"
+        alt="Banner de perfil"
+        class="w-full h-40 object-cover rounded-lg border border-gray-200 shadow-sm"
+      />
+      <div class="absolute inset-x-0 top-20 flex justify-center">
+        <img
+          v-if="userProfileImage"
+          :src="userProfileImage"
+          alt="Foto de perfil"
+          class="w-28 h-28 rounded-full border-4 border-white shadow-md"
+        />
       </div>
     </div>
 
-    <div class="text-center mb-4 mt-20">
-      <TituloSecundario class="text-2xl">{{ loading ? 'Cargando...' : userName }}</TituloSecundario>
-      <p v-if="descripcion">{{ descripcion }}</p>
-      <p v-if="provincia"><strong>{{ provincia }}</strong></p>
-      <TituloTerciario>Datos personales</TituloTerciario>
-      <ul>
-        <li v-if="email">{{ email }}</li>
-        <li v-if="telefono">{{ telefono }}</li>
+    <!-- Información de usuario -->
+    <div class="text-center mb-8">
+      <TituloSecundario class="text-2xl font-semibold text-gray-800">
+        {{ loading ? 'Cargando...' : userName }}
+      </TituloSecundario>
+      <p v-if="descripcion" class="text-gray-600 mt-2 text-sm">{{ descripcion }}</p>
+      <p v-if="provincia" class="text-gray-700 font-medium mt-1">{{ provincia }}</p>
+    </div>
+
+    <!-- Datos personales -->
+    <div class="bg-gray-100 p-4 rounded-lg shadow-sm mb-8">
+      <TituloTerciario class="text-lg text-gray-700 font-semibold">
+        Datos personales
+      </TituloTerciario>
+      <ul class="mt-2 text-gray-600 text-sm">
+        <li v-if="email" class="mb-1">
+          <strong>Email:</strong> {{ email }}
+        </li>
+        <li v-if="telefono" class="mb-1">
+          <strong>Teléfono:</strong> {{ telefono }}
+        </li>
       </ul>
     </div>
 
-    <div class="flex justify-center mt-24">
-      <BotonPrincipal @click="goToCreateTour">
-        Crear Tur
+    <!-- Botón Crear Tour -->
+    <div class="flex justify-center mt-6 mb-8">
+      <BotonPrincipal class="w-3/4 py-3 text-sm" @click="goToCreateTour">
+        Crear Tour
       </BotonPrincipal>
     </div>
 
-    <div v-if="tours.length > 0" class="mt-6">
-  <TituloSecundario class="text-xl">Tours Disponibles</TituloSecundario>
-  <ul class="space-y-4 mt-4">
-    <li v-for="tour in tours" :key="tour._id" class="bg-white p-4 rounded-lg shadow-md">
-      <div class="flex justify-between">
-        <div>
-          <strong class="text-lg">{{ tour.titulo }}</strong>
-          <p class="text-gray-600">{{ tour.descripcion }}</p>
+<!-- Lista de Tours Disponibles -->
+<div v-if="tours.length > 0" class="mt-8">
+  <TituloSecundario class="text-xl font-semibold text-gray-800 mb-4">
+    Tours Disponibles
+  </TituloSecundario>
+  <ul class="space-y-4">
+    <li
+      v-for="tour in tours"
+      :key="tour._id"
+      class="bg-white p-4 rounded-lg shadow-md border border-gray-200"
+    >
+      <div class="flex flex-col">
+        <div class="flex-1 mb-4">
+          <strong class="text-lg text-gray-800">{{ tour.titulo }}</strong>
+          <p class="text-gray-600 text-sm mt-1">{{ tour.descripcion }}</p>
         </div>
-
-        <div class="flex space-x-4 mt-4">
-          <router-link :to="`/vistaTur/${tour._id}`" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Ver
+        
+        <!-- Botones abajo de todo -->
+        <div class="flex space-x-3 mt-4">
+          <!-- Ver tour -->
+          <router-link
+            :to="`/vistaTur/${tour._id}`"
+            class="px-4 py-2 flex items-center bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-all duration-300"
+          >
+            <i class="fas fa-eye mr-2"></i> Ver
           </router-link>
 
-          <router-link :to="`/editarTur/${tour._id}`">
-            <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Editar
-            </button>
+          <!-- Editar tour -->
+          <router-link
+            :to="`/editarTur/${tour._id}`"
+            class="px-4 py-2 flex items-center bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-all duration-300"
+          >
+            <i class="fas fa-edit mr-2"></i> Editar
           </router-link>
 
-          <button @click="eliminarTour(tour._id)" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-            Eliminar
+          <!-- Eliminar tour -->
+          <button
+            @click="eliminarTour(tour._id)"
+            class="px-4 py-2 flex items-center bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-all duration-300"
+          >
+            <i class="fas fa-trash-alt mr-2"></i> Eliminar
           </button>
         </div>
       </div>
@@ -172,6 +212,8 @@ const eliminarTour = async (tourId) => {
   </ul>
 </div>
 
-
   </div>
 </template>
+
+
+

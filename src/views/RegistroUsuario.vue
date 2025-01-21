@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Axios from 'axios';
-import IrAtras from '../components/IrAtras.vue';
+
 import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 
@@ -86,58 +86,50 @@ const registroUsuario = async () => {
 </script>
 
 <template>
-  <IrAtras />
-  <div class="flex items-center justify-center h-screen bg-gray-50 pt-6 pb-8">
-    <div class="flex items-center justify-center flex-col max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
+  <div class="flex items-center justify-center ">
+    <div class="flex items-center justify-center flex-col max-w-md w-full bg-white rounded-lg shadow-lg p-6">
       <TituloSecundario class="text-center mb-6">Crea una cuenta</TituloSecundario>
 
       <form @submit.prevent="registroUsuario" class="w-full">
+
+        <!-- Nombre de Usuario -->
         <div class="mb-4">
           <label for="nombre" class="block text-sm font-medium text-gray-600">Nombre de Usuario</label>
-          <input
-            type="text"
-            id="nombre"
-            v-model="nombre"
-            placeholder="Ingresa tu nombre de usuario"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <p class="text-red-500">{{ errors.nombre }}</p>
+          <input type="text" id="nombre" v-model="nombre" placeholder="Ingresa tu nombre de usuario"
+            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          <p class="text-red-500 text-sm mt-1" v-if="errors.nombre">{{ errors.nombre }}</p>
         </div>
 
+        <!-- Email -->
         <div class="mb-4">
           <label for="email" class="block text-sm font-medium text-gray-600">Correo Electrónico</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            placeholder="Ingresa tu correo electrónico"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <p class="text-red-500">{{ errors.email }}</p>
+          <input type="email" id="email" v-model="email" placeholder="Ingresa tu correo electrónico"
+            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          <p class="text-red-500 text-sm mt-1" v-if="errors.email">{{ errors.email }}</p>
         </div>
 
+        <!-- Contraseña -->
         <div class="mb-4 relative">
           <label for="contrasenia" class="block text-sm font-medium text-gray-600">Contraseña</label>
-          <input
-            :type="isPasswordVisible ? 'text' : 'password'"
-            id="contrasenia"
-            v-model="contrasenia"
+          <input :type="isPasswordVisible ? 'text' : 'password'" id="contrasenia" v-model="contrasenia"
             placeholder="Ingresa tu contraseña"
-            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="button"
-            @click="togglePasswordVisibility"
-            class="absolute right-3 top-10"
-          >
-            <span v-if="isPasswordVisible">👁️</span>
-            <span v-else>👁️‍🗨️</span>
+            class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+          <button type="button" @click="togglePasswordVisibility"
+            class="absolute right-3 top-1/2 transform  flex items-center justify-center">
+            <span v-if="isPasswordVisible">
+              <i class="fas fa-eye text-gray-500"></i>
+            </span>
+            <span v-else>
+              <i class="fas fa-eye-slash text-gray-500"></i>
+            </span>
           </button>
-          <p class="text-red-500">{{ errors.contrasenia }}</p>
+          <p class="text-red-500 text-sm mt-1" v-if="errors.contrasenia">{{ errors.contrasenia }}</p>
         </div>
 
-        <p class="text-red-500">{{ backendError }}</p>
+        <!-- Error Backend -->
+        <p class="text-red-500 text-sm mt-1" v-if="backendError">{{ backendError }}</p>
 
+        <!-- Botón de Registro -->
         <div class="flex justify-center">
           <BotonPrincipal :disabled="loading">{{ loading ? 'Registrando...' : 'Registrarse' }}</BotonPrincipal>
         </div>

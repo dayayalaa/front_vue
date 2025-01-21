@@ -83,32 +83,66 @@ const eliminarCuenta = async () => {
 };
 </script>
 
+
+
 <template>
-    <ul>
-        <li>
-            <router-link v-if="activeLink" :to="activeLink">Perfil</router-link>
+    <ul class="space-y-4">
+        <!-- Perfil -->
+        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+            <i class="fas fa-user text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
+            <router-link 
+                v-if="activeLink" 
+                :to="activeLink" 
+                class="text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
+                Perfil
+            </router-link>
         </li>
-        <li>
-            <router-link v-if="userId" :to="{ name: 'EditarPerfil', params: { id: userId } }">
+
+        <!-- Editar perfil -->
+        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+            <i class="fas fa-edit text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
+            <router-link 
+                v-if="userId" 
+                :to="{ name: 'EditarPerfil', params: { id: userId } }" 
+                class="text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
                 Editar Perfil
             </router-link>
         </li>
-        <li>
-            <router-link to="/">Preguntas frecuentes</router-link>
+
+        <!-- Preguntas frecuentes -->
+        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+            <i class="fas fa-question-circle text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
+            <router-link 
+                to="/" 
+                class="text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
+                Preguntas frecuentes
+            </router-link>
         </li>    
-        <li>
-            <button @click.prevent="cerrarSesion" aria-label="Cerrar sesión">
+
+        <!-- Cerrar sesión -->
+        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+            <i class="fas fa-sign-out-alt text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
+            <button 
+                @click.prevent="cerrarSesion" 
+                aria-label="Cerrar sesión" 
+                class="w-full text-left text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
                 Cerrar sesión
             </button>
         </li>
-        <li>
-            <button @click.prevent="showModal = true" aria-label="Eliminar cuenta">
+
+        <!-- Eliminar cuenta -->
+        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#fef0f0] transition-all duration-300">
+            <i class="fas fa-trash-alt text-[#E30755] hover:text-[#f39200] text-2xl"></i>
+            <button 
+                @click.prevent="showModal = true" 
+                aria-label="Eliminar cuenta" 
+                class="w-full text-left text-[#E30755] hover:text-[#f39200] text-lg font-semibold transition-colors duration-300">
                 Eliminar cuenta
             </button>
         </li>
     </ul>
 
-    <!-- Modal overlay -->
+    <!-- Modal de confirmación (para eliminar cuenta) -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white p-4 rounded-lg shadow-lg w-full max-w-sm mx-4 md:max-w-md">
             <h2 class="text-lg font-semibold mb-4 text-center">Confirmación</h2>
@@ -130,3 +164,4 @@ const eliminarCuenta = async () => {
         </div>
     </div>
 </template>
+
