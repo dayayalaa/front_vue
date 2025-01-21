@@ -58,7 +58,9 @@ const obtenerVuelos = async () => {
   departure_id.value = decodeURIComponent(departure_idCodificado);
   arrival_id.value = decodeURIComponent(arrival_idCodificado);
 
+
   try {
+
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/vuelos/buscar/resultados', {
       params: {
         engine: 'google_flights',
@@ -71,6 +73,7 @@ const obtenerVuelos = async () => {
 
     if (Array.isArray(response.data) && response.data.length > 0) {
       vuelos.value = response.data;
+
     } else {
       errorMensaje.value = 'No se encontraron vuelos.';
     }
@@ -203,8 +206,87 @@ const obtenerNombreAeropuerto = (codigo) => {
 
     <!-- Step 2: Vuelos de Vuelta -->
     <div v-if="pasoActual === 2" class="mb-6">
-      <!-- Aquí se pueden agregar los vuelos de vuelta -->
+      <div v-if="cargando" class="flex justify-center">
+        <SpinnerCarga />
+      </div>
+
+      <div v-else-if="errorMensaje" class="text-red-500">
+        <p>{{ errorMensaje }}</p>
+      </div>
+
+      <div v-else-if="vuelos.length > 0" class="mt-8">
+        <TituloSecundario>Resultado de viajes de vuelta</TituloSecundario>
+        <p><strong>Origen:</strong> {{ obtenerNombreAeropuerto(arrival_id) }}</p>
+        <p><strong>Destino:</strong> {{ obtenerNombreAeropuerto(departure_id) }}</p>
+
+        <div v-for="vuelo in vuelos" :key="vuelo.price"
+          class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6">
+          <div class="w-full mb-6">
+            <div class="flex justify-between mb-6">
+              <div>
+                <p class="font-black text-4xl text-[#4F6D3A]">{{ arrival_id }}</p>
+                <p>Origen</p>
+                <div class="text-gray-500 text-sm mt-2">
+                  <p>{{ vuelo.flights[0].departure_airport?.time }}</p>
+                </div>
+              </div>
+              <div class="text-end">
+                <p class="font-black text-4xl text-[#4F6D3A]">{{ departure_id }}</p>
+                <p>Destino</p>
+                <div class="text-gray-500 text-sm mt-2">
+                  <p>{{ vuelo.flights[0].arrival_airport?.time }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Ilustracion avion -->
+            <div class="flex justify-center items-center mb-6 relative">
+              <div class="flex-1 bg-gray-400 h-[1px]"></div>
+              <IconoAvion class="mx-4" />
+              <div class="flex-1 bg-gray-400 h-[1px]"></div>
+            </div>
+
+            <!-- Aerolínea -->
+            <div class="flex justify-center items-center mb-6">
+              <div class="flex flex-col">
+                <img :src="vuelo.airline_logo" alt="Logo de la aerolínea {{ vuelo.airline }}"
+                  class="w-16 h-16 object-contain">
+                <p class="text-gray-500 text-sm mt-2">{{ vuelo.flights[0].airline }}</p>
+              </div>
+
+              <div class="text-end">
+                <p>Número de Vuelo:</p>
+                <p class="font-medium text-2xl">{{ vuelo.flights[0].flight_number }}</p>
+              </div>
+            </div>
+
+            <div class="flex flex-col justify-between h-full">
+              <!-- Escala -->
+              <div v-if="vuelo.flights.length > 1">
+                <p>Escala:</p>
+                <p class="font-medium text-2xl">
+                  {{ vuelo.flights.length - 1 }}
+                </p>
+              </div>
+              <div v-else>
+                <p>No hay escala</p>
+              </div>
+
+              <!-- Precio y botón de reserva -->
+              <div class="mt-4 flex justify-between items-center">
+                <span class="text-xl font-semibold text-green-600">
+                  ${{ vuelo.price?.toLocaleString() }}
+                </span>
+                <BotonPrincipal>Reservar</BotonPrincipal>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
 
     <!-- Step 3: Hoteles -->
     <div v-if="pasoActual === 3" class="mb-6">
