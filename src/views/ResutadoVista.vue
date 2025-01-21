@@ -1,43 +1,16 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
-
 import IconoAvion from '../components/icons/IconoAvion.vue';
 import IconoDespegar from '../components/icons/IconoDespegar.vue';
 import IconoAterrizaje from '../components/icons/IconoAterrizaje.vue';
 import IconoInicio from '../components/icons/IconoInicio.vue';
 import IconoLista from '../components/icons/IconoLista.vue';
-
 import IrAtras from '../components/IrAtras.vue';
 import SpinnerCarga from '../components/SpinnerCarga.vue';
-
-// Definición del objeto de lugares y códigos de aeropuerto
-const lugaresArgentinos = {
-  'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
-  'Buenos Aires - Aeroparque Jorge Newbery': 'AEP',
-  'Córdoba': 'COR',
-  'Mendoza': 'MDZ',
-  'Mar del Plata': 'MDQ',
-  'Ushuaia': 'USH',
-  'Bariloche': 'BRC',
-  'Salta': 'SLA',
-  'Rosario': 'ROS',
-  'Tucumán': 'TUC',
-  'Iguazú': 'IGR',
-  'Neuquén': 'NQN',
-  'Misiones': 'MIR',
-  'Posadas': 'PSS',
-  'San Fernando del Valle de Catamarca': 'CTC',
-  'San Juan': 'UAQ',
-  'Río Gallegos': 'RGL',
-  'Río Grande': 'RGA',
-  'El Calafate': 'FTE',
-  'San Luis': 'LUQ',
-  'Resistencia': 'RES',
-};
 
 const vuelos = ref([]);
 const errorMensaje = ref('');
@@ -58,9 +31,7 @@ const obtenerVuelos = async () => {
   departure_id.value = decodeURIComponent(departure_idCodificado);
   arrival_id.value = decodeURIComponent(arrival_idCodificado);
 
-
   try {
-
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/vuelos/buscar/resultados', {
       params: {
         engine: 'google_flights',
@@ -73,7 +44,6 @@ const obtenerVuelos = async () => {
 
     if (Array.isArray(response.data) && response.data.length > 0) {
       vuelos.value = response.data;
-
     } else {
       errorMensaje.value = 'No se encontraron vuelos.';
     }
@@ -90,10 +60,50 @@ const stepClass = (step) => pasoActual.value === step ? 'text-blue-600' : 'text-
 onMounted(obtenerVuelos);
 
 const obtenerNombreAeropuerto = (codigo) => {
+  const lugaresArgentinos = {
+    'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
+    'Buenos Aires - Aeroparque Jorge Newbery': 'AEP',
+    'Córdoba': 'COR',
+    'Mendoza': 'MDZ',
+    'Mar del Plata': 'MDQ',
+    'Ushuaia': 'USH',
+    'Bariloche': 'BRC',
+    'Salta': 'SLA',
+    'Rosario': 'ROS',
+    'Tucumán': 'TUC',
+    'Iguazú': 'IGR',
+    'Neuquén': 'NQN',
+    'Misiones': 'MIR',
+    'Posadas': 'PSS',
+    'San Fernando del Valle de Catamarca': 'CTC',
+    'San Juan': 'UAQ',
+    'Río Gallegos': 'RGL',
+    'Río Grande': 'RGA',
+    'El Calafate': 'FTE',
+    'San Luis': 'LUQ',
+    'Resistencia': 'RES',
+  };
+
   const aeropuerto = Object.keys(lugaresArgentinos).find(key => lugaresArgentinos[key] === codigo);
   return aeropuerto || 'Desconocido';
 };
+
+const almacenarVuelo = (vuelo, tipo) => {
+  const vueloReserva = JSON.parse(localStorage.getItem('vueloReserva')) || {};
+
+  vueloReserva[tipo] = vuelo;
+  localStorage.setItem('vueloReserva', JSON.stringify(vueloReserva));
+};
+
+const manejarReserva = (vuelo, tipo) => {
+  almacenarVuelo(vuelo, tipo);
+
+  if (tipo === 'ida') {
+    pasoActual.value = 2;
+  }
+};
 </script>
+
 
 <template>
   <IrAtras />
@@ -190,10 +200,8 @@ const obtenerNombreAeropuerto = (codigo) => {
 
               <!-- Precio y botón de reserva -->
               <div class="mt-4 flex justify-between items-center">
-                <span class="text-xl font-semibold text-green-600">
-                  ${{ vuelo.price?.toLocaleString() }}
-                </span>
-                <BotonPrincipal>Reservar</BotonPrincipal>
+                <span class="text-xl font-semibold text-green-600">${{ vuelo.price?.toLocaleString() }}</span>
+                <BotonPrincipal @click="manejarReserva(vuelo, 'ida')">Reservar</BotonPrincipal>
               </div>
             </div>
 
