@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import IrAtras from '../components/IrAtras.vue';
 
-
 const decodeJWT = (token) => {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -88,27 +87,81 @@ const provincias = [
 ];
 
 const actualizarPerfil = async () => {
-    const datosAEnviar = {
-        nombre: nombre.value,
-        email: email.value,
-        descripcion: descripcion.value,
-        telefono: telefono.value,
-        provincia: provincia.value,
-    };
+    const token = localStorage.getItem('token');
+    const datosAEnviar = new FormData();
+    datosAEnviar.append('nombre', nombre.value);
+    datosAEnviar.append('email', email.value);
+    datosAEnviar.append('descripcion', descripcion.value);
+    datosAEnviar.append('telefono', telefono.value);
+    datosAEnviar.append('provincia', provincia.value);
 
     try {
-        const respuesta = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, datosAEnviar);
-        console.log('Respuesta del servidor:', respuesta);
+        const respuesta = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/imagen/updatePerfil/${userId.value}`, datosAEnviar, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
         if (respuesta.status === 200) {
-            
-            nombre.value = respuesta.data.data.nombre; 
-            
+            successMessage.value = 'Perfil actualizado exitosamente!';
+            fetchUserData(); // Refresca los datos del usuario
         }
     } catch (error) {
         console.error('Error al actualizar el perfil:', error);
+        errorMessage.value = 'Hubo un error al actualizar el perfil.';
     }
 };
 
+const actualizarPortada = async () => {
+    const token = localStorage.getItem('token');
+    const datosAEnviar = new FormData();
+    if (fotoPortada.value) {
+        datosAEnviar.append('fotoPortada', fotoPortada.value);
+    }
+
+    try {
+        const respuesta = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/imagen/updatePortada/${userId.value}`, datosAEnviar, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (respuesta.status === 200) {
+            successMessage.value = 'Foto de portada actualizada exitosamente!';
+            fetchUserData(); // Refresca los datos del usuario
+        }
+    } catch (error) {
+        console.error('Error al actualizar la portada:', error);
+        errorMessage.value = 'Hubo un error al actualizar la portada.';
+    }
+};
+
+const actualizarFotoPerfil = async () => {
+    const token = localStorage.getItem('token');
+    const datosAEnviar = new FormData();
+    if (fotoPerfil.value) {
+        datosAEnviar.append('fotoPerfil', fotoPerfil.value);
+    }
+
+    try {
+        const respuesta = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/usuarios/updatePerfil/${userId.value}`, datosAEnviar, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (respuesta.status === 200) {
+            successMessage.value = 'Foto de perfil actualizada exitosamente!';
+            fetchUserData(); // Refresca los datos del usuario
+        }
+    } catch (error) {
+        console.error('Error al actualizar la foto de perfil:', error);
+        errorMessage.value = 'Hubo un error al actualizar la foto de perfil.';
+    }
+};
 
 onMounted(() => {
     const token = localStorage.getItem('token');
