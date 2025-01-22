@@ -20,6 +20,24 @@ const pasoActual = ref(1);
 const departure_id = ref('');
 const arrival_id = ref('');
 
+let departureTokenSeleccionado = "";
+
+const obtenerVueloDeVuelta = async (departureToken) => {
+  try {
+    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/vuelos/buscar/vuelta', {
+      params: {
+        engine: 'google_flights',
+        departure_token: departureToken,
+      }
+    });
+
+    console.log("Datos del vuelo de vuelta:", response.data);
+
+  } catch (error) {
+    console.error('Error al obtener el vuelo de vuelta:', error);
+  }
+};
+
 const obtenerVuelos = async () => {
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -44,6 +62,16 @@ const obtenerVuelos = async () => {
 
     if (Array.isArray(response.data) && response.data.length > 0) {
       vuelos.value = response.data;
+
+      departureTokenSeleccionado = response.data[0]?.departure_token || "";
+
+      if (departureTokenSeleccionado) {
+        obtenerVueloDeVuelta(departureTokenSeleccionado);
+      }
+
+      response.data.forEach(vuelo => {
+        console.log("Departure Token:", vuelo.departure_token);
+      });
     } else {
       errorMensaje.value = 'No se encontraron vuelos.';
     }
@@ -171,7 +199,7 @@ const manejarReserva = (vuelo, tipo) => {
             </div>
 
             <!-- Aerolínea -->
-            <div class="flex justify-center items-center mb-6">
+            <div class="flex justify-between items-center mb-6">
               <div class="flex flex-col">
                 <img :src="vuelo.airline_logo" alt="Logo de la aerolínea {{ vuelo.airline }}"
                   class="w-16 h-16 object-contain">
@@ -257,7 +285,7 @@ const manejarReserva = (vuelo, tipo) => {
             </div>
 
             <!-- Aerolínea -->
-            <div class="flex justify-center items-center mb-6">
+            <div class="flex justify-between items-center mb-6">
               <div class="flex flex-col">
                 <img :src="vuelo.airline_logo" alt="Logo de la aerolínea {{ vuelo.airline }}"
                   class="w-16 h-16 object-contain">
