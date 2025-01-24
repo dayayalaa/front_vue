@@ -88,48 +88,6 @@ const provincias = [
     'Tremedal', 'General Roca',
 ];
 
-const actualizarDatosPerfil = async () => {
-    const token = localStorage.getItem('token');
-    const datosAEnviar = {
-        nombre: nombre.value,
-        email: email.value,
-        descripcion: descripcion.value,
-        telefono: telefono.value,
-        provincia: provincia.value,
-    };
-
-    try {
-        const respuesta = await axios.put(
-            `https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`,
-            datosAEnviar,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-
-        if (respuesta.status === 200) {
-            successMessage.value = 'Datos del perfil actualizados exitosamente!';
-            fetchUserData();
-
-           
-            const userRole = respuesta.data.data.role; 
-
-          
-            if (userRole === 'guide') {
-                router.push({ name: 'GuiaPerfil', params: { id: userId.value } });
-            } else {
-                router.push({ name: 'Perfil', params: { id: userId.value } });
-            }
-        }
-    } catch (error) {
-        console.error('Error al actualizar los datos del perfil:', error);
-        errorMessage.value = 'Hubo un error al actualizar los datos del perfil.';
-    }
-};
-
-
 const actualizarFotoPerfil = async () => {
     const token = localStorage.getItem('token');
     const datosAEnviar = new FormData();
@@ -193,6 +151,50 @@ const actualizarFotoPortada = async () => {
         console.error('Error al actualizar la foto de portada:', error.response?.data || error.message);
         errorMessage.value = 'Hubo un error al actualizar la foto de portada.';
     }
+};
+
+const actualizarDatosPerfil = async () => {
+    const token = localStorage.getItem('token');
+    const datosAEnviar = {
+        nombre: nombre.value,
+        email: email.value,
+        descripcion: descripcion.value,
+        telefono: telefono.value,
+        provincia: provincia.value,
+    };
+
+    try {
+        const respuesta = await axios.put(
+            `https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`,
+            datosAEnviar,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        if (respuesta.status === 200) {
+            successMessage.value = 'Datos del perfil actualizados exitosamente!';
+            fetchUserData();
+
+           
+            const userRole = respuesta.data.data.role; 
+
+          
+            if (userRole === 'guide') {
+                router.push({ name: 'GuiaPerfil', params: { id: userId.value } });
+            } else {
+                router.push({ name: 'Perfil', params: { id: userId.value } });
+            }
+        }
+    } catch (error) {
+        console.error('Error al actualizar los datos del perfil:', error);
+        errorMessage.value = 'Hubo un error al actualizar los datos del perfil.';
+    }
+
+    actualizarFotoPerfil();
+    actualizarFotoPortada();
 };
 
 onMounted(() => {
@@ -279,10 +281,6 @@ onMounted(() => {
                     <img :src="fotoPerfilPreview" alt="Vista previa Foto de Perfil"
                         class="w-32 h-32 object-cover rounded-full" />
                 </div>
-                <button @click.prevent="actualizarFotoPerfil"
-                    class="mt-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    Actualizar Foto de Perfil
-                </button>
             </div>
 
             <div class="mb-4">
@@ -293,10 +291,6 @@ onMounted(() => {
                     <img :src="fotoPortadaPreview" alt="Vista previa Foto de Portada"
                         class="w-full h-48 object-cover rounded-lg" />
                 </div>
-                <button @click.prevent="actualizarFotoPortada"
-                    class="mt-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    Actualizar Foto de Portada
-                </button>
             </div>
 
             <!-- Contraseña y Confirmar Contraseña -->
