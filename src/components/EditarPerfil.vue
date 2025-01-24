@@ -91,32 +91,32 @@ const provincias = [
 const actualizarFotoPerfil = async () => {
     const token = localStorage.getItem('token');
     const datosAEnviar = new FormData();
+
     if (fotoPerfil.value) {
         datosAEnviar.append('file', fotoPerfil.value);
-    } else {
-        errorMessage.value = 'No se ha seleccionado ninguna imagen.';
-        return;
-    }
 
-    try {
-        const respuesta = await axios.put(
-            `https://back-tesis-lovat.vercel.app/arcana/imagen/updatePerfil/${userId.value}`,
-            datosAEnviar,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
-                },
+        try {
+            const respuesta = await axios.put(
+                `https://back-tesis-lovat.vercel.app/arcana/imagen/updatePerfil/${userId.value}`,
+                datosAEnviar,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (respuesta.status === 200) {
+                successMessage.value = 'Foto de perfil actualizada exitosamente!';
+                fetchUserData();
             }
-        );
-
-        if (respuesta.status === 200) {
-            successMessage.value = 'Foto de perfil actualizada exitosamente!';
-            fetchUserData();
+        } catch (error) {
+            console.error('Error al actualizar la foto de perfil:', error.response?.data || error.message);
+            errorMessage.value = 'Hubo un error al actualizar la foto de perfil.';
         }
-    } catch (error) {
-        console.error('Error al actualizar la foto de perfil:', error.response?.data || error.message);
-        errorMessage.value = 'Hubo un error al actualizar la foto de perfil.';
+    } else {
+        console.log('El usuario no seleccionó una nueva foto de perfil.');
     }
 };
 
@@ -126,34 +126,35 @@ const actualizarFotoPortada = async () => {
 
     if (fotoPortada.value) {
         datosAEnviar.append('file', fotoPortada.value);
-    } else {
-        errorMessage.value = 'No se ha seleccionado ninguna imagen.';
-        return;
-    }
 
-    try {
-        const respuesta = await axios.put(
-            `https://back-tesis-lovat.vercel.app/arcana/imagen/updatePortada/${userId.value}`,
-            datosAEnviar,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
-                },
+        try {
+            const respuesta = await axios.put(
+                `https://back-tesis-lovat.vercel.app/arcana/imagen/updatePortada/${userId.value}`,
+                datosAEnviar,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (respuesta.status === 200) {
+                successMessage.value = 'Foto de portada actualizada exitosamente!';
+                fetchUserData();
             }
-        );
-
-        if (respuesta.status === 200) {
-            successMessage.value = 'Foto de portada actualizada exitosamente!';
-            fetchUserData();
+        } catch (error) {
+            console.error('Error al actualizar la foto de portada:', error.response?.data || error.message);
+            errorMessage.value = 'Hubo un error al actualizar la foto de portada.';
         }
-    } catch (error) {
-        console.error('Error al actualizar la foto de portada:', error.response?.data || error.message);
-        errorMessage.value = 'Hubo un error al actualizar la foto de portada.';
+    } else {
+        console.log('El usuario no seleccionó una nueva foto de portada.');
     }
 };
 
 const actualizarDatosPerfil = async () => {
+    await actualizarFotoPerfil();
+    await actualizarFotoPortada();
     const token = localStorage.getItem('token');
     const datosAEnviar = {
         nombre: nombre.value,
@@ -178,23 +179,11 @@ const actualizarDatosPerfil = async () => {
             successMessage.value = 'Datos del perfil actualizados exitosamente!';
             fetchUserData();
 
-           
-            const userRole = respuesta.data.data.role; 
-
-          
-            if (userRole === 'guide') {
-                router.push({ name: 'GuiaPerfil', params: { id: userId.value } });
-            } else {
-                router.push({ name: 'Perfil', params: { id: userId.value } });
-            }
         }
     } catch (error) {
         console.error('Error al actualizar los datos del perfil:', error);
         errorMessage.value = 'Hubo un error al actualizar los datos del perfil.';
     }
-
-    actualizarFotoPerfil();
-    actualizarFotoPortada();
 };
 
 onMounted(() => {
@@ -227,6 +216,7 @@ onMounted(() => {
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4 text-center">Editar Perfil</h2>
         <div v-if="loading" class="text-center text-gray-500">Cargando...</div>
+        
         <form v-else @submit.prevent="actualizarDatosPerfil" enctype="multipart/form-data"
             class="bg-white p-6 shadow-md rounded-lg">
             <!-- Campos del formulario -->
