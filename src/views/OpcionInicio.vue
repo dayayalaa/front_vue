@@ -2,10 +2,10 @@
 import { ref } from 'vue';
 import IrAtras from '../components/IrAtras.vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
-import RegistroUsuario from './RegistroUsuario.vue';  // Importa el componente de registro de usuario
-import RegistroGuia from './RegistroGuia.vue';        // Importa el componente de registro de guía
+import RegistroUsuario from './RegistroUsuario.vue'; 
+import RegistroGuia from './RegistroGuia.vue';  
 
-const tipoRegistro = ref('usuario');  // Valor por defecto es 'usuario'
+const tipoRegistro = ref('usuario'); 
 </script>
 
 <template>

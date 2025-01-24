@@ -13,6 +13,7 @@ import IrAtras from '../components/IrAtras.vue';
 import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 const vuelos = ref([]);
+const vuelta = ref([]);
 const errorMensaje = ref('');
 const cargando = ref(true);
 const pasoActual = ref(1);
@@ -20,21 +21,46 @@ const pasoActual = ref(1);
 const departure_id = ref('');
 const arrival_id = ref('');
 
+const hoteles = ref([]);
+const numAdultos = ref(2);
+
 let departureTokenSeleccionado = "";
 
 const obtenerVueloDeVuelta = async (departureToken) => {
+  if (!departureToken) {
+    console.error('Token de ida no válido');
+    return;
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const departure_idCodificado = urlParams.get('departure_id');
+  const arrival_idCodificado = urlParams.get('arrival_id');
+  const outbound_dateCodificada = urlParams.get('outbound_date');
+  const return_dateCodificada = urlParams.get('return_date');
+
   try {
-    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/vuelos/buscar/vuelta', {
+    cargando.value = true;
+    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/vuelos/buscar/resultados', {
       params: {
         engine: 'google_flights',
         departure_token: departureToken,
+        departure_id: decodeURIComponent(departure_idCodificado),
+        arrival_id: decodeURIComponent(arrival_idCodificado),
+        outbound_date: outbound_dateCodificada,
+        return_date: return_dateCodificada,
       }
     });
 
-    console.log("Datos del vuelo de vuelta:", response.data);
-
+    if (response.data && response.data.length > 0) {
+      vuelta.value = response.data;
+    } else {
+      errorMensaje.value = 'No se encontraron vuelos de vuelta.';
+    }
   } catch (error) {
-    console.error('Error al obtener el vuelo de vuelta:', error);
+    console.error('Error al obtener vuelos de vuelta:', error);
+    errorMensaje.value = 'Hubo un error al obtener los vuelos de vuelta.';
+  } finally {
+    cargando.value = false;
   }
 };
 
@@ -60,6 +86,8 @@ const obtenerVuelos = async () => {
       }
     });
 
+    console.log('Vuelos de vuelta:', response.data);
+
     if (Array.isArray(response.data) && response.data.length > 0) {
       vuelos.value = response.data;
 
@@ -70,7 +98,7 @@ const obtenerVuelos = async () => {
       }
 
       response.data.forEach(vuelo => {
-        console.log("Departure Token:", vuelo.departure_token);
+        // console.log("Departure Token:", vuelo.departure_token);
       });
     } else {
       errorMensaje.value = 'No se encontraron vuelos.';
@@ -83,9 +111,69 @@ const obtenerVuelos = async () => {
   }
 };
 
-const stepClass = (step) => pasoActual.value === step ? 'text-blue-600' : 'text-gray-400';
+const obtenerHoteles = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const arrival_id = urlParams.get('arrival_id');
+  const check_in_date = urlParams.get('outbound_date');
+  const check_out_date = urlParams.get('return_date');
+  const adults = numAdultos.value;
 
-onMounted(obtenerVuelos);
+  if (!arrival_id || !check_in_date || !check_out_date || !adults) {
+    errorMensaje.value = 'Faltan parámetros requeridos para la búsqueda de hoteles.';
+    console.log('Error: Faltan parámetros requeridos.');
+    return;
+  }
+
+  const provincia = obtenerNombreAeropuerto(arrival_id);
+  console.log('Provincia obtenida:', provincia);
+
+  if (!provincia) {
+    errorMensaje.value = 'No se encontró la provincia correspondiente al código de aeropuerto.';
+    console.log('Error: Provincia no encontrada para el código de aeropuerto', arrival_id);
+    return;
+  }
+
+  try {
+    cargando.value = true;
+
+    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/hoteles', {
+      params: {
+        q: provincia,
+        check_in_date: check_in_date,
+        check_out_date: check_out_date,
+        adults: adults,
+      }
+    });
+
+    console.log('Respuesta de la API:', response.data);
+
+    if (response.status === 200 && response.data && response.data.hoteles && response.data.hoteles.length > 0) {
+      hoteles.value = response.data.hoteles;
+      console.log('Hoteles encontrados:', hoteles.value);
+    } else {
+      errorMensaje.value = 'No se encontraron hoteles disponibles.';
+      console.log('No se encontraron hoteles.');
+    }
+  } catch (error) {
+    console.error('Error al obtener hoteles:', error);
+    errorMensaje.value = 'Hubo un error al obtener los hoteles. Por favor, intente más tarde.';
+  } finally {
+    cargando.value = false;
+    console.log('Carga finalizada.');
+  }
+};
+
+const stepClass = (step) => pasoActual.value === step ? 'text-[#788B69]' : 'text-gray-400';
+
+onMounted(async () => {
+  try {
+    await obtenerVuelos();
+    await obtenerHoteles();
+  } catch (error) {
+    console.error("Error en la carga inicial:", error);
+    errorMensaje.value = 'Hubo un problema al cargar los datos. Intenta más tarde.';
+  }
+});
 
 const obtenerNombreAeropuerto = (codigo) => {
   const lugaresArgentinos = {
@@ -116,22 +204,49 @@ const obtenerNombreAeropuerto = (codigo) => {
   return aeropuerto || 'Desconocido';
 };
 
-const almacenarVuelo = (vuelo, tipo) => {
+const almacenar = (vuelo, tipo, departure_token, hoteles) => {
+  // vuelo de ida
   const vueloReserva = JSON.parse(localStorage.getItem('vueloReserva')) || {};
-
   vueloReserva[tipo] = vuelo;
-  localStorage.setItem('vueloReserva', JSON.stringify(vueloReserva));
-};
 
-const manejarReserva = (vuelo, tipo) => {
-  almacenarVuelo(vuelo, tipo);
+  // vuelo de vuelta
+  const vueltaReserva = JSON.parse(localStorage.getItem('vueltaReserva')) || {};
+  vueltaReserva[tipo] = departure_token;
+
+  // hotel
+  const hotelReserva = JSON.parse(localStorage.getItem('hotelReserva')) || {};
+  hotelReserva[tipo] = hoteles;
+
+  // Combinar los objetos en uno solo
+  const reservaTotal = {
+    vueloReserva,
+    vueltaReserva,
+    hotelReserva
+  };
+
+  // Guardar el objeto combinado en localStorage
+  localStorage.setItem('Reserva', JSON.stringify(reservaTotal));
+};
+const manejarReserva = (vuelo, tipo, departure_token, hoteles) => {
+  console.log("Vuelo de ida seleccionado:", vuelo);
+  console.log("Vuelo de vuelta seleccionado:", departure_token);
+  console.log("Hotel seleccionado:", hoteles);
+
+  // Ahora se pasa también el departure_token
+  almacenar(vuelo, tipo, departure_token, hoteles);
 
   if (tipo === 'ida') {
     pasoActual.value = 2;
+  } else if (tipo === 'vuelta') {
+    pasoActual.value = 3;
+  } else if (tipo === 'hoteles') {
+    pasoActual.value = 4;
   }
-};
-</script>
 
+  console.log("Paso actual:", pasoActual.value);
+};
+
+</script>
 
 <template>
   <IrAtras />
@@ -229,7 +344,7 @@ const manejarReserva = (vuelo, tipo) => {
               <!-- Precio y botón de reserva -->
               <div class="mt-4 flex justify-between items-center">
                 <span class="text-xl font-semibold text-green-600">${{ vuelo.price?.toLocaleString() }}</span>
-                <BotonPrincipal @click="manejarReserva(vuelo, 'ida')">Reservar</BotonPrincipal>
+                <BotonPrincipal @click="manejarReserva(vuelo, 'ida', departure_token)">Reservar</BotonPrincipal>
               </div>
             </div>
 
@@ -250,12 +365,12 @@ const manejarReserva = (vuelo, tipo) => {
         <p>{{ errorMensaje }}</p>
       </div>
 
-      <div v-else-if="vuelos.length > 0" class="mt-8">
+      <div v-else-if="vuelta.length > 0" class="mt-8">
         <TituloSecundario>Resultado de viajes de vuelta</TituloSecundario>
         <p><strong>Origen:</strong> {{ obtenerNombreAeropuerto(arrival_id) }}</p>
         <p><strong>Destino:</strong> {{ obtenerNombreAeropuerto(departure_id) }}</p>
 
-        <div v-for="vuelo in vuelos" :key="vuelo.price"
+        <div v-for="vuelo in vuelta" :key="vuelo.price"
           class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6">
           <div class="w-full mb-6">
             <div class="flex justify-between mb-6">
@@ -315,7 +430,7 @@ const manejarReserva = (vuelo, tipo) => {
                 <span class="text-xl font-semibold text-green-600">
                   ${{ vuelo.price?.toLocaleString() }}
                 </span>
-                <BotonPrincipal>Reservar</BotonPrincipal>
+                <BotonPrincipal @click="manejarReserva(vuelo, 'vuelta', departure_token)">Reservar</BotonPrincipal>
               </div>
             </div>
           </div>
@@ -326,12 +441,112 @@ const manejarReserva = (vuelo, tipo) => {
 
     <!-- Step 3: Hoteles -->
     <div v-if="pasoActual === 3" class="mb-6">
-      <!-- Mostrar opciones de hoteles aquí -->
+      <div class="mb-4 border-t-2 border-b-2 border-[#788B69]">
+        <div class="flex items-center justify-center space-x-4 mt-4 mb-4">
+          <label for="adults" class="block text-sm font-medium text-gray-700">
+            <i class="fas fa-user text-[#3C4A28] text-2xl"></i>
+          </label>
+          <input id="adults" v-model="numAdultos" type="number" min="1" max="10"
+            class="w-[70px] text-center h-10 rounded-md border-gray-300 shadow-sm appearance-none" placeholder="0" />
+
+            <button @click="obtenerHoteles" class="h-10 px-4 py-2 bg-[#3C4A28] text-white rounded-md">
+        Buscar Hoteles
+      </button>
+        </div>
+      </div>
+
+      <div v-if="cargando" class="flex justify-center">
+        <SpinnerCarga />
+      </div>
+
+      <div v-else-if="errorMensaje" class="text-red-500">
+        <p>{{ errorMensaje }}</p>
+      </div>
+
+      <div v-else-if="hoteles.length > 0" class="mt-8">
+        <TituloSecundario>Hoteles Disponibles</TituloSecundario>
+        <div v-for="hotel in hoteles" :key="hotel.name"
+          class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6">
+          <!-- Imagen del hotel -->
+          <img :src="hotel.images && hotel.images.length > 0 ? hotel.images[0].original_image : 'ruta-a-imagen-de-respaldo.jpg'"
+            alt="Imagen de {{ hotel.name }}" class="w-full h-auto object-cover rounded-md mb-4" />
+
+          <!-- Nombre del hotel -->
+          <h3 class="font-bold text-lg">{{ hotel.name }}</h3>
+
+          <!-- Amenidades -->
+          <p><strong>Amenidades:</strong>
+            {{ hotel.amenities && hotel.amenities.length > 0 ? hotel.amenities.join(', ') : 'No disponibles' }}
+          </p>
+
+          <!-- Precio -->
+          <p><strong>Precio:</strong> {{ hotel.total_rate.before_taxes_fees }}</p>
+
+          <!-- Botón de reserva -->
+          <BotonPrincipal @click="manejarReserva(hoteles, 'hoteles')">Reservar</BotonPrincipal>
+        </div>
+      </div>
     </div>
 
+
+
+
     <!-- Step 4: Selección -->
-    <div v-if="pasoActual === 4" class="mb-6">
-      <!-- Opciones de selección para el usuario -->
+<div v-if="pasoActual === 4" class="mb-6">
+  <div v-if="cargando" class="flex justify-center">
+    <SpinnerCarga />
+  </div>
+
+  <div v-else-if="errorMensaje" class="text-red-500">
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <div v-else>
+    <TituloSecundario>Mis Reservas</TituloSecundario>
+    
+    <!-- Obtener reservas del localStorage -->
+    <div v-if="reservas.length > 0" class="space-y-6">
+      <div v-for="(reserva, index) in reservas" :key="index" class="bg-white border border-gray-200 rounded-lg shadow-md p-6">
+        
+        <!-- Vuelo de ida -->
+        <div v-if="reserva.ida" class="mb-6">
+          <p><strong>Vuelo de Ida:</strong></p>
+          <p><strong>Origen:</strong> {{ obtenerNombreAeropuerto(reserva.ida.departure_id) }}</p>
+          <p><strong>Destino:</strong> {{ obtenerNombreAeropuerto(reserva.ida.arrival_id) }}</p>
+          <p><strong>Aerolínea:</strong> {{ reserva.ida.airline }}</p>
+          <p><strong>Número de vuelo:</strong> {{ reserva.ida.flight_number }}</p>
+          <p><strong>Precio:</strong> ${{ reserva.ida.price.toLocaleString() }}</p>
+        </div>
+
+        <!-- Vuelo de vuelta -->
+        <div v-if="reserva.vuelta" class="mb-6">
+          <p><strong>Vuelo de Vuelta:</strong></p>
+          <p><strong>Origen:</strong> {{ obtenerNombreAeropuerto(reserva.vuelta.departure_id) }}</p>
+          <p><strong>Destino:</strong> {{ obtenerNombreAeropuerto(reserva.vuelta.arrival_id) }}</p>
+          <p><strong>Aerolínea:</strong> {{ reserva.vuelta.airline }}</p>
+          <p><strong>Número de vuelo:</strong> {{ reserva.vuelta.flight_number }}</p>
+          <p><strong>Precio:</strong> ${{ reserva.vuelta.price.toLocaleString() }}</p>
+        </div>
+
+        <!-- Hoteles -->
+        <div v-if="reserva.hoteles && reserva.hoteles.length > 0" class="mb-6">
+          <p><strong>Hoteles:</strong></p>
+          <div v-for="(hotel, i) in reserva.hoteles" :key="i" class="border-b border-gray-300 pb-4">
+            <p><strong>Hotel:</strong> {{ hotel.name }}</p>
+            <p><strong>Dirección:</strong> {{ hotel.address }}</p>
+            <p><strong>Precio por noche:</strong> ${{ hotel.price.toLocaleString() }}</p>
+          </div>
+        </div>
+        
+      </div>
     </div>
+    
+    <!-- Mensaje si no hay reservas -->
+    <div v-else>
+      <p>No tienes reservas realizadas aún.</p>
+    </div>
+  </div>
+</div>
+
   </div>
 </template>
