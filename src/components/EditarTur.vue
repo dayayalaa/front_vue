@@ -24,18 +24,6 @@ const loading = ref(true);
 const fotoArchivo = ref(null);
 const fechaTemp = ref('');
 
-const fetchTour = async () => {
-  try {
-    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`);
-    Object.assign(tur, response.data);
-    fotoPreview.value = tur.fotoPortada;
-  } catch (error) {
-    console.error('Error al obtener el tour:', error);
-  } finally {
-    loading.value = false;
-  }
-};
-
 const provincias = [
   'Buenos Aires', 'Córdoba', 'Mendoza', 'Mar del Plata', 'Ushuaia',
   'Bariloche', 'Salta', 'Rosario', 'Tucumán', 'Iguazú', 'Neuquén',
@@ -44,13 +32,25 @@ const provincias = [
   'Tremedal', 'General Roca'
 ];
 
+const fetchTour = async () => {
+  try {
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`);
+    Object.assign(tur, response.data);
+    fotoPreview.value = tur.fotoPortada; // Cargar la foto de portada actual
+  } catch (error) {
+    console.error('Error al obtener el tour:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     fotoArchivo.value = file;
     const reader = new FileReader();
     reader.onload = (e) => {
-      fotoPreview.value = e.target.result;
+      fotoPreview.value = e.target.result; // Mostrar vista previa de la nueva imagen
     };
     reader.readAsDataURL(file);
   }
@@ -59,7 +59,7 @@ const handleFileChange = (event) => {
 const agregarFecha = () => {
   if (fechaTemp.value) {
     tur.fechasDisponibles.push(fechaTemp.value);
-    fechaTemp.value = '';
+    fechaTemp.value = ''; // Limpiar el campo de fecha temporal
   }
 };
 
@@ -69,45 +69,12 @@ const eliminarFecha = (index) => {
 
 const updateTour = async () => {
   try {
-    const formData = new FormData();
-
     if (fotoArchivo.value) {
-      formData.append('fotoPortada', fotoArchivo.value);
-    }
+      const formData = new FormData();
+      formData.append('file', fotoArchivo.value);
 
-    const tourData = {
-      titulo: tur.titulo,
-      descripcion: tur.descripcion,
-      precio: tur.precio,
-      provincia: tur.provincia,
-      duracion: tur.duracion,
-      fechasDisponibles: tur.fechasDisponibles,
-      politicaCancelacion: tur.politicaCancelacion,
-    };
-
-    if (fotoArchivo.value) {
-      for (const key in tourData) {
-        formData.append(key, tourData[key]);
-      }
-    } else {
-      const response = await axios.put(
-        `https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`,
-        tourData,
-        {
-          headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      if (response.status === 200) {
-        router.push(`/vistaTur/${turId}`);
-      }
-    }
-
-    if (fotoArchivo.value) {
-      const response = await axios.put(
-        `https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`,
+      const fotoResponse = await axios.put(
+        `https://back-tesis-lovat.vercel.app/arcana/imagen/updateTourPortada/${turId}`,
         formData,
         {
           headers: {
@@ -116,18 +83,50 @@ const updateTour = async () => {
           },
         }
       );
-      if (response.status === 200) {
-        router.push(`/vistaTur/${turId}`);
+
+      if (fotoResponse.data && fotoResponse.data.secure_url) {
+        console.log('URL de la imagen recibida:', fotoResponse.data.secure_url);
+        tur.fotoPortada = fotoResponse.data.secure_url;
+        fotoPreview.value = fotoResponse.data.secure_url;
+      } else {
+        console.error('No se recibió la URL de la imagen en la respuesta.');
       }
     }
 
+    const response = await axios.put(
+      `https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`,
+      {
+        titulo: tur.titulo,
+        descripcion: tur.descripcion,
+        precio: tur.precio,
+        provincia: tur.provincia,
+        duracion: tur.duracion,
+        fechasDisponibles: tur.fechasDisponibles,
+        politicaCancelacion: tur.politicaCancelacion,
+        fotoPortada: tur.fotoPortada,
+      },
+      {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      router.push(`/vistaTur/${turId}`);
+    }
   } catch (error) {
     console.error('Error al actualizar el tour:', error);
+    if (error.response) {
+      console.error('Respuesta del servidor:', error.response.data);
+    } else if (error.request) {
+      console.error('No se recibió respuesta del servidor:', error.request);
+    } else {
+      console.error('Error al configurar la solicitud:', error.message);
+    }
   }
 };
-
-
-
 
 onMounted(() => {
   fetchTour();
@@ -149,8 +148,7 @@ onMounted(() => {
 
       <div>
         <label for="descripcion" class="block font-medium">Descripción</label>
-        <textarea id="descripcion" v-model="tur.descripcion" class="w-full p-2 border rounded" rows="4"
-          required></textarea>
+        <textarea id="descripcion" v-model="tur.descripcion" class="w-full p-2 border rounded" rows="4" required></textarea>
       </div>
 
       <div>
@@ -168,29 +166,23 @@ onMounted(() => {
         </select>
       </div>
 
-
       <div>
         <label for="duracion" class="block font-medium">Duración</label>
-        <input id="duracion" v-model="tur.duracion" type="text" class="w-full p-2 border rounded"
-          placeholder="Ejemplo: 2 horas 30 minutos" required />
+        <input id="duracion" v-model="tur.duracion" type="text" class="w-full p-2 border rounded" placeholder="Ejemplo: 2 horas 30 minutos" required />
       </div>
 
       <div>
         <label for="fechas" class="block font-medium">Fechas Disponibles</label>
         <div class="flex items-center space-x-2">
-          <input type="date" v-model="fechaTemp"
-            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-          <button type="button" @click="agregarFecha"
-            class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none">
+          <input type="date" v-model="fechaTemp" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+          <button type="button" @click="agregarFecha" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none">
             Agregar
           </button>
         </div>
         <ul class="mt-2 space-y-1">
-          <li v-for="(fecha, index) in tur.fechasDisponibles" :key="index"
-            class="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md">
+          <li v-for="(fecha, index) in tur.fechasDisponibles" :key="index" class="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md">
             {{ fecha }}
-            <button type="button" @click="eliminarFecha(index)"
-              class="text-red-500 hover:text-red-700 focus:outline-none">
+            <button type="button" @click="eliminarFecha(index)" class="text-red-500 hover:text-red-700 focus:outline-none">
               Eliminar
             </button>
           </li>
@@ -199,8 +191,7 @@ onMounted(() => {
 
       <div>
         <label for="fotoPortada" class="block font-medium">Foto de Portada</label>
-        <input id="fotoPortada" type="file" @change="handleFileChange" class="w-full p-2 border rounded"
-          accept="image/*" />
+        <input id="fotoPortada" type="file" @change="handleFileChange" class="w-full p-2 border rounded" accept="image/*" />
         <div v-if="fotoPreview" class="mt-4">
           <p class="font-medium">Vista previa:</p>
           <img :src="fotoPreview" alt="Foto de portada" class="w-full h-32 object-cover rounded border" />

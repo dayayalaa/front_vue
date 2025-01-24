@@ -88,7 +88,6 @@ const provincias = [
     'Tremedal', 'General Roca',
 ];
 
-// Función para actualizar los datos del perfil (sin imágenes)
 const actualizarDatosPerfil = async () => {
     const token = localStorage.getItem('token');
     const datosAEnviar = {
@@ -112,7 +111,17 @@ const actualizarDatosPerfil = async () => {
 
         if (respuesta.status === 200) {
             successMessage.value = 'Datos del perfil actualizados exitosamente!';
-            fetchUserData(); // Refresca los datos del usuario
+            fetchUserData();
+
+           
+            const userRole = respuesta.data.data.role; 
+
+          
+            if (userRole === 'guide') {
+                router.push({ name: 'GuiaPerfil', params: { id: userId.value } });
+            } else {
+                router.push({ name: 'Perfil', params: { id: userId.value } });
+            }
         }
     } catch (error) {
         console.error('Error al actualizar los datos del perfil:', error);
@@ -120,7 +129,6 @@ const actualizarDatosPerfil = async () => {
     }
 };
 
-// Función para actualizar la foto de perfil
 
 const actualizarFotoPerfil = async () => {
     const token = localStorage.getItem('token');
@@ -158,12 +166,11 @@ const actualizarFotoPortada = async () => {
     const token = localStorage.getItem('token');
     const datosAEnviar = new FormData();
 
-    // Agregar foto de portada si existe
     if (fotoPortada.value) {
-        datosAEnviar.append('file', fotoPortada.value); // Asegúrate de que el campo sea 'file'
+        datosAEnviar.append('file', fotoPortada.value);
     } else {
         errorMessage.value = 'No se ha seleccionado ninguna imagen.';
-        return; // Detener la función si no hay archivo
+        return;
     }
 
     try {
@@ -180,7 +187,7 @@ const actualizarFotoPortada = async () => {
 
         if (respuesta.status === 200) {
             successMessage.value = 'Foto de portada actualizada exitosamente!';
-            fetchUserData(); // Refresca los datos del usuario
+            fetchUserData();
         }
     } catch (error) {
         console.error('Error al actualizar la foto de portada:', error.response?.data || error.message);
@@ -291,7 +298,6 @@ onMounted(() => {
                     Actualizar Foto de Portada
                 </button>
             </div>
-
 
             <!-- Contraseña y Confirmar Contraseña -->
             <div class="mb-4">

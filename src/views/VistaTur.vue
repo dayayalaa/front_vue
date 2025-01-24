@@ -66,13 +66,12 @@ onMounted(async () => {
     console.error('Error al obtener el tour o guía:', error);
   }
 });
-
 </script>
 
 <template>
   <div class="max-w-4xl mx-auto">
     <div class="relative mb-4">
-      <img :src="tour.fotoPortada" :alt="'Foto del tour ' + tour.titulo" class="w-full object-contain" />
+      <img :src="tour.fotoPortada" :alt="'Foto del tour ' + tour.titulo" class="w-full h-64 object-cover" />
       <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#fcf9f4] to-transparent opacity-75 h-1/3"></div>
       <IrAtras class="absolute top-0" />
       <h2 class="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-4xl text-[#3C4A28]">
