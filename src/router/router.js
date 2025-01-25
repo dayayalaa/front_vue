@@ -20,6 +20,7 @@ import VistaTur from "../views/VistaTur.vue";
 import EditarTur from "../components/EditarTur.vue";
 import Ajustes from "../components/Ajustes.vue";
 import Pago from "../components/PagoVista.vue";
+import ProvinciaVista from "../components/ProvinciaVista.vue";
 
 import pruebaAPI from "../components/pruebaAPI.vue";
 
@@ -45,6 +46,7 @@ const routes = [
   { path: "/editarTur/:id",      name: "editarTur",         component: EditarTur},
   { path: "/ajustes",            name: "ajustes",           component: Ajustes,           meta: { requiresAuth: true }},
   { path: "/pago",               name: "pago",              component: Pago,              meta: { requiresAuth: true }},
+  { path: "/provinciaVista:id",     name: "provinciaVista",    component: ProvinciaVista,    meta: { requiresAuth: true }},
 
   { path: "/prueba",            name: "prueba",           component: pruebaAPI},
 ];

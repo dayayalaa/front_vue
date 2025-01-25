@@ -14,10 +14,10 @@ const tipoRegistro = ref('usuario');
   
   <div class="flex flex-col max-w-md mx-auto p-6 bg-white shadow-md rounded-md">
     <form>
-      <!-- Selector de tipo de registro -->
+    
       <div class="flex flex-col max-w-md mx-auto p-6 bg-white shadow-md rounded-md">
   <form>
-    <!-- Selector de tipo de registro -->
+    
     <div class="flex space-x-4 mb-6">
   <button
     :class="{'bg-[#3C4A28] text-white border-2 border-[#2a4b1a]': tipoRegistro === 'usuario', 'bg-[#3C4A28] bg-opacity-50 text-white': tipoRegistro !== 'usuario'}"
@@ -37,7 +37,7 @@ const tipoRegistro = ref('usuario');
 
   </form>
 </div>
-      <!-- Mostrar el formulario correspondiente -->
+      
       <div v-if="tipoRegistro === 'usuario'">
         <RegistroUsuario />
       </div>
