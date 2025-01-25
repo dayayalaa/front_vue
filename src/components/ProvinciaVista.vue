@@ -1,45 +1,93 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
+import IrAtras from "./IrAtras.vue";
 
 const route = useRoute();
-const lugar = ref(null);
-const cargando = ref(true);
+const lugares = ref([]);
+const loading = ref(true);
+const error = ref(false);
 
-const lugarId = route.params.id;
+const provinciaNombre = route.params.id.toLowerCase().trim();
+console.log("Nombre de la provincia:", provinciaNombre);
 
 onMounted(async () => {
   try {
-    const response = await fetch(
-      `https://back-tesis-lovat.vercel.app/arcana/destino/provincia${provincia}`
+    const response = await axios.get(
+      "https://back-tesis-lovat.vercel.app/arcana/destino/provincia",
+      {
+        params: { provincia: provinciaNombre },
+      }
     );
-    if (!response.ok) {
-      throw new Error('Error al obtener los detalles del lugar');
+
+    console.log("Respuesta completa:", response);
+
+    if (response.data) {
+      console.log("Lugar obtenido:", response.data);
+      lugares.value = [response.data];
+    } else {
+      console.log("No se encontraron lugares para la provincia ingresada.");
+      error.value = true;
     }
-    const data = await response.json();
-    lugar.value = data;
   } catch (err) {
-    console.error("Error:", err);
+    if (err.response) {
+      console.error("Error de respuesta:", err.response.data);
+      console.error("Código de estado:", err.response.status);
+    } else if (err.request) {
+      console.error("No se recibió respuesta del servidor");
+    } else {
+      console.error("Error:", err.message);
+    }
+    error.value = true;
   } finally {
-    cargando.value = false;
+    loading.value = false;
   }
 });
 </script>
 
 <template>
-  <div class="p-6 max-w-4xl mx-auto">
-    <div v-if="cargando" class="text-center">Cargando...</div>
-    <div v-else-if="lugar" class="bg-white rounded-lg shadow-lg p-6">
-      <h1 class="text-2xl font-semibold mb-4">{{ provincia.nombre }}</h1>
-      <img 
-        v-if="lugar.imagen"
-        :src="lugar.imagen"
-        :alt="lugar.nombre"
-        class="w-full h-64 object-cover rounded-lg mb-4"
-      />
-      <p class="text-gray-700">{{ lugar.descripcion }}</p>
-      <p class="text-sm text-gray-500 mt-2">{{ lugar.ubicacion }}</p>
+    <IrAtras/>
+  <div class="max-w-4xl mx-auto p-6">
+    <div v-if="loading" class="text-center text-gray-500">Cargando...</div>
+
+    <div v-else-if="error" class="text-center text-red-500 font-semibold">
+      No se encontraron lugares para la provincia ingresada.
     </div>
-    <div v-else class="text-center text-red-500">No se encontró la provincia.</div>
+
+    <div v-else v-for="lugar in lugares" :key="lugar.place_id" class="mb-8 p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transition">
+      <h3 class="text-2xl font-semibold text-green-600">{{ lugar.title }}</h3>
+      <p class="text-sm text-gray-600 mt-2">{{ lugar.address }}</p>
+
+      <div class="mt-4">
+        <img :src="lugar.thumbnail" alt="Imagen del lugar" class="rounded-lg shadow-sm w-full h-auto" />
+      </div>
+
+      <p v-if="lugar.description && lugar.description.snippet" class="mt-4 text-gray-700">
+        <strong class="text-green-600">Descripción:</strong> {{ lugar.description.snippet }}
+      </p>
+
+      <div class="mt-4 space-x-4">
+        <a :href="lugar.website" target="_blank" class="text-blue-500 hover:underline">Visitar página oficial</a>
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+button {
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2c6f39;
+}
+
+h3 {
+  color: #2f855a;
+}
+
+p {
+  color: #4a5568;
+}
+</style>

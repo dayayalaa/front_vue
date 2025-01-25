@@ -46,9 +46,9 @@ const routes = [
   { path: "/editarTur/:id",      name: "editarTur",         component: EditarTur},
   { path: "/ajustes",            name: "ajustes",           component: Ajustes,           meta: { requiresAuth: true }},
   { path: "/pago",               name: "pago",              component: Pago,              meta: { requiresAuth: true }},
-  { path: "/provinciaVista:id",     name: "provinciaVista",    component: ProvinciaVista,    meta: { requiresAuth: true }},
+  { path: "/provinciaVista/:id",  name: "provinciaVista",    component: ProvinciaVista,    meta: { requiresAuth: true }},
 
-  { path: "/prueba",            name: "prueba",           component: pruebaAPI},
+  { path: "/prueba",             sdname: "prueba",           component: pruebaAPI},
 ];
 
 const router = createRouter({
