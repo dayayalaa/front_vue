@@ -23,6 +23,7 @@ import Pago from "../components/PagoVista.vue";
 import ProvinciaVista from "../components/ProvinciaVista.vue";
 
 import pruebaAPI from "../components/pruebaAPI.vue";
+import MiReservasUsuario from "../components/MiReservasUsuario.vue";
 
 const routes = [
   { path: "/",                   name: "Home",              component: HomeView,          meta: { requiresAuth: true } },
@@ -39,7 +40,7 @@ const routes = [
   { path: "/hoteles",            name: "opcionesHoteles",   component: HotelesVista,      meta: { requiresAuth: true }},
   { path: "/login",              name: "login",             component: InicioSesion},
   { path: "/opcion",             name: "opcion",            component: OpcionInicio,      meta: { publicRoutes: true }},
-  { path: "/registroUsuario",    name: "registroUsuario",   component: RegistroUsuario,          meta: { publicRoutes: true }},
+  { path: "/registroUsuario",    name: "registroUsuario",   component: RegistroUsuario,   meta: { publicRoutes: true }},
   { path: "/registroGuia",       name: "registroGuia",      component: RegistroGuia,      meta: { publicRoutes: true }},
   { path: "/crearTur",           name: "crearTur",          component: CraerTur},
   { path: "/vistaTur/:id",       name: "vistaTur",          component: VistaTur},
@@ -48,7 +49,9 @@ const routes = [
   { path: "/pago",               name: "pago",              component: Pago,              meta: { requiresAuth: true }},
   { path: "/provinciaVista/:id",  name: "provinciaVista",    component: ProvinciaVista,    meta: { requiresAuth: true }},
 
-  { path: "/prueba",             sdname: "prueba",           component: pruebaAPI},
+  { path: "/prueba",             name: "prueba",           component: pruebaAPI},
+  { path: "/misreservas",             name: "misReservas", component: MiReservasUsuario  },
+
 ];
 
 const router = createRouter({
