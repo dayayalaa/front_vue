@@ -50,7 +50,7 @@ const routes = [
   { path: "/provinciaVista/:id",  name: "provinciaVista",    component: ProvinciaVista,    meta: { requiresAuth: true }},
 
   { path: "/prueba",             name: "prueba",           component: pruebaAPI},
-  { path: "/misreservas",             name: "misReservas", component: MiReservasUsuario  },
+  { path: "/misreservas",        name: "misReservas", component: MiReservasUsuario,  meta: { requiresAuth: true }  },
 
 ];
 

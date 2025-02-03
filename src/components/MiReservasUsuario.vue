@@ -1,7 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import IrAtras from '../components/IrAtras.vue'; 
+import TituloSecundario from '../components/TituloSecundario.vue'; 
+import TituloTerciario from '../components/TituloTerciario.vue'; 
 
 const userName = ref('');
 const userProfileImage = ref('');
@@ -11,11 +14,12 @@ const email = ref('');
 const provincia = ref('');
 const telefono = ref('');
 const userId = ref('');
-const reservas = ref([]);
+const reservas = ref([]); 
 const loading = ref(true);
 
 const router = useRouter();
 
+// Obtener datos del usuario
 const fetchUserData = async () => {
   try {
     const response = await fetch(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, {
@@ -47,6 +51,7 @@ const fetchUserData = async () => {
   }
 };
 
+// Obtener las reservas asociadas a los tours del guía
 const obtenerReservas = async (idGuia) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/segunGuia?id=${idGuia}`, {
@@ -54,12 +59,14 @@ const obtenerReservas = async (idGuia) => {
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
     });
-    reservas.value = response.data;
+    reservas.value = response.data; // Guardar las reservas
+    console.log('Reservas obtenidas:', reservas.value); // Depuración
   } catch (error) {
     console.error('Error al obtener las reservas:', error);
   }
 };
 
+// Decodificar el token JWT
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split('.')[1];
@@ -78,15 +85,30 @@ const decodeJWT = (token) => {
   }
 };
 
+// Verificar si el usuario es un guía
 const verificarRolGuia = (decodedToken) => {
-  // Asegúrate de que el rol sea 'guide' (o el valor correcto que uses)
-  if (decodedToken.role !== 'guide') {
+  if (decodedToken.rols !== 'guia') { // Cambia 'role' por 'rols' y 'guide' por 'guia'
     console.log('Usuario no es guía. Redirigiendo...'); // Depuración
     router.push('/'); // Redirige si no es guía
     return false;
   }
   return true;
 };
+
+// Agrupar reservas por tour
+const reservasPorTour = computed(() => {
+  const grupos = {};
+  reservas.value.data.forEach((reserva) => { // Accede a reservas.value.data
+    if (!grupos[reserva.tour._id]) {
+      grupos[reserva.tour._id] = {
+        tour: reserva.tour,
+        reservas: [],
+      };
+    }
+    grupos[reserva.tour._id].reservas.push(reserva);
+  });
+  return Object.values(grupos);
+});
 
 onMounted(async () => {
   const token = localStorage.getItem('token');
@@ -102,7 +124,7 @@ onMounted(async () => {
 
       userId.value = decodedToken.userId;
       await fetchUserData();
-      await obtenerReservas(userId.value);
+      await obtenerReservas(userId.value); // Obtener las reservas del guía
     }
   } else {
     loading.value = false;
@@ -110,6 +132,7 @@ onMounted(async () => {
   }
 });
 </script>
+
 <template>
   <IrAtras />
   <div class="max-w-4xl mx-auto p-4 mb-20">
@@ -140,29 +163,42 @@ onMounted(async () => {
       <p v-if="provincia" class="text-gray-700 font-medium mt-1">{{ provincia }}</p>
     </div>
 
-    <!-- Lista de Reservas -->
-    <div v-if="reservas.length > 0" class="mt-8">
+    <!-- Lista de Reservas por Tour -->
+    <div v-if="reservasPorTour.length > 0" class="mt-8">
       <TituloSecundario class="text-xl font-semibold text-gray-800 mb-4">
         Reservas de tus Tours
       </TituloSecundario>
       <ul class="space-y-4">
         <li
-          v-for="reserva in reservas"
-          :key="reserva._id"
+          v-for="grupo in reservasPorTour"
+          :key="grupo.tour._id"
           class="bg-white p-4 rounded-lg shadow-md border border-gray-200"
         >
           <div class="flex flex-col">
             <div class="flex-1 mb-4">
-              <strong class="text-lg text-gray-800">{{ reserva.tour.titulo }}</strong>
-              <p class="text-gray-600 text-sm mt-1">{{ reserva.tour.descripcion }}</p>
+              <strong class="text-lg text-gray-800">{{ grupo.tour.titulo }}</strong>
+              <p class="text-gray-600 text-sm mt-1">{{ grupo.tour.descripcion }}</p>
             </div>
-            <div class="text-gray-600 text-sm">
-              <p><strong>Reservado por:</strong> {{ reserva.usuario.nombre }}</p>
-              <p><strong>Email:</strong> {{ reserva.usuario.email }}</p>
-              <p><strong>Teléfono:</strong> {{ reserva.usuario.telefono }}</p>
-              <p><strong>Fecha de reserva:</strong> {{ reserva.fechaReserva }}</p>
-              <p><strong>Personas:</strong> {{ reserva.cantidadPersonas }}</p>
-              <p><strong>Estado:</strong> {{ reserva.estado }}</p>
+
+            <!-- Lista de reservas para este tour -->
+            <div v-if="grupo.reservas.length > 0" class="mt-4">
+              <TituloTerciario class="text-lg text-gray-700 font-semibold">
+                Reservas
+              </TituloTerciario>
+              <ul class="space-y-2 mt-2">
+                <li
+                  v-for="reserva in grupo.reservas"
+                  :key="reserva._id"
+                  class="bg-gray-50 p-3 rounded-lg"
+                >
+                  <p><strong>Reservado por:</strong> {{ reserva.usuario.nombre }}</p>
+                  <p><strong>Email:</strong> {{ reserva.usuario.email }}</p>
+                  <p><strong>Teléfono:</strong> {{ reserva.usuario.telefono }}</p>
+                  <p><strong>Fecha de reserva:</strong> {{ reserva.fechaReserva }}</p>
+                  <p><strong>Personas:</strong> {{ reserva.cantidadPersonas }}</p>
+                  <p><strong>Estado:</strong> {{ reserva.estado }}</p>
+                </li>
+              </ul>
             </div>
           </div>
         </li>
