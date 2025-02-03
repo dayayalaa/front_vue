@@ -4,8 +4,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import IrAtras from '../components/IrAtras.vue'; 
 import TituloSecundario from '../components/TituloSecundario.vue'; 
-import TituloTerciario from '../components/TituloTerciario.vue'; 
-
+import TituloTerciario from '../components/TituloTerciario.vue';
 const userName = ref('');
 const userProfileImage = ref('');
 const userCoverImage = ref('');
@@ -54,12 +53,13 @@ const fetchUserData = async () => {
 // Obtener las reservas asociadas a los tours del guía
 const obtenerReservas = async (idGuia) => {
   try {
-    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/segunGuia?id=${idGuia}`, {
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservasTour/tours`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
     });
-    reservas.value = response.data; // Guardar las reservas
+    // Filtrar las reservas por el ID del guía
+    reservas.value = response.data.data.filter((reserva) => reserva.tourId.guia === idGuia);
     console.log('Reservas obtenidas:', reservas.value); // Depuración
   } catch (error) {
     console.error('Error al obtener las reservas:', error);
@@ -98,15 +98,17 @@ const verificarRolGuia = (decodedToken) => {
 // Agrupar reservas por tour
 const reservasPorTour = computed(() => {
   const grupos = {};
-  reservas.value.data.forEach((reserva) => { // Accede a reservas.value.data
-    if (!grupos[reserva.tour._id]) {
-      grupos[reserva.tour._id] = {
-        tour: reserva.tour,
-        reservas: [],
-      };
-    }
-    grupos[reserva.tour._id].reservas.push(reserva);
-  });
+  if (reservas.value && Array.isArray(reservas.value)) {
+    reservas.value.forEach((reserva) => {
+      if (!grupos[reserva.tourId._id]) {
+        grupos[reserva.tourId._id] = {
+          tour: reserva.tourId,
+          reservas: [],
+        };
+      }
+      grupos[reserva.tourId._id].reservas.push(reserva);
+    });
+  }
   return Object.values(grupos);
 });
 
