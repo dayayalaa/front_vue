@@ -60,7 +60,7 @@ const obtenerReservas = async (idGuia) => {
     });
     // Filtrar las reservas por el ID del guía
     reservas.value = response.data.data.filter((reserva) => reserva.tourId.guia === idGuia);
-    console.log('Reservas obtenidas:', reservas.value); // Depuración
+    console.log('Reservas obtenidas:', reservas.value);
   } catch (error) {
     console.error('Error al obtener las reservas:', error);
   }
@@ -77,7 +77,7 @@ const decodeJWT = (token) => {
       .join('');
 
     const decodedToken = JSON.parse(decodeURIComponent(jsonPayload));
-    console.log('Token decodificado:', decodedToken); // Depuración
+    console.log('Token decodificado:', decodedToken); 
     return decodedToken;
   } catch (error) {
     console.error('Error decodificando el token:', error);
@@ -87,9 +87,9 @@ const decodeJWT = (token) => {
 
 // Verificar si el usuario es un guía
 const verificarRolGuia = (decodedToken) => {
-  if (decodedToken.rols !== 'guia') { // Cambia 'role' por 'rols' y 'guide' por 'guia'
-    console.log('Usuario no es guía. Redirigiendo...'); // Depuración
-    router.push('/'); // Redirige si no es guía
+  if (decodedToken.rols !== 'guia') { 
+    console.log('Usuario no es guía. Redirigiendo...'); 
+    router.push('/'); 
     return false;
   }
   return true;
@@ -119,18 +119,18 @@ onMounted(async () => {
     const decodedToken = decodeJWT(token);
 
     if (decodedToken && decodedToken.userId) {
-      // Verifica si el usuario es un guía
+      
       if (!verificarRolGuia(decodedToken)) {
-        return; // Detiene la ejecución si no es guía
+        return;
       }
 
       userId.value = decodedToken.userId;
       await fetchUserData();
-      await obtenerReservas(userId.value); // Obtener las reservas del guía
+      await obtenerReservas(userId.value);
     }
   } else {
     loading.value = false;
-    router.push('/login'); // Redirige al login si no hay token
+    router.push('/login'); 
   }
 });
 </script>
