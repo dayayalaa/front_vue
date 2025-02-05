@@ -30,7 +30,6 @@ const getIndex = (link) => {
   return -1;
 };
 
-// Función para decodificar el JWT
 const decodeJWT = (token) => {
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -55,18 +54,12 @@ onMounted(() => {
       const decodedToken = decodeJWT(token);
       userId.value = decodedToken.userId;
       userRole.value = decodedToken.rols;  
-      // console.log('User ID:', userId.value);
-      if (userRole.value === 'guia') {
-        activeLink.value = `/perfil/guia/${userId.value}`;
-      } else {
-        activeLink.value = `/perfil/${userId.value}`;
-      }
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
-  }
-
-  setActive(activeLink.value);
+  } 
+  
+  setActive('/');
 });
 </script>
 
@@ -118,10 +111,3 @@ onMounted(() => {
     </div>
   </nav>
 </template>
-
-<style>
-li {
-  flex: 1; 
-  min-width: 100px; 
-}
-</style>
