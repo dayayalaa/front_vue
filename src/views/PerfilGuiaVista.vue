@@ -211,8 +211,7 @@ const eliminarTour = async (tourId) => {
     </li>
   </ul>
 </div>
-
-  </div>
+</div>
 </template>
 
 

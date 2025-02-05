@@ -5,7 +5,12 @@ import axios from "axios";
 import IrAtras from '../components/IrAtras.vue';
 import TituloTerciario from "../components/TituloTerciario.vue";
 
-const user = ref(null);
+// Simulación de usuario autenticado
+const user = ref({
+  _id: "676ee0ee1b4bbdb2a9ba223b", // ID del usuario (simulado)
+  role: "user", // Rol del usuario
+});
+
 const isUser = computed(() => user.value?.role === 'user');
 
 const tour = ref({
@@ -21,6 +26,13 @@ const tour = ref({
 });
 
 const route = useRoute();
+const cantidadPersonas = ref(1); // Cantidad de personas (valor inicial: 1)
+const reservaExitosa = ref(false); // Estado para mostrar la notificación
+
+// Calcular el costo total
+const costoTotal = computed(() => {
+  return tour.value.precio * cantidadPersonas.value;
+});
 
 const formattedFecha = computed(() => {
   if (tour.value.fechasDisponibles.length > 0) {
@@ -66,6 +78,33 @@ onMounted(async () => {
     console.error('Error al obtener el tour o guía:', error);
   }
 });
+
+// Función para reservar el tour
+const reservarTour = async () => {
+  const tourId = route.params.id;
+  const userId = user.value?._id; // ID del usuario autenticado
+
+  if (!userId) {
+    alert("Debes iniciar sesión para reservar.");
+    return;
+  }
+
+  const reserva = {
+    userId: userId,
+    tourId: tourId,
+    fechaTour: tour.value.fechasDisponibles[0], // Usa la primera fecha disponible
+    cantidadPersonas: cantidadPersonas.value, // Cantidad de personas seleccionada
+  };
+
+  try {
+    const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/reservastour/tours', reserva);
+    console.log("Reserva creada:", response.data);
+    reservaExitosa.value = true; // Mostrar mensaje de éxito
+  } catch (error) {
+    console.error("Error al crear la reserva:", error);
+    alert("Hubo un error al crear la reserva. Inténtalo de nuevo.");
+  }
+};
 </script>
 
 <template>
@@ -108,10 +147,55 @@ onMounted(async () => {
     </div>
 
     <div v-if="isUser" class="mt-6">
-      <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
-        @click="() => alert('Función de reserva en desarrollo...')">
-        Reservar
-      </button>
+      <form @submit.prevent="reservarTour" class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold mb-4">Reservar Tour</h3>
+
+        <div class="mb-4">
+          <label for="cantidadPersonas" class="block text-gray-700 font-medium mb-2">
+            Cantidad de personas:
+          </label>
+          <input
+            type="number"
+            id="cantidadPersonas"
+            v-model="cantidadPersonas"
+            min="1"
+            max="10"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <p class="text-gray-700">
+            <span class="font-semibold">Costo total:</span> ${{ costoTotal }}
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Reservar
+        </button>
+
+        <!-- Mensaje de confirmación -->
+        <div v-if="reservaExitosa" class="mt-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
+          <p>¡Reserva realizada con éxito!</p>
+        </div>
+      </form>
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Estilos para el mensaje de confirmación */
+.bg-green-100 {
+  background-color: #f0fff4;
+}
+.border-green-500 {
+  border-color: #48bb78;
+}
+.text-green-700 {
+  color: #2f855a;
+}
+</style>
