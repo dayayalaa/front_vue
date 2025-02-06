@@ -1,21 +1,20 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // Importa el router
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import SpinnerCarga from './SpinnerCarga.vue';
 import IconoBuscador from './icons/IconoBuscador.vue';
 
-const router = useRouter(); // Obtén acceso al router
+const router = useRouter();
 
 const destinos = ref([]);
-const provinciasDisponibles = ref([]); // Provincias disponibles
+const provinciasDisponibles = ref([]);
 const busqueda = ref('');
 const cargando = ref(false);
 const provinciaSeleccionada = ref('');
-const mostrarResultados = ref(false); // Controla cuando se muestran los resultados
-const mostrarSugerencias = ref(false); // Controla cuando se muestran las sugerencias de provincias
+const mostrarResultados = ref(false);
+const mostrarSugerencias = ref(false);
 
-// Función para obtener destinos por provincia
 const obtenerDestinos = async () => {
   if (!provinciaSeleccionada.value) {
     console.error('No se ha especificado una provincia');
@@ -40,18 +39,15 @@ const obtenerDestinos = async () => {
   }
 };
 
-// Se ejecuta cada vez que cambia la provincia seleccionada
 watch(provinciaSeleccionada, obtenerDestinos);
 
-// Filtrar provincias disponibles basadas en la búsqueda
 const filtrarProvincias = computed(() => {
-  const term = busqueda.value.toLowerCase().trim();
+  const term = busqueda.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Convertir a minúsculas y quitar acentos
   return provinciasDisponibles.value.filter((provincia) =>
-    provincia.toLowerCase().includes(term)
+    provincia.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(term)
   );
 });
 
-// Simulación de provincias disponibles
 onMounted(() => {
   provinciasDisponibles.value = [
     "Buenos Aires", "Catamarca", "Chaco", "Chubut", "CABA", "Córdoba", "Corrientes", "Entre Ríos",
@@ -61,24 +57,20 @@ onMounted(() => {
   ];
 });
 
-// Resalta las coincidencias en los resultados
 const resaltarCoincidencias = (texto, termino) => {
   if (!termino) return texto;
   const regex = new RegExp(`(${termino})`, 'gi');
-  return texto.replace(regex, '<b class="text-[#3C4A28]">$1</b>'); // Resalta en color verde
+  return texto.replace(regex, '<b class="text-[#3C4A28]">$1</b>');
 };
 
-// Función para activar la búsqueda y redirigir a la provincia
 const activarBusqueda = () => {
   provinciaSeleccionada.value = busqueda.value;
-  mostrarResultados.value = true; // Mostrar los resultados después de hacer clic en "Buscar"
-  mostrarSugerencias.value = false; // Ocultar las sugerencias después de la búsqueda
-  
-  // Redirigir a la ruta de la provincia usando router.push
+  mostrarResultados.value = true;
+  mostrarSugerencias.value = false;
+
   router.push({ name: 'ProvinciasVistas', params: { id: provinciaSeleccionada.value } });
 };
 
-// Mostrar las sugerencias de provincias cuando el input recibe el foco
 const mostrarSugerenciasAlHacerClick = () => {
   mostrarSugerencias.value = true;
 };
@@ -106,7 +98,7 @@ const ocultarSugerencias = () => {
     <SpinnerCarga v-if="cargando" />
 
     <!-- Sugerencias de provincias (se muestra al hacer clic en el input) -->
-    <div v-if="mostrarSugerencias && filtrarProvincias.length > 0 && !mostrarResultados" 
+    <div v-if="mostrarSugerencias && filtrarProvincias.length > 0 && !mostrarResultados"
       class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 z-10 max-h-80 overflow-y-auto sm:max-h-96">
       <div v-for="(provincia, index) in filtrarProvincias" :key="index"
         @click="busqueda = provincia; provinciaSeleccionada = provincia; mostrarResultados = true; mostrarSugerencias = false"
@@ -115,13 +107,16 @@ const ocultarSugerencias = () => {
       </div>
     </div>
 
+    
     <!-- Mensaje cuando no hay provincias coincidentes -->
-    <p v-if="busqueda && filtrarProvincias.length === 0" class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 text-center p-2 text-gray-500">
+    <p v-if="busqueda && filtrarProvincias.length === 0"
+      class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 text-center p-2 text-gray-500">
       No se encontraron provincias.
     </p>
 
     <!-- Resultados filtrados por provincia -->
-    <div v-if="mostrarResultados" class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 z-10 max-h-80 overflow-y-auto sm:max-h-96">
+    <div v-if="mostrarResultados"
+      class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 z-10 max-h-80 overflow-y-auto sm:max-h-96">
       <div v-for="resultado in destinos" :key="resultado._id"
         class="flex mb-3 p-2 hover:bg-gray-100 transition duration-300 ease-in-out">
         <router-link v-if="resultado._id" :to="{ name: 'lugarDetalle', params: { id: resultado._id } }"
@@ -140,9 +135,9 @@ const ocultarSugerencias = () => {
     </div>
 
     <!-- Mensaje cuando no hay resultados -->
-    <p v-if="busqueda && destinos.length === 0 && !cargando" 
-       class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 text-center p-2 text-gray-500">
-      No se encontro la provincia.
+    <p v-if="busqueda && destinos.length === 0 && !cargando"
+      class="absolute w-full bg-white border border-gray-200 rounded shadow-lg mt-1 text-center p-2 text-gray-500">
+      No se encontró la provincia.
     </p>
   </div>
 </template>

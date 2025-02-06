@@ -5,13 +5,18 @@ import axios from 'axios';
 import SpinnerCarga from './SpinnerCarga.vue';
 import TituloSecundario from './TituloSecundario.vue';
 import TituloTerciario from './TituloTerciario.vue';
+import IrAtras from './IrAtras.vue';
+import BotonPrincipal from './BotonPrincipal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const provinciaInfo = ref(null);
 const guias = ref([]);
 const guiasFiltrados = ref([]);
+const lugaresTuristicos = ref([]);
 const cargando = ref(true);
+
+const provinciasPopulares = ref([]);
 
 const obtenerProvincia = async () => {
     const provinciaId = route.params.id;
@@ -69,18 +74,49 @@ const obtenerGuias = async () => {
     }
 };
 
+const obtenerLugares = async () => {
+    const provincia = route.params.id;
+    console.log('Para lugar:', provincia)
+    try {
+        const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugar?provincia=${provincia}`);
+        console.log('Lugares turísticos obtenidos:', response.data);
+
+        if (response.data && Array.isArray(response.data)) {
+            lugaresTuristicos.value = response.data;
+        } else {
+            console.error('Formato inesperado en la respuesta de la API');
+            lugaresTuristicos.value = [];
+        }
+    } catch (error) {
+        console.error('Error al obtener lugares turísticos:', error);
+        lugaresTuristicos.value = [];
+    }
+};
+
+const obtenerProvinciasPopulares = async () => {
+    try {
+        const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
+        provinciasPopulares.value = response.data;
+        console.log(provinciasPopulares.value);
+    } catch (error) {
+        console.error('Error al obtener provincias populares:', error);
+    }
+};
 
 onMounted(() => {
     obtenerProvincia();
     obtenerGuias();
+    obtenerLugares();
+    obtenerProvinciasPopulares();
 });
 
 const irADetalleGuia = (id) => {
-    router.push(`/detalles-guia/${id}`);
+    router.push(`/perfil/guia/${id}`);
 };
 </script>
 
 <template>
+    <IrAtras />
     <div class="w-full max-w-4xl mx-auto p-4">
         <!-- Indicador de carga -->
         <div v-if="cargando" class="text-center">
@@ -106,23 +142,96 @@ const irADetalleGuia = (id) => {
         </div>
 
         <!-- Mensaje si no se encuentra información para la provincia -->
-        <p v-else class="text-center text-gray-500">No se encontró información para la provincia {{ route.params.id }}.</p>
+        <p v-else class="text-center text-gray-500">No se encontró información para la provincia {{ route.params.id }}.
+        </p>
 
-       <!-- Lista de guías -->
-       <div v-if="guiasFiltrados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div v-for="guia in guiasFiltrados" :key="guia.id"
-                class="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow duration-300"
-                @click="irADetalleGuia(guia._id)">
-                <img :src="guia.fotoPerfil" :alt="'Foto de ' + guia.nombre"
-                    class="w-24 h-24 rounded-full mb-4 object-cover" />
-
-                <strong class="text-lg text-[#222725]">{{ guia.nombre }}</strong>
-                <p class="text-gray-600">{{ guia.provincia }}</p>
-            </div>
+        <div class="flex justify-center items-center mt-8 mb-8">
+            <router-link
+            to="/crear">
+            <BotonPrincipal>Crear viaje</BotonPrincipal> 
+          </router-link>
         </div>
 
-        <!-- Mensaje si no se encuentran guías -->
-        <p v-else class="text-center text-gray-500">No se encontraron guías para la provincia {{ route.params.id }}.</p>
+        <!-- Lista de guías -->
+        <div>
+            <TituloSecundario class="text-center">Guías turísticos en {{ provinciaInfo?.title || route.params.id }}
+            </TituloSecundario>
+            <div v-if="guiasFiltrados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div v-for="guia in guiasFiltrados" :key="guia.id"
+                    class="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow duration-300"
+                    @click="irADetalleGuia(guia._id)">
+                    <img :src="guia.fotoPerfil" :alt="'Foto de ' + guia.nombre"
+                        class="w-24 h-24 rounded-full mb-4 object-cover" />
+
+                    <strong class="text-lg text-[#222725]">{{ guia.nombre }}</strong>
+                    <p class="text-gray-600">{{ guia.provincia }}</p>
+                </div>
+            </div>
+
+            <!-- Mensaje si no se encuentran guías -->
+            <p v-else class="text-center text-gray-500">No se encontraron guías para la provincia {{ route.params.id }}.
+            </p>
+        </div>
+
+        <!-- Vista de los lugares turísticos -->
+        <div class="flex flex-col items-center mt-8">
+            <!-- Título Secundario -->
+            <TituloSecundario class="text-center mb-8">
+                Lugares turísticos en {{ provinciaInfo?.title || route.params.id }}
+            </TituloSecundario>
+
+            <!-- Lugares turísticos -->
+            <div v-if="lugaresTuristicos.length > 0">
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <div v-for="lugar in lugaresTuristicos" :key="lugar.id"
+                        class="bg-white shadow-lg rounded-lg p-2 flex flex-col items-center w-[150px] h-[200px]">
+
+                        <img :src="lugar.thumbnail" :alt="lugar.title"
+                            class="w-full h-[70%] object-cover rounded-md mb-2" />
+
+                        <strong class="text-xs text-[#222725]">{{ lugar.title.slice(0, 30) }}{{ lugar.title.length > 30
+                            ? '...' : '' }}</strong>
+
+                        <p class="text-xs text-gray-600">{{ lugar.description }}</p>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Mensaje si no se encuentran lugares turísticos -->
+            <p v-else class="text-center text-gray-500 mt-4">No se encontraron lugares turísticos en {{ route.params.id
+                }}.</p>
+        </div>
+
+        <!-- Provincias Populares -->
+        <TituloSecundario class="text-center mt-8">
+               Otros destinos
+            </TituloSecundario>
+        <div class="overflow-x-auto mt-8">
+    <div class="flex gap-4 ml-3">
+        <RouterLink 
+            v-for="provincia in provinciasPopulares" 
+            :key="provincia.provincia"
+            :to="{ name: 'lugarDetalle', params: { id: provincia.provincia } }"
+            class="w-[140px] h-[200px] flex-none"
+        >
+            <div class="relative w-full h-full">
+                <img 
+                    :src="provincia.thumbnail" 
+                    :alt="`Imagen de ${provincia.provincia}`"
+                    class="w-full h-full object-cover rounded-lg"
+                />
+                <p class="absolute bottom-0 left-0 w-full h-20 bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
+                    {{ provincia.provincia }}
+                </p>
+            </div>
+        </RouterLink>
+    </div>
+</div>
+
+
+
 
     </div>
 </template>
