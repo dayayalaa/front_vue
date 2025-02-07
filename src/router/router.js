@@ -21,6 +21,7 @@ import EditarTur from "../components/EditarTur.vue";
 import Ajustes from "../components/Ajustes.vue";
 import Pago from "../components/PagoVista.vue";
 import ProvinciasVistas from "../components/ProvinciasVistas.vue";
+import LugaresVistas from "../components/LugaresVistas.vue";
 import MiReservasUsuario from "../components/MiReservasUsuario.vue";
 
 const routes = [
@@ -46,6 +47,7 @@ const routes = [
   { path: "/ajustes",            name: "ajustes",           component: Ajustes,           meta: { requiresAuth: true }},
   { path: "/pago",               name: "pago",              component: Pago,              meta: { requiresAuth: true }},
   { path: "/provincia/:id",      name: "ProvinciasVistas",  component: ProvinciasVistas,  meta: { requiresAuth: true }},
+  { path: "/lugar/:id",          name: "LugaresVistas",  component: LugaresVistas,  meta: { requiresAuth: true }},
 
   { path: "/misreservas",        name: "misReservas", component: MiReservasUsuario,  meta: { requiresAuth: true }  },
 

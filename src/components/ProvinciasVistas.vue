@@ -43,6 +43,10 @@ const obtenerProvincia = async () => {
                 description: response.data.description?.snippet || 'No disponible',
                 thumbnail: response.data.thumbnail,
             };
+
+            const data_id = response.data.data_id;
+            console.log('data_id:', data_id);
+            obtenerImagenes(data_id);
         } else {
             console.error('No se encontró la información esperada en la respuesta de la API');
             provinciaInfo.value = null;
@@ -93,6 +97,23 @@ const obtenerLugares = async () => {
     }
 };
 
+const obtenerImagenes = async (data_id) => {
+    try {
+        const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
+
+        console.log('Respuesta de la API img:', response.data);
+
+        if (response.data && response.data.images && Array.isArray(response.data.images)) {
+            provinciaInfo.value.gallery = response.data.images; 
+            console.log('Galería después de asignar:', provinciaInfo.value.gallery);
+        } else {
+            console.warn('No se encontraron imágenes en la respuesta o el formato es incorrecto');
+        }
+    } catch (error) {
+        console.error('Error al obtener imágenes:', error);
+    }
+};
+
 const obtenerProvinciasPopulares = async () => {
     try {
         const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
@@ -128,8 +149,13 @@ const irADetalleGuia = (id) => {
             <TituloSecundario class="text-center">Descubre {{ provinciaInfo.title }}</TituloSecundario>
             <TituloTerciario class="text-gray-600 mt-4">{{ provinciaInfo.address }}</TituloTerciario>
 
-            <img :src="provinciaInfo.thumbnail" :alt="'Imagen de ' + route.params.id"
-                class="rounded-lg shadow-sm w-full h-auto" />
+            <!-- Galería de imágenes -->
+            <div class="flex space-x-4 overflow-x-auto p-2 rounded-lg bg-gray-100">
+    <div v-for="(imagen, index) in provinciaInfo.gallery" :key="index" class="flex-shrink-0 w-48">
+        <img :src="imagen" :alt="'Imagen ' + index" class="w-full h-32 object-cover rounded-lg shadow-sm" />
+    </div>
+</div>
+
 
             <p v-if="provinciaInfo.description" class="mt-4 text-gray-700">
                 <strong class="text-green-600">Descripción:</strong>
@@ -146,10 +172,9 @@ const irADetalleGuia = (id) => {
         </p>
 
         <div class="flex justify-center items-center mt-8 mb-8">
-            <router-link
-            to="/crear">
-            <BotonPrincipal>Crear viaje</BotonPrincipal> 
-          </router-link>
+            <router-link to="/crear">
+                <BotonPrincipal>Crear viaje</BotonPrincipal>
+            </router-link>
         </div>
 
         <!-- Lista de guías -->
@@ -183,55 +208,46 @@ const irADetalleGuia = (id) => {
             <!-- Lugares turísticos -->
             <div v-if="lugaresTuristicos.length > 0">
                 <div class="flex flex-wrap gap-4 justify-center">
-                    <div v-for="lugar in lugaresTuristicos" :key="lugar.id"
-                        class="bg-white shadow-lg rounded-lg p-2 flex flex-col items-center w-[150px] h-[200px]">
-
+                    <!-- Hacemos clickeable cada tarjeta de lugar -->
+                    <router-link v-for="lugar in lugaresTuristicos" :key="lugar.id"
+                        :to="{ name: 'LugaresVistas', params: { id: lugar.title } }"
+                        class="bg-white shadow-lg rounded-lg p-2 flex flex-col items-center w-[150px] h-[200px] cursor-pointer hover:shadow-xl transition">
                         <img :src="lugar.thumbnail" :alt="lugar.title"
                             class="w-full h-[70%] object-cover rounded-md mb-2" />
-
                         <strong class="text-xs text-[#222725]">{{ lugar.title.slice(0, 30) }}{{ lugar.title.length > 30
                             ? '...' : '' }}</strong>
-
                         <p class="text-xs text-gray-600">{{ lugar.description }}</p>
-                    </div>
+                    </router-link>
+
                 </div>
             </div>
 
-
-
             <!-- Mensaje si no se encuentran lugares turísticos -->
-            <p v-else class="text-center text-gray-500 mt-4">No se encontraron lugares turísticos en {{ route.params.id
-                }}.</p>
+            <p v-else class="text-center text-gray-500 mt-4">
+                No se encontraron lugares turísticos en {{ route.params.id }}.
+            </p>
         </div>
 
         <!-- Provincias Populares -->
         <TituloSecundario class="text-center mt-8">
-               Otros destinos
-            </TituloSecundario>
+            Otros destinos
+        </TituloSecundario>
         <div class="overflow-x-auto mt-8">
-    <div class="flex gap-4 ml-3">
-        <RouterLink 
-            v-for="provincia in provinciasPopulares" 
-            :key="provincia.provincia"
-            :to="{ name: 'lugarDetalle', params: { id: provincia.provincia } }"
-            class="w-[140px] h-[200px] flex-none"
-        >
-            <div class="relative w-full h-full">
-                <img 
-                    :src="provincia.thumbnail" 
-                    :alt="`Imagen de ${provincia.provincia}`"
-                    class="w-full h-full object-cover rounded-lg"
-                />
-                <p class="absolute bottom-0 left-0 w-full h-20 bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
-                    {{ provincia.provincia }}
-                </p>
+            <div class="flex gap-4 ml-3">
+                <RouterLink v-for="provincia in provinciasPopulares" :key="provincia.provincia"
+                    :to="{ name: 'lugarDetalle', params: { id: provincia.provincia } }"
+                    class="w-[140px] h-[200px] flex-none">
+                    <div class="relative w-full h-full">
+                        <img :src="provincia.thumbnail" :alt="`Imagen de ${provincia.provincia}`"
+                            class="w-full h-full object-cover rounded-lg" />
+                        <p
+                            class="absolute bottom-0 left-0 w-full h-20 bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
+                            {{ provincia.provincia }}
+                        </p>
+                    </div>
+                </RouterLink>
             </div>
-        </RouterLink>
-    </div>
-</div>
-
-
-
+        </div>
 
     </div>
 </template>

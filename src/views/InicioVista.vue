@@ -54,7 +54,7 @@ onMounted(() => {
       <TituloSecundario>Provincias Populares</TituloSecundario>
       <div class="flex flex-wrap gap-5 justify-center m-2">
         <RouterLink v-for="provincia in provinciasPopulares" :key="provincia.provincia"
-          :to="{ name: 'lugarDetalle', params: { id: provincia.provincia } }">
+          :to="{ name: 'ProvinciasVistas', params: { id: provincia.provincia } }">
           <div class="relative w-[140px] h-[200px]">
 
             <img :src="provincia.thumbnail" :alt="`Imagen de ${provincia.provincia}`"
