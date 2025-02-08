@@ -104,7 +104,7 @@ const obtenerImagenes = async (data_id) => {
         console.log('Respuesta de la API img:', response.data);
 
         if (response.data && response.data.images && Array.isArray(response.data.images)) {
-            provinciaInfo.value.gallery = response.data.images; 
+            provinciaInfo.value.gallery = response.data.images;
             console.log('Galería después de asignar:', provinciaInfo.value.gallery);
         } else {
             console.warn('No se encontraron imágenes en la respuesta o el formato es incorrecto');
@@ -149,24 +149,27 @@ const irADetalleGuia = (id) => {
             <TituloSecundario class="text-center">Descubre {{ provinciaInfo.title }}</TituloSecundario>
             <TituloTerciario class="text-gray-600 mt-4">{{ provinciaInfo.address }}</TituloTerciario>
 
-            <!-- Galería de imágenes -->
-            <div class="flex space-x-4 overflow-x-auto p-2 rounded-lg bg-gray-100">
-    <div v-for="(imagen, index) in provinciaInfo.gallery" :key="index" class="flex-shrink-0 w-48">
-        <img :src="imagen" :alt="'Imagen ' + index" class="w-full h-32 object-cover rounded-lg shadow-sm" />
-    </div>
-</div>
+            <div class="h-[250px] w-[300px] mt-6">
+                <img :src="provinciaInfo.gallery[0]" :alt="provinciaInfo.title"
+                    class="w-full h-full object-cover rounded-lg" />
+            </div>
 
 
             <p v-if="provinciaInfo.description" class="mt-4 text-gray-700">
                 <strong class="text-green-600">Descripción:</strong>
                 {{ provinciaInfo.description }}
             </p>
-            <p v-if="provinciaInfo.weather" class="mt-4 text-gray-700">
-                <strong class="text-green-600">Clima:</strong> {{ provinciaInfo.weather.celsius }} ({{
-                    provinciaInfo.weather.conditions }})
-            </p>
-        </div>
 
+
+            <!-- Galería de imágenes -->
+            <div class="flex space-x-4 overflow-x-auto p-2 rounded-lg bg-gray-100 mt-6 mb-6">
+                <div v-for="(imagen, index) in provinciaInfo.gallery.slice(1)" :key="index" class="flex-shrink-0 w-48">
+                    <img :src="imagen" :alt="'Imagen ' + (index + 1)"
+                        class="w-full h-32 object-cover rounded-lg shadow-sm" />
+                </div>
+            </div>
+
+        </div>
         <!-- Mensaje si no se encuentra información para la provincia -->
         <p v-else class="text-center text-gray-500">No se encontró información para la provincia {{ route.params.id }}.
         </p>
