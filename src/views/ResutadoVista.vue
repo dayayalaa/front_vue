@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 import TituloSecundario from '../components/TituloSecundario.vue';
@@ -12,6 +13,8 @@ import IconoInicio from '../components/icons/IconoInicio.vue';
 import IconoLista from '../components/icons/IconoLista.vue';
 import IrAtras from '../components/IrAtras.vue';
 import SpinnerCarga from '../components/SpinnerCarga.vue';
+
+const router = useRouter();
 
 const vuelos = ref([]);
 const vuelta = ref([]);
@@ -26,7 +29,8 @@ const numAdultos = ref(2);
 
 let departureTokenSeleccionado = "";
 
-// Obtener vuelo de vuelta
+console.log('--INICIO DE LA BUSQUDA--');
+
 const obtenerVueloDeVuelta = async (departureToken) => {
   if (!departureToken) {
     console.error('Token de ida no válido');
@@ -52,6 +56,8 @@ const obtenerVueloDeVuelta = async (departureToken) => {
       }
     });
 
+    console.log('vuelta:', response);
+
     if (response.data && response.data.length > 0) {
       vuelta.value = response.data;
     } else {
@@ -65,10 +71,8 @@ const obtenerVueloDeVuelta = async (departureToken) => {
   }
 };
 
-// Obtener vuelos de ida
 const obtenerVuelos = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-
   const departure_idCodificado = urlParams.get('departure_id');
   const arrival_idCodificado = urlParams.get('arrival_id');
   const outbound_dateCodificada = urlParams.get('outbound_date');
@@ -88,12 +92,14 @@ const obtenerVuelos = async () => {
       }
     });
 
+    console.log('vuelos:', response);
+
     if (Array.isArray(response.data) && response.data.length > 0) {
       vuelos.value = response.data;
       departureTokenSeleccionado = response.data[0]?.departure_token || "";
 
       if (departureTokenSeleccionado) {
-        obtenerVueloDeVuelta(departureTokenSeleccionado);
+        await obtenerVueloDeVuelta(departureTokenSeleccionado);
       }
     } else {
       errorMensaje.value = 'No se encontraron vuelos.';
@@ -106,20 +112,19 @@ const obtenerVuelos = async () => {
   }
 };
 
-// Obtener hoteles
 const obtenerHoteles = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const arrival_id = urlParams.get('arrival_id');
+  const arrival_idCodificado = urlParams.get('arrival_id');
   const check_in_date = urlParams.get('outbound_date');
   const check_out_date = urlParams.get('return_date');
   const adults = numAdultos.value;
 
-  if (!arrival_id || !check_in_date || !check_out_date || !adults) {
+  if (!arrival_idCodificado || !check_in_date || !check_out_date || !adults) {
     errorMensaje.value = 'Faltan parámetros requeridos para la búsqueda de hoteles.';
     return;
   }
 
-  const provincia = obtenerNombreAeropuerto(arrival_id);
+  const provincia = obtenerNombreAeropuerto(arrival_idCodificado);
 
   if (!provincia) {
     errorMensaje.value = 'No se encontró la provincia correspondiente al código de aeropuerto.';
@@ -137,6 +142,8 @@ const obtenerHoteles = async () => {
         adults: adults,
       }
     });
+
+    console.log('hotel:', response);
 
     if (response.status === 200 && response.data && response.data.hoteles && response.data.hoteles.length > 0) {
       hoteles.value = response.data.hoteles;
@@ -182,24 +189,19 @@ const obtenerNombreAeropuerto = (codigo) => {
   return aeropuerto || 'Desconocido';
 };
 
-// Manejar reserva
-const manejarReserva = (tipo, tokenSeleccionado, idHotelSeleccionado) => {
-  const reserva = JSON.parse(localStorage.getItem('Reserva')) || {};
-
-  // Limpiar datos anteriores de la reserva
-  delete reserva.vueloIda;
-  delete reserva.vueloVuelta;
-  delete reserva.hotel;
+const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
+  reserva.value = JSON.parse(localStorage.getItem('Reserva')) || {};
 
   switch (tipo) {
     case 'ida':
       if (tokenSeleccionado) {
         const vueloSeleccionado = vuelos.value.find(v => v.departure_token === tokenSeleccionado);
         if (vueloSeleccionado) {
-          reserva.idaReserva = {
+          reserva.value.idaReserva = {
             token: tokenSeleccionado,
             details: vueloSeleccionado
           };
+          console.log('Vuelo de ida actualizado:', reserva.value.idaReserva);
         } else {
           console.error('No se encontró el vuelo de ida seleccionado.');
         }
@@ -210,23 +212,36 @@ const manejarReserva = (tipo, tokenSeleccionado, idHotelSeleccionado) => {
 
     case 'vuelta':
       if (vuelta.value.length > 0) {
-        const vueloVueltaSeleccionado = vuelta.value[0]; // Seleccionar el vuelo de vuelta deseado
-        reserva.vueltaReserva = vueloVueltaSeleccionado;
+        const vueloVueltaSeleccionado = vuelta.value.find(v => v.arrival_token === tokenSeleccionado);
+        if (vueloVueltaSeleccionado) {
+          reserva.value.vueltaReserva = {
+            token: tokenSeleccionado,
+            details: vueloVueltaSeleccionado,
+            arrival_id: vueloVueltaSeleccionado.arrival_id
+          };
+          console.log('Vuelo de vuelta actualizado:', reserva.value.vueltaReserva);
+        } else {
+          console.error('No se encontró el vuelo de vuelta seleccionado.');
+        }
       } else {
         console.error('No se seleccionó un vuelo de vuelta.');
       }
       break;
 
     case 'hotel':
-      if (hoteles.value.length > 0) {
-        const hotelSeleccionado = hoteles.value.find(h => h.id === idHotelSeleccionado); // Aquí se busca el hotel seleccionado por el id
-        if (hotelSeleccionado) {
-          reserva.hotelReserva = hotelSeleccionado;
+    console.log('Seleccionando hotel:', hotelSeleccionado);
+    console.log('Property Token del hotel seleccionado:', hotelSeleccionado);
+
+    if (hoteles.value.length > 0) {
+        const hotelEncontrado = hoteles.value.find(h => h.property_token === tokenSeleccionado);
+        if (hotelEncontrado) {
+          reserva.value.hotelReserva = hotelEncontrado;
+          console.log('Hotel reservado actualizado:', reserva.value.hotelReserva);
         } else {
-          console.error('No se encontró el hotel seleccionado.');
+          console.error('No se encontró el hotel seleccionado. Verifica que el ID sea correcto.');
         }
       } else {
-        console.error('No se seleccionó un hotel.');
+        console.error('No se seleccionó un hotel. Verifica la lista de hoteles disponibles.');
       }
       break;
 
@@ -235,15 +250,16 @@ const manejarReserva = (tipo, tokenSeleccionado, idHotelSeleccionado) => {
       return;
   }
 
-  localStorage.setItem('Reserva', JSON.stringify(reserva));
-  console.log('Reserva actualizada:', reserva);
+  localStorage.setItem('Reserva', JSON.stringify(reserva.value));
+  console.log('Reserva actualizada:', reserva.value);
+  
   pasoActual.value += 1;
 };
 
 const decodeJWT = (token) => {
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
   }).join(''));
 
@@ -267,43 +283,67 @@ const confirmarReserva = async () => {
     try {
       const decodedToken = decodeJWT(token);
       userId = decodedToken.userId;
-      console.log('User ID extraído del token:', userId);
     } catch (error) {
       console.error('Error al decodificar el token:', error);
       alert('Error al verificar el token. Intenta nuevamente.');
       return;
     }
   } else {
-    console.log('No se encontró el token en el localStorage');
     alert('No se encontró el token de autenticación. Por favor, inicia sesión.');
     return;
   }
 
   if (!userId) {
-    console.log('No se pudo obtener el userId del token');
     alert('Hubo un problema con la autenticación. Intenta nuevamente.');
     return;
   }
+  if (!reserva.value || !reserva.value.vueltaReserva || !reserva.value.vueltaReserva.details) {
+    alert('No se encontró la reserva de vuelta. Por favor, intenta nuevamente.');
+    return;
+  }
 
-  const reserva = {
+  const arrival_idCodificado = new URLSearchParams(window.location.search).get('arrival_id');
+  const destinoId = decodeURIComponent(arrival_idCodificado);
+
+  console.log('Lugar:', destinoId);
+
+  const destinoNombre = obtenerNombreAeropuerto(destinoId);
+
+  console.log('Lugar del viaje:', destinoNombre);
+
+
+  const reservaParaEnviar = {
     userId: userId,
-    vueloIda: this.reserva.idaReserva.details.flights[0],
-    vueloVuelta: this.reserva.vueltaReserva,
-    hotel: this.reserva.hotelReserva
+    vueloIda: reserva.value.idaReserva,
+    vueloVuelta: reserva.value.vueltaReserva,
+    hotel: reserva.value.hotelReserva,
+    destino: destinoNombre,
+    checklist: []
   };
 
   try {
-    const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/reserva', reserva);
+    const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/reservas/crear', reservaParaEnviar);
 
     if (response.status === 200) {
-      alert('¡Reserva confirmada exitosamente!');
+      console.log('¡Reserva confirmada exitosamente!');
+      // localStorage.removeItem('reserva');
+      // reserva.value = null;
+      router.push('/pago');
     } else {
-      alert('Hubo un problema al confirmar la reserva');
+      console.log('Hubo un problema al confirmar la reserva');
     }
   } catch (error) {
-    console.error('Error al confirmar la reserva:', error);
-    alert('Hubo un error en la conexión. Intenta nuevamente más tarde.');
+  if (error.response) {
+    alert('Error en la respuesta del servidor: ' + error.response.status);
+    console.error('Detalles del error:', error.response.data);
+  } else if (error.request) {
+    alert('No se recibió respuesta del servidor. Intenta nuevamente más tarde.');
+    console.error('La solicitud fue hecha pero no se recibió respuesta:', error.request);
+  } else {
+    alert('Error al configurar la solicitud: ' + error.message);
+    console.error('Error al configurar la solicitud:', error);
   }
+}
 };
 
 onMounted(async () => {
@@ -323,7 +363,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('storage', actualizarReservaDesdeLocalStorage);
 });
 </script>
-
 
 <template>
   <IrAtras />
@@ -421,7 +460,7 @@ onBeforeUnmount(() => {
               <!-- Precio y botón de reserva -->
               <div class="mt-4 flex justify-between items-center">
                 <span class="text-xl font-semibold text-green-600">${{ vuelo.price?.toLocaleString() }}</span>
-                <BotonPrincipal @click="manejarReserva('ida')">Reservar</BotonPrincipal>
+                <BotonPrincipal @click="manejarReserva('ida', vuelo.departure_token)">Reservar</BotonPrincipal>
               </div>
             </div>
 
@@ -507,7 +546,7 @@ onBeforeUnmount(() => {
                 <span class="text-xl font-semibold text-green-600">
                   ${{ vuelo.price?.toLocaleString() }}
                 </span>
-                <BotonPrincipal @click="manejarReserva('vuelta')">Reservar</BotonPrincipal>
+                <BotonPrincipal @click="manejarReserva('vuelta', vuelo.arrival_token)">Reservar</BotonPrincipal>
               </div>
             </div>
           </div>
@@ -544,9 +583,11 @@ onBeforeUnmount(() => {
         <div v-for="hotel in hoteles" :key="hotel.name"
           class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6">
           <!-- Imagen del hotel -->
-          <img
-            :src="hotel.images && hotel.images.length > 0 ? hotel.images[0].original_image : 'ruta-a-imagen-de-respaldo.jpg'"
-            alt="Imagen de {{ hotel.name }}" class="w-full h-auto object-cover rounded-md mb-4" />
+          <img :src="hotel.images?.length
+            ? hotel.images[0].original_image || hotel.images[0].thumbnail || '/img/default_portada.png'
+            : '/img/default_portada.png'
+            " alt="Imagen de {{ hotel.name }}" class="w-full h-auto object-cover rounded-md mb-4" />
+
 
           <!-- Nombre del hotel -->
           <h3 class="font-bold text-lg">{{ hotel.name }}</h3>
@@ -567,7 +608,7 @@ onBeforeUnmount(() => {
           <p><strong>Precio:</strong> {{ hotel.total_rate.before_taxes_fees }}</p>
 
           <!-- Botón de reserva -->
-          <BotonPrincipal @click="manejarReserva('hotel')">Reservar</BotonPrincipal>
+          <BotonPrincipal @click="manejarReserva('hotel', hotel.property_token)">Reservar</BotonPrincipal>
         </div>
       </div>
     </div>
@@ -593,23 +634,25 @@ onBeforeUnmount(() => {
         </div>
 
         <TituloTerciario>Vuelo de Vuelta:</TituloTerciario>
-        <div v-if="reserva.vueltaReserva && reserva.vueltaReserva.length > 0"
+        <div
+          v-if="reserva.vueltaReserva && reserva.vueltaReserva.details && reserva.vueltaReserva.details.flights && reserva.vueltaReserva.details.flights.length > 0"
           class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6">
-          <div v-for="vuelo in reserva.vueltaReserva" :key="vuelo.price">
-            <p><strong>Aerolínea:</strong> {{ vuelo.flights[0].airline }}</p>
-            <p><strong>Número de vuelo:</strong> {{ vuelo.flights[0].flight_number }}</p>
-            <p><strong>Origen:</strong> {{ vuelo.flights[0].departure_airport.name }}</p>
-            <p><strong>Destino:</strong> {{ vuelo.flights[0].arrival_airport.name }}</p>
-            <p><strong>Fecha:</strong> {{ vuelo.flights[0].departure_airport?.time }}</p>
+          <div v-for="vuelo in reserva.vueltaReserva.details.flights" :key="vuelo.flight_number">
+            <p><strong>Aerolínea:</strong> {{ vuelo.airline }}</p>
+            <p><strong>Número de vuelo:</strong> {{ vuelo.flight_number }}</p>
+            <p><strong>Origen:</strong> {{ vuelo.departure_airport.name }}</p>
+            <p><strong>Destino:</strong> {{ vuelo.arrival_airport.name }}</p>
+            <p><strong>Fecha:</strong> {{ vuelo.departure_airport?.time }}</p>
           </div>
         </div>
 
         <TituloTerciario>Hotel:</TituloTerciario>
         <div v-if="reserva.hotelReserva && reserva.hotelReserva.images && reserva.hotelReserva.images.length > 0"
           class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6 flex items-center">
-          <img
-            :src="reserva.hotelReserva.images && reserva.hotelReserva.images.length > 0 ? reserva.hotelReserva.images[0].original_image : 'ruta-a-imagen-de-respaldo.jpg'"
-            alt="Imagen de {{ reserva.hotelReserva.name }}" class="w-24 h-24 object-cover rounded-lg mr-4" />
+          <img :src="reserva.hotelReserva.images && reserva.hotelReserva.images.length > 0
+            ? (reserva.hotelReserva.images[0].original_image || reserva.hotelReserva.images[0].thumbnail)
+            : '/img/default_portada.png'
+            " alt="Imagen de {{ reserva.hotelReserva.name }}" class="w-24 h-24 object-cover rounded-lg mr-4" />
 
           <div>
             <p class="font-semibold">{{ reserva.hotelReserva.name }}</p>

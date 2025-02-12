@@ -11,18 +11,18 @@ import { RouterLink } from 'vue-router';
 
 const provinciasPopulares = ref([]);
 
-const obtenerProvinciasPopulares = async () => {
-  try {
-    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
-    provinciasPopulares.value = response.data;
-    console.log(provinciasPopulares.value);
-  } catch (error) {
-    console.error('Error al obtener provincias populares:', error);
-  }
-};
+// const obtenerProvinciasPopulares = async () => {
+//   try {
+//     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
+//     provinciasPopulares.value = response.data;
+//     console.log(provinciasPopulares.value);
+//   } catch (error) {
+//     console.error('Error al obtener provincias populares:', error);
+//   }
+// };
 
 onMounted(() => {
-  obtenerProvinciasPopulares();
+  // obtenerProvinciasPopulares();
 });
 </script>
 
@@ -49,10 +49,13 @@ onMounted(() => {
       </RouterLink>
     </section>
 
+    
+
     <!-- Provincias Populares -->
-    <section class="flex flex-col justify-center items-center mb-20">
+   <section class="flex flex-col justify-center items-center mb-20">
       <TituloSecundario>Provincias Populares</TituloSecundario>
-      <div class="flex flex-wrap gap-5 justify-center m-2">
+      <strong class="text-center">¡Esta silenciado lo de las provincias para no gastar busquedas!</strong>
+      <!--  <div class="flex flex-wrap gap-5 justify-center m-2">
         <RouterLink v-for="provincia in provinciasPopulares" :key="provincia.provincia"
           :to="{ name: 'ProvinciasVistas', params: { id: provincia.provincia } }">
           <div class="relative w-[140px] h-[200px]">
@@ -66,7 +69,7 @@ onMounted(() => {
             </p>
           </div>
         </RouterLink>
-      </div>
+      </div> -->
     </section>
 
   </div>
