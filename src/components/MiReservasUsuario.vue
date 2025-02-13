@@ -19,7 +19,6 @@ const loading = ref(true);
 
 const router = useRouter();
 
-
 const fetchUserData = async () => {
   try {
     const response = await fetch(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, {
@@ -34,8 +33,7 @@ const fetchUserData = async () => {
     }
 
     const data = await response.json();
-    const { nombre, fotoPerfil, fotoPortada, descripcion: desc, email: correo, telefono: tel, provincia: prov } =
-      data.data;
+    const { nombre, fotoPerfil, fotoPortada, descripcion: desc, email: correo, telefono: tel, provincia: prov } = data.data;
 
     userName.value = nombre;
     userProfileImage.value = fotoPerfil;
@@ -51,8 +49,26 @@ const fetchUserData = async () => {
   }
 };
 
+const obtenerTourData = async (tourId) => {
+  try {
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/${tourId}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener los datos del tour:', error);
+    return null;
+  }
+};
 
 const obtenerReservas = async (idGuia) => {
+  if (!idGuia) {
+    console.error('Error: idGuia es inválido o está vacío');
+    return;
+  }
   try {
     const response = await axios.get(
       `https://back-tesis-lovat.vercel.app/arcana/reservastour/tours/guia/${idGuia}`,
@@ -62,13 +78,19 @@ const obtenerReservas = async (idGuia) => {
         },
       }
     );
-    reservas.value = response.data.data;
-    console.log('Reservas obtenidas:', reservas.value);
+    reservas.value = await Promise.all(
+      response.data.data.map(async (reserva) => {
+        const tourData = await obtenerTourData(reserva.tourId._id);
+        return {
+          ...reserva,
+          tour: tourData,
+        };
+      })
+    );
   } catch (error) {
     console.error('Error al obtener las reservas:', error);
   }
 };
-
 
 const decodeJWT = (token) => {
   try {
@@ -80,7 +102,6 @@ const decodeJWT = (token) => {
       .join('');
 
     const decodedToken = JSON.parse(decodeURIComponent(jsonPayload));
-    console.log('Token decodificado:', decodedToken);
     return decodedToken;
   } catch (error) {
     console.error('Error decodificando el token:', error);
@@ -90,7 +111,6 @@ const decodeJWT = (token) => {
 
 const verificarRolGuia = (decodedToken) => {
   if (decodedToken.rols !== 'guia') {
-    console.log('Usuario no es guía. Redirigiendo...');
     router.push('/');
     return false;
   }
@@ -120,7 +140,6 @@ onMounted(async () => {
     const decodedToken = decodeJWT(token);
 
     if (decodedToken && decodedToken.userId) {
-
       if (!verificarRolGuia(decodedToken)) {
         return;
       }
@@ -137,105 +156,66 @@ onMounted(async () => {
 </script>
 
 <template>
-  <IrAtras />
-  <div class="max-w-4xl mx-auto p-6 mb-20 bg-white rounded-xl shadow-lg">
-    <!-- Banner de perfil -->
-    <div class="relative mb-16">
-      <img v-if="userCoverImage" :src="userCoverImage" alt="Banner de perfil"
-        class="w-full h-52 object-cover rounded-lg shadow-md" />
-      <div class="absolute inset-x-0 -bottom-12 flex justify-center">
-        <img v-if="userProfileImage" :src="userProfileImage" alt="Foto de perfil"
-          class="w-24 h-24 rounded-full border-4 border-white shadow-lg" />
-      </div>
-    </div>
 
-    <!-- Información de usuario -->
-    <div class="text-center mt-6">
-      <TituloSecundario class="text-2xl font-bold text-gray-900">
-        {{ loading ? 'Cargando...' : userName }}
-      </TituloSecundario>
-      <p v-if="descripcion" class="text-gray-600 mt-2 text-base max-w-md mx-auto">
-        {{ descripcion }}
-      </p>
-      <div v-if="provincia || telefono" class="mt-4 flex justify-center gap-6">
-        <p v-if="provincia" class="flex items-center text-gray-700 font-medium">
-          <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          {{ provincia }}
-        </p>
-        <p v-if="telefono" class="flex items-center text-gray-700 font-medium">
-          <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-          </svg>
-          {{ telefono }}
-        </p>
-      </div>
-    </div>
-
-    <!-- Lista de Reservas por Tour -->
-    <div v-if="reservasPorTour.length > 0" class="mt-10">
-      <TituloSecundario class="text-xl font-bold text-gray-900 mb-6">
+  <div class="max-w-3xl mx-auto p-6 mb-16 bg-white rounded-xl shadow-xl border border-gray-200">
+    <div v-if="reservasPorTour.length > 0" class="mt-10 space-y-10">
+      <TituloSecundario class="text-2xl font-semibold text-gray-800 mb-4">
         Reservas de tus Tours
       </TituloSecundario>
       <ul class="space-y-6">
-        <li v-for="grupo in reservasPorTour" :key="grupo.tour._id"
-          class="bg-gray-50 p-6 rounded-xl shadow-md border border-gray-200">
+        <li v-for="grupo in reservasPorTour" :key="grupo.tour._id" class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
           <div class="flex flex-col md:flex-row items-center md:items-start gap-4">
-            <!-- Imagen del Tour -->
-            <img v-if="grupo.tour.fotoPortada" :src="grupo.tour.fotoPortada" alt="Foto del tour"
-              class="w-28 h-28 rounded-lg object-cover shadow-sm" />
-            <!-- Información del Tour -->
+            <!-- Foto de perfil del tour -->
+            <img v-if="grupo.tour.fotoPerfil" :src="grupo.tour.fotoPerfil" alt="Foto de perfil del tour"
+              class="w-24 h-24 rounded-full object-cover shadow-md" />
+
+            <!-- Foto de portada del tour -->
+            <div v-if="grupo.tour.fotoPortada" class="w-full h-56 md:h-72 rounded-lg overflow-hidden">
+              <img :src="grupo.tour.fotoPortada" alt="Foto del tour"
+                class="w-full h-full object-cover shadow-md" />
+            </div>
+            <!-- Comprobación de la foto de portada -->
+            <p v-if="!grupo.tour.fotoPortada" class="text-red-500">¡Foto de portada no disponible!</p>
+
             <div class="flex-1 text-center md:text-left">
-              <strong class="text-lg text-gray-900 block">
+              <strong class="text-xl text-gray-900 block">
                 {{ grupo.tour.titulo }}
               </strong>
-              <p class="text-gray-600 text-sm mt-1 line-clamp-2">
-                {{ grupo.tour.descripcion }}
+              <p class="text-gray-600 text-sm mt-2">
+                {{ grupo.tour.descripcion || 'Descripción no disponible' }}
               </p>
             </div>
           </div>
 
-          <!-- Lista de reservas -->
+          <!-- Reservas -->
           <div v-if="grupo.reservas.length > 0" class="mt-6">
-            <TituloTerciario class="text-lg text-gray-800 font-semibold mb-4">
+            <TituloTerciario class="text-xl text-gray-800 font-semibold mb-4">
               Reservas
             </TituloTerciario>
             <ul class="space-y-4">
               <li v-for="reserva in grupo.reservas" :key="reserva._id"
-                class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <p class="text-gray-700 font-medium">Reservado por:</p>
-                    <p class="text-gray-900 font-semibold">{{ reserva.userId.nombre }}</p>
+                class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
+                <div v-if="reserva.userId && reserva.userId.fotoPerfil">
+                  <img :src="reserva.userId.fotoPerfil" alt="Foto de perfil" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between">
+                    <p class="text-gray-700 font-medium">Usuario:</p>
+                    <p class="text-gray-900 font-semibold">{{ reserva.userId?.nombre || 'Nombre no disponible' }}</p>
                   </div>
-                  <div>
+                  <div class="flex justify-between mt-2">
                     <p class="text-gray-700 font-medium">Email:</p>
-                    <p class="text-gray-900">{{ reserva.userId.email }}</p>
+                    <p class="text-gray-900">{{ reserva.userId?.email || 'Email no disponible' }}</p>
                   </div>
-                  <div>
+                  <div class="flex justify-between mt-2">
                     <p class="text-gray-700 font-medium">Fecha de reserva:</p>
                     <p class="text-gray-900">
-                      {{ new Date(reserva.fechaReserva).toLocaleDateString() }}
+                      {{ reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : 'Fecha no disponible' }}
                     </p>
                   </div>
-                  <div>
+                  <div class="flex justify-between mt-2">
                     <p class="text-gray-700 font-medium">Personas:</p>
                     <p class="text-gray-900">{{ reserva.cantidadPersonas }}</p>
-                  </div>
-                  <div>
-                    <p class="text-gray-700 font-medium">Estado:</p>
-                    <span class="px-2 py-1 rounded-md text-sm font-semibold" :class="{
-                      'text-green-700 bg-green-100': reserva.estado === 'Confirmada',
-                      'text-red-700 bg-red-100': reserva.estado === 'Cancelada',
-                      'text-yellow-700 bg-yellow-100': reserva.estado === 'Pendiente'
-                    }">
-                      {{ reserva.estado }}
-                    </span>
                   </div>
                 </div>
               </li>
@@ -244,12 +224,21 @@ onMounted(async () => {
         </li>
       </ul>
     </div>
-
-
-    <!-- Mensaje si no hay reservas -->
-    <div v-else class="text-center text-gray-600 mt-10">
-      <p class="text-lg font-medium">No hay reservas para mostrar.</p>
-      <p class="text-sm mt-2">Cuando alguien reserve tus tours, aparecerán aquí.</p>
-    </div>
   </div>
 </template>
+
+<style scoped>
+/* Estilos generales de la aplicación */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f7f7f7;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Sableklish', sans-serif;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+</style>

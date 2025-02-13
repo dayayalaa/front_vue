@@ -6,6 +6,7 @@ import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IrAtras from '../components/IrAtras.vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import MiReservasUsuario from '../components/MiReservasUsuario.vue';
 
 const userName = ref('');
 const userProfileImage = ref('');
@@ -211,6 +212,7 @@ const eliminarTour = async (tourId) => {
     </li>
   </ul>
 </div>
+<MiReservasUsuario />
 </div>
 </template>
 

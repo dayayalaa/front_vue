@@ -49,7 +49,7 @@ const routes = [
   { path: "/provincia/:id",      name: "ProvinciasVistas",  component: ProvinciasVistas,  meta: { requiresAuth: true }},
   { path: "/lugar/:id",          name: "LugaresVistas",  component: LugaresVistas,  meta: { requiresAuth: true }},
 
-  { path: "/misreservas",        name: "misReservas", component: MiReservasUsuario,  meta: { requiresAuth: true }  },
+ 
 
 ];
 
