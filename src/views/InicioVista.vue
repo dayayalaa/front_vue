@@ -3,13 +3,14 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
-import MiItinerario from '../components/MiItinerario.vue';
+import Mistinerario from '../components/Mistinerario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import NavSuperior from '../components/NavSuperior.vue';
 import Buscador from '../components/Buscador.vue';
 import { RouterLink } from 'vue-router';
 
 const provinciasPopulares = ref([]);
+const guias = ref([]);
 
 // const obtenerProvinciasPopulares = async () => {
 //   try {
@@ -21,8 +22,18 @@ const provinciasPopulares = ref([]);
 //   }
 // };
 
+const obtenerGuias = async () => {
+  try {
+    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/usuarios/guia');
+    guias.value = response.data.data;
+  } catch (error) {
+    console.error('Error al obtener guías:', error);
+  }
+};
+
 onMounted(() => {
   // obtenerProvinciasPopulares();
+  obtenerGuias();
 });
 </script>
 
@@ -38,21 +49,34 @@ onMounted(() => {
     </div>
 
     <div>
-      <MiItinerario />
+      <Mistinerario />
     </div>
 
     <!-- Guías -->
     <section class="flex flex-col justify-center items-center mb-20">
       <TituloSecundario>¡Conoce nuestros guías!</TituloSecundario>
+
+      <div class="flex justify-center gap-4 m-6 flex-wrap">
+        <div v-for="guia in guias.slice(0, 3)" :key="guia._id"
+          class="bg-white shadow-md rounded-lg overflow-hidden w-28 text-center">
+          <router-link :to="`/guias/${guia._id}`">
+            <img :src="guia.fotoPerfil" alt="Guía" class="w-28 h-28 object-cover" />
+            <div class="p-2">
+              <h3 class="text-md font-semibold text-gray-800">{{ guia.nombre }}</h3>
+            </div>
+          </router-link>
+        </div>
+      </div>
+
       <RouterLink to="/guiasTarjetas">
         <BotonPrincipal>Guías locales</BotonPrincipal>
       </RouterLink>
     </section>
 
-    
+
 
     <!-- Provincias Populares -->
-   <section class="flex flex-col justify-center items-center mb-20">
+    <section class="flex flex-col justify-center items-center mb-20">
       <TituloSecundario>Provincias Populares</TituloSecundario>
       <strong class="text-center">¡Esta silenciado lo de las provincias para no gastar busquedas!</strong>
       <!--  <div class="flex flex-wrap gap-5 justify-center m-2">

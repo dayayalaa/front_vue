@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
-import MiItinerario from '../components/MiItinerario.vue';
+import Mistinerario from '../components/Mistinerario.vue';
 import IrAtras from '../components/IrAtras.vue';
 
 const userName = ref('');
@@ -87,7 +87,7 @@ onMounted(() => {
       <TituloSecundario class="text-2xl">{{ loading ? 'Cargando...' : userName }}</TituloSecundario>
     </div>
 
-    <MiItinerario />
+    <Mistinerario />
 
     <div class="flex justify-center mt-6">
       <!-- <BotonPrincipal>Ver mi mapa</BotonPrincipal> -->
