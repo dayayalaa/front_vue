@@ -81,11 +81,29 @@ const fetchUserData = async () => {
 };
 
 const provincias = [
-    'Buenos Aires', 'Córdoba', 'Mendoza', 'Mar del Plata', 'Ushuaia',
-    'Bariloche', 'Salta', 'Rosario', 'Tucumán', 'Iguazú', 'Neuquén',
-    'Misiones', 'Posadas', 'San Fernando del Valle de Catamarca', 'San Juan',
-    'Río Gallegos', 'Río Grande', 'El Calafate', 'San Luis', 'Resistencia',
-    'Tremedal', 'General Roca',
+  'Buenos Aires',
+  'Catamarca',
+  'Chaco',
+  'Chubut',
+  'Córdoba',
+  'Corrientes',
+  'Entre Ríos',
+  'Formosa',
+  'Jujuy',
+  'La Pampa',
+  'La Rioja',
+  'Mendoza',
+  'Misiones',
+  'Neuquén',
+  'Río Negro',
+  'Salta',
+  'San Juan',
+  'San Luis',
+  'Santa Cruz',
+  'Santa Fe',
+  'Santiago del Estero',
+  'Tierra del Fuego',
+  'Tucumán'
 ];
 
 const actualizarFotoPerfil = async () => {

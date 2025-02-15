@@ -162,28 +162,34 @@ const stepClass = (step) => pasoActual.value === step ? 'text-[#788B69]' : 'text
 
 const obtenerNombreAeropuerto = (codigo) => {
   const lugaresArgentinos = {
-    'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
-    'Buenos Aires - Aeroparque Jorge Newbery': 'AEP',
-    'Córdoba': 'COR',
-    'Mendoza': 'MDZ',
-    'Mar del Plata': 'MDQ',
-    'Ushuaia': 'USH',
-    'Bariloche': 'BRC',
-    'Salta': 'SLA',
-    'Rosario': 'ROS',
-    'Tucumán': 'TUC',
-    'Iguazú': 'IGR',
-    'Neuquén': 'NQN',
-    'Misiones': 'MIR',
-    'Posadas': 'PSS',
-    'San Fernando del Valle de Catamarca': 'CTC',
-    'San Juan': 'UAQ',
-    'Río Gallegos': 'RGL',
-    'Río Grande': 'RGA',
-    'El Calafate': 'FTE',
-    'San Luis': 'LUQ',
-    'Resistencia': 'RES',
-  };
+  'Buenos Aires - Ezeiza': 'EZE',
+  'Buenos Aires - Aeroparque': 'AEP',
+  'San Carlos de Bariloche': 'BRC',
+  'Comodoro Rivadavia': 'CRD',
+  'Córdoba': 'COR',
+  'Corrientes': 'CNQ',
+  'El Calafate': 'FTE',
+  'El Palomar': 'EPA',
+  'Esquel': 'EQS',
+  'Formosa': 'FMA',
+  'Mar del Plata': 'MDQ',
+  'Mendoza': 'MDZ',
+  'Neuquén': 'NQN',
+  'Posadas': 'PSS',
+  'Puerto Iguazú': 'IGR',
+  'Resistencia': 'RES',
+  'Río Gallegos': 'RGL',
+  'Río Grande': 'RGA',
+  'Rosario': 'ROS',
+  'Salta': 'SLA',
+  'San Miguel de Tucumán': 'TUC',
+  'San Salvador de Jujuy': 'JUJ',
+  'Santa Rosa del Conlara': 'RLO',
+  'Termas de Río Hondo': 'RHD',
+  'Trelew': 'REL',
+  'Ushuaia': 'USH'
+};
+
 
   const aeropuerto = Object.keys(lugaresArgentinos).find(key => lugaresArgentinos[key] === codigo);
   return aeropuerto || 'Desconocido';

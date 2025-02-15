@@ -22,28 +22,30 @@ const isPasswordVisible = ref(false);
 
 const lugaresArgentinos = [
   'Buenos Aires',
+  'Catamarca',
+  'Chaco',
+  'Chubut',
   'Córdoba',
+  'Corrientes',
+  'Entre Ríos',
+  'Formosa',
+  'Jujuy',
+  'La Pampa',
+  'La Rioja',
   'Mendoza',
-  'Mar del Plata',
-  'Ushuaia',
-  'Bariloche',
-  'Salta',
-  'Rosario',
-  'Tucumán',
-  'Iguazú',
-  'Neuquén',
   'Misiones',
-  'Posadas',
-  'San Fernando del Valle de Catamarca',
+  'Neuquén',
+  'Río Negro',
+  'Salta',
   'San Juan',
-  'Río Gallegos',
-  'Río Grande',
-  'El Calafate',
   'San Luis',
-  'Resistencia',
-  'Tremedal',
-  'General Roca',
+  'Santa Cruz',
+  'Santa Fe',
+  'Santiago del Estero',
+  'Tierra del Fuego',
+  'Tucumán'
 ];
+
 
 const togglePasswordVisibility = () => {
   isPasswordVisible.value = !isPasswordVisible.value;
