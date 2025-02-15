@@ -69,7 +69,6 @@ onMounted(() => {
           :to="{ path: `/itinerario/${itinerario._id}` }" class="flex flex-col justify-between items-center w-[150px]">
 
           <div class="w-[150px] h-[150px] overflow-hidden">
-            <!-- Ya no usamos data_id, simplemente mostramos la imagen del itinerario -->
             <img :src="itinerario.img || '/img/default_portada.png'" :alt="itinerario.alt"
               class="w-full h-full object-cover rounded-lg" />
           </div>

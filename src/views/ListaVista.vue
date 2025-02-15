@@ -21,13 +21,12 @@ async function addItem() {
       const response = await axios.post(`https://back-tesis-lovat.vercel.app/arcana/reservas/${id}/checklist/agregar`, {
         id: id,
         titulo: nuevoItem.value.trim(),
-        estado: false,
+        estado: 'pendiente',
       });
 
-      checklistItems.value.push({
-        titulo: nuevoItem.value.trim(),
-        estado: false
-      });
+      console.log("Respuesta al agregar:", response.data);
+
+      await loadChecklistItems();
 
       nuevoItem.value = '';
     } catch (err) {
@@ -37,19 +36,44 @@ async function addItem() {
   }
 }
 
+async function loadChecklistItems() {
+  try {
+    const id = route.params.id;
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/${id}`);
+    itinerario.value = response.data;
+    checklistItems.value = itinerario.value.checklist;
+
+    console.log('Lista de ítems actualizada:', checklistItems.value);
+  } catch (err) {
+    error.value = err.message || 'Ocurrió un error al cargar el itinerario.';
+    console.error('Error al cargar los ítems:', err.message);
+  }
+}
+
+
 async function removeItem(itemId) {
+  console.log('🗑 Item a eliminar:', itemId);
+
+  if (!itemId) {
+    console.error("Error: itemId no está definido.");
+    return;
+  }
+
   try {
     const id = route.params.id;
     const response = await axios.delete(`https://back-tesis-lovat.vercel.app/arcana/reservas/${id}/checklist/eliminar`, {
       data: { id, itemId }
     });
 
-    checklistItems.value = checklistItems.value.filter(item => item._id !== itemId);
+    console.log('📌 Respuesta de la API después de eliminar:', response.data);
+
+    await loadChecklistItems();
+
   } catch (err) {
-    error.value = 'Error al eliminar el ítem.';
-    console.error('Error al eliminar item:', err.message);
+    console.error('❌ Error al eliminar item:', err.message);
   }
 }
+
 
 onMounted(async () => {
   try {
@@ -59,6 +83,9 @@ onMounted(async () => {
     itinerario.value = response.data;
     checklistItems.value = itinerario.value.checklist;
     isLoading.value = false;
+
+    console.log('lista: ', checklistItems.value);
+
   } catch (err) {
     error.value = err.message || 'Ocurrió un error al cargar el itinerario.';
     isLoading.value = false;
@@ -66,25 +93,44 @@ onMounted(async () => {
 });
 
 async function toggleItemStatus(item) {
-  try {
-    const id = route.params.id;
+    try {
+        const id = route.params.id;
+        const nuevoEstado = item.estado === 'pendiente' ? 'realizado' : 'pendiente';
 
-    console.log("ID de la reserva:", id);
-    console.log("Ítem a cambiar:", item);
-    console.log("Estado antes de cambiar:", item.estado);
+        console.log('item:', item._id);
+        console.log("Estado a enviar:", nuevoEstado);
 
-    const response = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/reservas/${id}/checklist/actualizar`, {
-      itemId: item._id,
-      titulo: item.titulo,
-      estado: !item.estado
-    });
+        const itemIndex = checklistItems.value.findIndex(checklistItem => checklistItem._id === item._id);
+        if (itemIndex !== -1) {
+            checklistItems.value[itemIndex] = { ...checklistItems.value[itemIndex], estado: nuevoEstado };
+        }
 
-    console.log("Respuesta del servidor:", response.data);
-    checklistItems.value = response.data.checklist;
-  } catch (err) {
-    console.error("Error al cambiar el estado del item:", err.message);
-    error.value = 'Error al cambiar el estado del ítem. Intenta nuevamente.';
-  }
+        const response = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/reservas/${id}/checklist/actualizar`, {
+            id: id,
+            itemId: item._id,
+            titulo: item.titulo,
+            estado: nuevoEstado
+        });
+
+      if (response.data && response.data.checklist) {
+            checklistItems.value = response.data.checklist;
+            console.log("Lista actualizada:", checklistItems.value);
+        }
+         else {
+            console.error("Error: Respuesta del servidor inesperada", response.data);
+            if (itemIndex !== -1) {
+                checklistItems.value[itemIndex] = { ...checklistItems.value[itemIndex], estado: item.estado === 'pendiente' ? 'realizado' : 'pendiente' };
+            }
+        }
+    } catch (err) {
+        console.error("Error al cambiar el estado del item:", err.message);
+        error.value = 'Error al cambiar el estado del ítem. Intenta nuevamente.';
+
+        const itemIndex = checklistItems.value.findIndex(checklistItem => checklistItem._id === item._id);
+        if (itemIndex !== -1) {
+            checklistItems.value[itemIndex] = { ...checklistItems.value[itemIndex], estado: item.estado === 'pendiente' ? 'realizado' : 'pendiente' };
+        }
+    }
 }
 </script>
 
@@ -103,13 +149,20 @@ async function toggleItemStatus(item) {
     <div v-if="error" class="text-red-500 mb-4">{{ error }}</div>
     <div v-if="isLoading" class="text-blue-500 mb-4">Cargando checklist...</div>
 
-
     <div v-for="item in checklistItems" :key="item._id"
       class="bg-white shadow-md rounded-lg p-4 mb-4 flex items-center">
-      <input type="checkbox" v-model="item.estado" @change="toggleItemStatus(item)" class="mr-2" />
-      <span :class="{ 'line-through': item.estado }">{{ item.titulo }}</span>
+      <input
+        type="checkbox"
+        :checked="item.estado === 'realizado'"
+        @change="() => toggleItemStatus(item)"
+        class="mr-2"
+      />
 
-      <button @click="removeItem(item._id)"
+      <span :class="{ 'line-through': item.estado === 'realizado' }">
+        {{ item.titulo }}
+      </span>
+
+      <button @click.stop="removeItem(item._id)"
         class="ml-auto flex items-center justify-center bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition">
         <IconoBorrar class="w-6 h-6" />
       </button>
