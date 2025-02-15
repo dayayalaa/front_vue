@@ -22,7 +22,8 @@ import Ajustes from "../components/Ajustes.vue";
 import Pago from "../components/PagoVista.vue";
 import ProvinciasVistas from "../components/ProvinciasVistas.vue";
 import LugaresVistas from "../components/LugaresVistas.vue";
-import MiReservasUsuario from "../components/MiReservasUsuario.vue";
+
+import InicioGuiaVista from "../views/InicioGuiaVista.vue";
 
 const routes = [
   { path: "/",                   name: "Home",              component: HomeView,          meta: { requiresAuth: true } },
@@ -49,8 +50,7 @@ const routes = [
   { path: "/provincia/:id",      name: "ProvinciasVistas",  component: ProvinciasVistas,  meta: { requiresAuth: true }},
   { path: "/lugar/:id",          name: "LugaresVistas",  component: LugaresVistas,  meta: { requiresAuth: true }},
 
- 
-
+  { path: "/inicioguia",          name: "inicioGuia",  component: InicioGuiaVista,  meta: { requiresAuth: true }},
 ];
 
 const router = createRouter({
