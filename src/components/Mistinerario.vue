@@ -7,6 +7,8 @@ import IconoMas from './icons/IconoMas.vue';
 const userId = ref(null);
 const itinerarios = ref([]);
 const loading = ref(true);
+const lugaresTuristicos = ref([]);
+const provinciaInfo = ref({ gallery: [] });
 
 const decodeJWT = (token) => {
   try {
@@ -29,11 +31,67 @@ const fetchUserData = async () => {
 
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/usuario/${userId.value}`);
     itinerarios.value = response.data.data;
+
+    itinerarios.value.forEach(async (itinerario) => {
+      await obtenerProvincia(itinerario.destino);
+      itinerario.thumbnail = provinciaInfo.value.thumbnail || '/img/default_portada.png';
+    });
+
   } catch (error) {
     console.error('Error al obtener los itinerarios:', error);
   } finally {
     loading.value = false;
   }
+};
+
+
+const obtenerProvincia = async (provincia) => {
+  console.log('Buscando lugares turísticos para la provincia:', provincia);
+  try {
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/provincia?provincia=${provincia}`);
+
+    console.log('Estructura de response.data:', response.data);
+
+    if (response && response.data) {
+      provinciaInfo.value = {
+        title: response.data.title,
+        address: response.data.address,
+        description: response.data.description?.snippet || 'No disponible',
+        thumbnail: response.data.thumbnail,
+      };
+
+      const data_id = response.data.data_id;
+      console.log('data_id:', data_id);
+      obtenerImagenes(data_id);
+    } else {
+      console.error('Formato inesperado en la respuesta de la API');
+    }
+  } catch (error) {
+    console.error('Error al obtener lugares turísticos:', error);
+  }
+};
+
+const obtenerImagenes = async (data_id) => {
+  try {
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
+    console.log('Respuesta de la API img:', response.data);
+
+    if (response.data && response.data.images && Array.isArray(response.data.images) && response.data.images.length > 0) {
+      const validImage = response.data.images.find(image => isValidImage(image));
+      provinciaInfo.value.thumbnail = validImage || '/img/default_portada.png'; 
+    } else {
+      console.warn('No se encontraron imágenes, se asignará una imagen predeterminada');
+      provinciaInfo.value.thumbnail = '/img/default_portada.png'; 
+    }
+  } catch (error) {
+    console.error('Error al obtener imágenes:', error);
+    provinciaInfo.value.thumbnail = '/img/default_portada.png';
+  }
+};
+
+
+const isValidImage = (image) => {
+  return image && image.startsWith('http');
 };
 
 onMounted(() => {
@@ -68,8 +126,9 @@ onMounted(() => {
         <router-link v-for="itinerario in itinerarios" :key="itinerario._id"
           :to="{ path: `/itinerario/${itinerario._id}` }" class="flex flex-col justify-between items-center w-[150px]">
 
+          <!-- Mostrar la imagen del destino -->
           <div class="w-[150px] h-[150px] overflow-hidden">
-            <img :src="itinerario.img || '/img/default_portada.png'" :alt="itinerario.alt"
+            <img :src="itinerario.thumbnail || '/img/default_portada.png'" :alt="itinerario.destino"
               class="w-full h-full object-cover rounded-lg" />
           </div>
 
