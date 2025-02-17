@@ -92,7 +92,7 @@ const irARuta = () => {
 <template>
   <IrAtras />
   <div class="flex items-center justify-center pt-6 pb-8">
-    <div class="max-w-md p-4 bg-white rounded shadow-lg">
+    <div class="max-w-md p-4 m-4 bg-white rounded shadow-lg">
       <TituloSecundario>Buscar vuelos</TituloSecundario>
       <form @submit.prevent="irARuta">
         <div class="mb-4">

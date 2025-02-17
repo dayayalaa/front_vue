@@ -70,45 +70,43 @@ const inicioSesion = async () => {
 </script>
 
 <template>
-    <div class="flex items-center justify-center h-screen pt-6 pb-8">
-        <div class="flex items-center justify-center flex-col max-w-md p-4 bg-white rounded shadow-lg">
-            <IconoArcana fill="#222725" width="150" height="150" />
-            <TituloSecundario class="text-center">Iniciar Sesión</TituloSecundario>
-            <form @submit.prevent="inicioSesion">
-                <div>
-                    <label for="email" class="block text-sm font-medium">Email:</label>
-                    <input type="email" id="email" placeholder="Correo electrónico"
-                        class="border border-gray-300 p-2 rounded w-full" v-model="email" />
+    <div class="flex items-center justify-center mt-24">
+        <div class="flex items-center justify-center flex-col max-w-md w-full p-4 m-4 bg-white rounded shadow-lg">
+        <IconoArcana fill="#222725" width="150" height="150" />
+        <TituloSecundario class="text-center">Iniciar Sesión</TituloSecundario>
+        <form @submit.prevent="inicioSesion">
+            <div>
+                <label for="email" class="block text-sm font-medium">Email:</label>
+                <input type="email" id="email" placeholder="Correo electrónico"
+                    class="border border-gray-300 p-2 rounded w-full" v-model="email" />
+            </div>
+            <div class="mt-3 relative">
+                <label for="contrasenia" class="block text-sm font-medium">Contraseña:</label>
+                <input :type="isPasswordVisible ? 'text' : 'password'" id="contrasenia" placeholder="Contraseña"
+                    class="border border-gray-300 p-2 rounded w-full" v-model="contrasenia" />
+                <button type="button" @click="togglePasswordVisibility"
+                    class="absolute right-3 top-1/2 transform  flex items-center justify-center">
+                    <span v-if="isPasswordVisible">
+                        <i class="fas fa-eye text-gray-500"></i>
+                    </span>
+                    <span v-else>
+                        <i class="fas fa-eye-slash text-gray-500"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="flex flex-col justify-center mt-5">
+                <div class="flex justify-center mb-2">
+                    <BotonPrincipal :disabled="loading">{{ loading ? 'Cargando...' : 'Iniciar Sesión' }}
+                    </BotonPrincipal>
                 </div>
-                <div class="mt-3 relative">
-                    <label for="contrasenia" class="block text-sm font-medium">Contraseña:</label>
-                    <input :type="isPasswordVisible ? 'text' : 'password'" id="contrasenia" placeholder="Contraseña"
-                        class="border border-gray-300 p-2 rounded w-full" v-model="contrasenia" />
-                    <button type="button" @click="togglePasswordVisibility"
-                        class="absolute right-3 top-1/2 transform  flex items-center justify-center">
-                        <span v-if="isPasswordVisible">
-                            <i class="fas fa-eye text-gray-500"></i>
-                        </span>
-                        <span v-else>
-                            <i class="fas fa-eye-slash text-gray-500"></i>
-                        </span>
-                    </button>
-
-                </div>
-
-
-
-                <div class="flex flex-col justify-center mt-5">
-                    <div class="flex justify-center mb-2">
-                        <BotonPrincipal :disabled="loading">{{ loading ? 'Cargando...' : 'Iniciar Sesión' }}
-                        </BotonPrincipal>
-                    </div>
-                    <p v-if="errorMessage" class="text-red-500 text-center">{{ errorMessage }}</p>
-                    <a href="/opcion" class="text-center text-[#788B69]">
-                        ¿No tienes cuenta?
-                    </a>
-                </div>
-            </form>
-        </div>
+                <p v-if="errorMessage" class="text-red-500 text-center text-sm">
+                    {{ errorMessage }}
+                </p>
+                <a href="/opcion" class="text-center text-[#788B69]">
+                    ¿No tienes cuenta?
+                </a>
+            </div>
+        </form>
+    </div>
     </div>
 </template>

@@ -219,6 +219,9 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
     case 'vuelta':
       if (vuelta.value.length > 0) {
         const vueloVueltaSeleccionado = vuelta.value.find(v => v.arrival_token === tokenSeleccionado);
+        console.log(arrival_id);
+        console.log(vueloVueltaSeleccionado.arrival_id);
+        console.log(vueloVueltaSeleccionado);
         if (vueloVueltaSeleccionado) {
           reserva.value.vueltaReserva = {
             token: tokenSeleccionado,

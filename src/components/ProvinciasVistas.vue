@@ -115,13 +115,48 @@ const obtenerImagenes = async (data_id) => {
 };
 
 const obtenerProvinciasPopulares = async () => {
-    try {
-        const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
-        provinciasPopulares.value = response.data;
-        console.log(provinciasPopulares.value);
-    } catch (error) {
-        console.error('Error al obtener provincias populares:', error);
+  try {
+    const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
+    // console.log('Respuesta completa de la API:', response.data);
+
+    provinciasPopulares.value = response.data;
+    response.data.forEach(provincia => {
+      if (provincia.data_id) {
+        // console.log('data_id encontrado:', provincia.data_id);
+        obtenerImagenesP(provincia);
+      } else {
+        console.log('No se encontró data_id en la provincia:', provincia.provincia);
+      }
+    });
+  } catch (error) {
+    console.error('Error al obtener provincias populares:', error);
+  }
+};
+
+const obtenerImagenesP = async (provincia) => {
+  try {
+    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${provincia.data_id}`);
+    // console.log('Respuesta de la API img:', response.data);
+
+    if (response.data && response.data.images && Array.isArray(response.data.images) && response.data.images.length > 0) {
+      const validImage = response.data.images.find(image => isValidImage(image));
+      provincia.thumbnail = validImage || '/img/default_portada.png';
+    } else {
+      console.warn('No se encontraron imágenes, se asignará una imagen predeterminada');
+      provincia.thumbnail = '/img/default_portada.png';
     }
+
+    // console.log(`Imagen para ${provincia.provincia}:`, provincia.thumbnail);
+
+    provinciasPopulares.value = [...provinciasPopulares.value];
+  } catch (error) {
+    console.error('Error al obtener imágenes:', error);
+    provincia.thumbnail = '/img/default_portada.png';
+  }
+};
+
+const isValidImage = (image) => {
+  return image && image.startsWith('http');
 };
 
 onMounted(() => {
@@ -138,7 +173,7 @@ const irADetalleGuia = (id) => {
 
 <template>
     <IrAtras />
-    <div class="w-full max-w-4xl mx-auto p-4">
+    <div class="w-full max-w-4xl mx-auto">
         <!-- Indicador de carga -->
         <div v-if="cargando" class="text-center">
             <SpinnerCarga />
@@ -149,23 +184,24 @@ const irADetalleGuia = (id) => {
             <TituloSecundario class="text-center">Descubre {{ provinciaInfo.title }}</TituloSecundario>
             <TituloTerciario class="text-gray-600 mt-4">{{ provinciaInfo.address }}</TituloTerciario>
 
-            <div class="h-[250px] w-[300px] mt-6">
-                <img :src="provinciaInfo.gallery[0]" :alt="provinciaInfo.title"
-                    class="w-full h-full object-cover rounded-lg" />
+            <div class="flex flex-col justify-center items-center p-4">
+                <div class="h-[250px] w-[300px] mt-6">
+                    <img :src="provinciaInfo.gallery[0]" :alt="provinciaInfo.title"
+                        class="w-full h-full object-cover rounded-lg" />
+                </div>
+
+
+                <p v-if="provinciaInfo.description" class="mt-4 text-gray-700 text-left">
+                    <strong class="text-green-600">Descripción:</strong>
+                    {{ provinciaInfo.description }}
+                </p>
+
             </div>
-
-
-            <p v-if="provinciaInfo.description" class="mt-4 text-gray-700">
-                <strong class="text-green-600">Descripción:</strong>
-                {{ provinciaInfo.description }}
-            </p>
-
-
             <!-- Galería de imágenes -->
-            <div class="flex space-x-4 overflow-x-auto p-2 rounded-lg bg-gray-100 mt-6 mb-6">
+            <div class="flex space-x-4 overflow-x-auto rounded-lg mt-6 mb-6 p-2">
                 <div v-for="(imagen, index) in provinciaInfo.gallery.slice(1)" :key="index" class="flex-shrink-0 w-48">
                     <img :src="imagen" :alt="'Imagen ' + (index + 1)"
-                        class="w-full h-32 object-cover rounded-lg shadow-sm" />
+                        class="w-full h-60 object-cover rounded-lg shadow-sm" />
                 </div>
             </div>
 

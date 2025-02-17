@@ -9,7 +9,6 @@ import BotonPrincipal from './BotonPrincipal.vue';
 
 const reserva = JSON.parse(localStorage.getItem('Reserva')) || null;
 
-// Función para calcular el total
 const calcularTotal = () => {
     const precioVueloIda = parseFloat(reserva.idaReserva.details.price || 0);
     const precioVueloVuelta = parseFloat(reserva.vueltaReserva.details.price || 0);
@@ -17,7 +16,6 @@ const calcularTotal = () => {
     return precioVueloIda + precioVueloVuelta + precioHotel;
 };
 
-// Función para manejar el pago
 const realizarPago = async () => {
     try {
         const items = [
@@ -47,7 +45,7 @@ const realizarPago = async () => {
         console.log('Verificacion:', response);
 
         if (response.data?.init_point) {
-            window.location.href = response.data.init_point; // Redirigir a Mercado Pago
+            window.location.href = response.data.init_point; 
         } else {
             throw new Error('No se recibió init_point de la respuesta.');
         }
@@ -73,8 +71,10 @@ const realizarPago = async () => {
                     <TituloTerciario>Resumen de la Reserva</TituloTerciario>
                     <p><strong>Vuelo de Ida:</strong> {{ reserva.idaReserva.details.flights[0].airline }}</p>
                     <p><strong>Precio de Ida:</strong> ${{ reserva.idaReserva.details.price?.toLocaleString() }}</p>
+                    <hr class="m-4">
                     <p><strong>Vuelo de Vuelta:</strong> {{ reserva.vueltaReserva.details.flights[0].airline }}</p>
                     <p><strong>Precio de Vuelta:</strong> ${{ reserva.vueltaReserva.details.price?.toLocaleString() }}</p>
+                    <hr class="m-4">
                     <p><strong>Hotel:</strong> {{ reserva.hotelReserva.name }}</p>
                     <p><strong>Precio del Hotel:</strong> ${{ reserva.hotelReserva.total_rate.extracted_before_taxes_fees?.toLocaleString() }}</p>
                     <hr class="m-6">
