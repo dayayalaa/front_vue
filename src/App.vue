@@ -12,15 +12,17 @@ const loading = ref(true);
 onMounted(() => {
   setTimeout(() => {
     loading.value = false;
-  }, 3000);
+  }, 5600); 
 });
 </script>
 
 <template>
   <main>
-    <div v-if="loading" class="fixed inset-0 bg-green-500 flex justify-center items-center z-50 opacity-100 transition-opacity duration-1000 ease-in-out">
-      <VistaBienvenida />
-    </div>
+    <transition name="fade" @after-enter="onAfterEnter">
+      <div v-if="loading" class="fixed inset-0 bg-green-500 flex justify-center items-center z-50">
+        <VistaBienvenida />
+      </div>
+    </transition>
 
     <div v-if="!loading" class="mb-16">
       <RouterView />
@@ -29,3 +31,12 @@ onMounted(() => {
     <NavInferior v-if="!hiddenRoutes.includes(route.path) && !loading" />
   </main>
 </template>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1.5s ease-in-out; 
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+</style>
