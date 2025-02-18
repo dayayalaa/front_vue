@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import SpinnerCarga from './SpinnerCarga.vue';
@@ -17,6 +17,43 @@ const lugaresTuristicos = ref([]);
 const cargando = ref(true);
 
 const provinciasPopulares = ref([]);
+const isUser = ref(false);
+const isGuia = ref(false);
+
+
+const decodeJWT = (token) => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+};
+
+
+const checkUserRole = () => {
+  const token = localStorage.getItem('token');
+  console.log('Token:', token);
+
+  if (token) {
+    try {
+      const decodedToken = decodeJWT(token);
+      console.log('Decoded Token:', decodedToken);
+
+     
+      if (typeof decodedToken.rols === 'string') {
+        isGuia.value = decodedToken.rols === 'guia';
+        isUser.value = decodedToken.rols === 'user';
+        console.log('isUser:', isUser.value, 'isGuia:', isGuia.value);
+      } else {
+        console.error('El campo "rols" no es una cadena:', decodedToken.rols);
+      }
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+    }
+  }
+};
 
 const obtenerProvincia = async () => {
     const provinciaId = route.params.id;
@@ -117,12 +154,9 @@ const obtenerImagenes = async (data_id) => {
 const obtenerProvinciasPopulares = async () => {
   try {
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
-    // console.log('Respuesta completa de la API:', response.data);
-
     provinciasPopulares.value = response.data;
     response.data.forEach(provincia => {
       if (provincia.data_id) {
-        // console.log('data_id encontrado:', provincia.data_id);
         obtenerImagenesP(provincia);
       } else {
         console.log('No se encontró data_id en la provincia:', provincia.provincia);
@@ -136,8 +170,6 @@ const obtenerProvinciasPopulares = async () => {
 const obtenerImagenesP = async (provincia) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${provincia.data_id}`);
-    // console.log('Respuesta de la API img:', response.data);
-
     if (response.data && response.data.images && Array.isArray(response.data.images) && response.data.images.length > 0) {
       const validImage = response.data.images.find(image => isValidImage(image));
       provincia.thumbnail = validImage || '/img/default_portada.png';
@@ -145,8 +177,6 @@ const obtenerImagenesP = async (provincia) => {
       console.warn('No se encontraron imágenes, se asignará una imagen predeterminada');
       provincia.thumbnail = '/img/default_portada.png';
     }
-
-    // console.log(`Imagen para ${provincia.provincia}:`, provincia.thumbnail);
 
     provinciasPopulares.value = [...provinciasPopulares.value];
   } catch (error) {
@@ -164,6 +194,7 @@ onMounted(() => {
     obtenerGuias();
     obtenerLugares();
     obtenerProvinciasPopulares();
+    checkUserRole();  
 });
 
 const irADetalleGuia = (id) => {
@@ -174,12 +205,10 @@ const irADetalleGuia = (id) => {
 <template>
     <IrAtras />
     <div class="w-full max-w-4xl mx-auto">
-        <!-- Indicador de carga -->
         <div v-if="cargando" class="text-center">
             <SpinnerCarga />
         </div>
 
-        <!-- Mostrar la información de la provincia -->
         <div v-else-if="provinciaInfo" class="text-center">
             <TituloSecundario class="text-center">Descubre {{ provinciaInfo.title }}</TituloSecundario>
             <TituloTerciario class="text-gray-600 mt-4">{{ provinciaInfo.address }}</TituloTerciario>
@@ -190,35 +219,26 @@ const irADetalleGuia = (id) => {
                         class="w-full h-full object-cover rounded-lg" />
                 </div>
 
-
                 <p v-if="provinciaInfo.description" class="mt-4 text-gray-700 text-left">
                     <strong class="text-green-600">Descripción:</strong>
                     {{ provinciaInfo.description }}
                 </p>
-
             </div>
-            <!-- Galería de imágenes -->
+        
             <div class="flex space-x-4 overflow-x-auto rounded-lg mt-6 mb-6 p-2">
                 <div v-for="(imagen, index) in provinciaInfo.gallery.slice(1)" :key="index" class="flex-shrink-0 w-48">
                     <img :src="imagen" :alt="'Imagen ' + (index + 1)"
                         class="w-full h-60 object-cover rounded-lg shadow-sm" />
                 </div>
             </div>
-
         </div>
-        <!-- Mensaje si no se encuentra información para la provincia -->
-        <p v-else class="text-center text-gray-500">No se encontró información para la provincia {{ route.params.id }}.
-        </p>
+       
+        <p v-else class="text-center text-gray-500">No se encontró información para la provincia {{ route.params.id }}.</p>
 
-        <div class="flex justify-center items-center mt-8 mb-8">
-            <router-link to="/crear">
-                <BotonPrincipal>Crear viaje</BotonPrincipal>
-            </router-link>
-        </div>
-
-        <!-- Lista de guías -->
-        <div>
-            <TituloSecundario class="text-center">Guías turísticos en {{ provinciaInfo?.title || route.params.id }}
+       
+        <div v-if="isUser">
+            <TituloSecundario class="text-center mt-8">
+                Guías turísticos en {{ provinciaInfo?.title || route.params.id }}
             </TituloSecundario>
             <div v-if="guiasFiltrados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div v-for="guia in guiasFiltrados" :key="guia.id"
@@ -232,39 +252,13 @@ const irADetalleGuia = (id) => {
                 </div>
             </div>
 
-            <!-- Mensaje si no se encuentran guías -->
-            <p v-else class="text-center text-gray-500">No se encontraron guías para la provincia {{ route.params.id }}.
-            </p>
+            <p v-else class="text-center text-gray-500">No se encontraron guías para la provincia {{ route.params.id }}.</p>
         </div>
 
-        <!-- Vista de los lugares turísticos -->
-        <div class="flex flex-col items-center mt-8">
-            <!-- Título Secundario -->
-            <TituloSecundario class="text-center mb-8">
-                Lugares turísticos en {{ provinciaInfo?.title || route.params.id }}
-            </TituloSecundario>
-
-            <!-- Lugares turísticos -->
-            <div v-if="lugaresTuristicos.length > 0">
-                <div class="flex flex-wrap gap-4 justify-center">
-                    <!-- Hacemos clickeable cada tarjeta de lugar -->
-                    <router-link v-for="lugar in lugaresTuristicos" :key="lugar.id"
-                        :to="{ name: 'LugaresVistas', params: { id: lugar.title } }"
-                        class="bg-white shadow-lg rounded-lg p-2 flex flex-col items-center w-[150px] h-[200px] cursor-pointer hover:shadow-xl transition">
-                        <img :src="lugar.thumbnail" :alt="lugar.title"
-                            class="w-full h-[70%] object-cover rounded-md mb-2" />
-                        <strong class="text-xs text-[#222725]">{{ lugar.title.slice(0, 30) }}{{ lugar.title.length > 30
-                            ? '...' : '' }}</strong>
-                        <p class="text-xs text-gray-600">{{ lugar.description }}</p>
-                    </router-link>
-
-                </div>
-            </div>
-
-            <!-- Mensaje si no se encuentran lugares turísticos -->
-            <p v-else class="text-center text-gray-500 mt-4">
-                No se encontraron lugares turísticos en {{ route.params.id }}.
-            </p>
+        <div v-if="isUser" class="flex justify-center items-center mt-8 mb-8">
+            <router-link to="/crear">
+                <BotonPrincipal class="bg-[#3C4A28] hover:bg-[#788B69]">Crear viaje</BotonPrincipal>
+            </router-link>
         </div>
 
         <!-- Provincias Populares -->
@@ -272,12 +266,12 @@ const irADetalleGuia = (id) => {
             Otros destinos
         </TituloSecundario>
         <div class="overflow-x-auto mt-8">
-            <div class="flex gap-4 ml-3">
+            <div class="flex gap-4 ml-3 mb-8">
                 <RouterLink v-for="provincia in provinciasPopulares" :key="provincia.provincia"
                     :to="{ name: 'lugarDetalle', params: { id: provincia.provincia } }"
                     class="w-[140px] h-[200px] flex-none">
                     <div class="relative w-full h-full">
-                        <img :src="provincia.thumbnail" :alt="`Imagen de ${provincia.provincia}`"
+                        <img :src="provincia.thumbnail" :alt="'Imagen de ' + provincia.provincia"
                             class="w-full h-full object-cover rounded-lg" />
                         <p
                             class="absolute bottom-0 left-0 w-full h-20 bg-black bg-opacity-70 text-white text-center p-2 rounded-b-lg">
@@ -290,3 +284,4 @@ const irADetalleGuia = (id) => {
 
     </div>
 </template>
+

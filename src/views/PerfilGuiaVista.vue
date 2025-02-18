@@ -87,18 +87,9 @@ const decodeJWT = (token) => {
   }
 };
 
-const tieneReservas = ref(false);
 
-const fetchReservas = async () => {
-  try {
-    const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/${userId.value}`);
-    if (response.data && response.data.length > 0) {
-      tieneReservas.value = true;
-    }
-  } catch (error) {
-    console.error("Error al obtener las reservas:", error);
-  }
-};
+
+
 
 onMounted(async () => {
   const token = localStorage.getItem('token');
@@ -110,6 +101,7 @@ onMounted(async () => {
       userId.value = decodedToken.userId;
       await fetchUserData();
       await obtenerTours(userId.value);
+   
     }
   } else {
     loading.value = false;
@@ -214,9 +206,11 @@ const eliminarTour = async (tourId) => {
         </li>
       </ul>
     </div>
-
     <p v-else class="text-center text-gray-600 mt-4">No hay tours disponibles.</p>
-
-    <MiReservasUsuario v-if="tieneReservas" />
+    
+    <TituloSecundario class="mt-4 text-2xl font-semibold text-gray-800 mb-4">
+        Reservas de tus Tours
+      </TituloSecundario>
+    <MiReservasUsuario  />
   </div>
 </template>
