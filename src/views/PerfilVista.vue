@@ -89,24 +89,12 @@ onMounted(() => {
     <div class="text-center mb-4 mt-16">
       <TituloSecundario class="text-2xl">{{ loading ? 'Cargando...' : userName }}</TituloSecundario>
 
-      <p v-if="userDescripcion">{{ userDescripcion }}</p>
+      <p v-if="userDescripcion" class="text-left m-4">{{ userDescripcion }}</p>
 
       <p v-if="userProvincia"><strong>Ubicación: </strong>{{ userProvincia }}</p>
     </div>
 
     <Mistinerario />
-
-    <div class="flex justify-center items-center mb-8">
-      <div class="relative">
-        <div class="absolute inset-x-0 top-1/2 transform -translate-y-1/2 flex items-center justify-center z-20 bg-[#3C4A28] bg-opacity-50 rounded-lg px-2 py-1 m-2">
-          <div class="text-white text-xl font-bold">Próximamente</div>
-        </div>
-        <div class="flex flex-col items-center justify-between p-4 bg-white rounded-lg shadow-lg text-[#3C4A28] w-48 h-36 relative">
-          <IconoMapa class="w-12 h-12 text-[#3C4A28] fill-current" />
-          <TituloSecundario class="text-sm text-gray-700">Ver mi mapa</TituloSecundario>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 

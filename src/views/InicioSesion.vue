@@ -16,6 +16,13 @@ const togglePasswordVisibility = () => {
     isPasswordVisible.value = !isPasswordVisible.value;
 };
 
+const decodeJWT = (token) => {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const decoded = JSON.parse(window.atob(base64));
+    return decoded;
+};
+
 const inicioSesion = async () => {
     loading.value = true;
     errorMessage.value = '';
@@ -48,11 +55,14 @@ const inicioSesion = async () => {
         if (response.ok) {
             if (data.token) {
                 localStorage.setItem('token', data.token);
-                try {
-                    await router.push('/');
-                } catch (error) {
-                    console.error('Error durante la redirección:', error);
-                    errorMessage.value = 'Hubo un error al intentar redirigir.';
+                
+                const decodedToken = decodeJWT(data.token);
+                const userRole = decodedToken.roles;
+
+                if (userRole === 'guia') {
+                    await router.push('/inicioguia'); 
+                } else {
+                    await router.push('/');  
                 }
             } else {
                 errorMessage.value = 'Token no válido recibido.';

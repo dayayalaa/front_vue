@@ -123,7 +123,7 @@ const eliminarTour = async (tourId) => {
         {{ loading ? 'Cargando...' : userName }}
       </TituloSecundario>
 
-      <p v-if="descripcion" class="text-gray-600 mt-2 text-sm">{{ descripcion }}</p>
+      <p v-if="descripcion" class="text-gray-600 mt-2 text-sm text-left">{{ descripcion }}</p>
       <p v-if="provincia" class="text-gray-700 font-medium mt-1">{{ provincia }}</p>
     </div>
 
@@ -185,7 +185,7 @@ const eliminarTour = async (tourId) => {
     </div>
     <p v-else class="text-center text-gray-600 mt-4">No hay tours disponibles.</p>
     
-    <TituloSecundario class="mt-4 text-2xl font-semibold text-gray-800 mb-4">
+    <TituloSecundario class="mt-12 text-2xl font-semibold text-gray-800 mb-4">
         Reservas de tus Tours
       </TituloSecundario>
     <MiReservasUsuario  />

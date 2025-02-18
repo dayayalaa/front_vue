@@ -8,58 +8,92 @@ const activeLink = ref('/');
 const circlePosition = ref(0);
 const itemWidth = 120;
 
-const setActive = (link) => {
-  if (link === `/perfil/${userId.value}` && !userId.value) {
-    console.error('No user ID available');
-    return;
+const isActive = (link) => {
+  if (link === '/') {
+    return activeLink.value === '/';
+  } else if (link.startsWith('/perfil/')) {
+    return activeLink.value.startsWith('/perfil/');
+  } else if (link === '/crear' || link === '/crearTur') {
+    return activeLink.value === '/crear' || activeLink.value === '/crearTur';
+  } else {
+    return activeLink.value === link;
   }
-  activeLink.value = link;
-  const index = getIndex(link);
-  circlePosition.value = index * itemWidth + (itemWidth / 2) - 180;
 };
-
-const isActive = (link) => activeLink.value === link;
 
 const userId = ref('');
 const userRole = ref('');
 
 const getIndex = (link) => {
-  if (link === '/') return 0;
-  if (link === '/crear') return 1;
+  if (link === '/' || link === '/inicioguia') return 0;
+  if (link === '/crear' || link === '/crearTur') return 1;
   if (link.startsWith('/perfil/')) return 2;
-  return -1;
+  return 0;
+};
+
+const setActive = (link) => {
+  if (link.startsWith('/perfil/') && !userId.value) {
+    console.error('No user ID available');
+    return;
+  }
+
+  activeLink.value = link;
+  const index = getIndex(link);
+
+  let newPosition = index * itemWidth + (itemWidth / 2) - 180;
+
+  const maxPosition = (itemWidth * 2) - 130;
+  newPosition = Math.min(newPosition, maxPosition);
+  newPosition = Math.max(newPosition, -180);
+
+  circlePosition.value = newPosition;
 };
 
 const decodeJWT = (token) => {
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  ).join(''));
 
-  return JSON.parse(jsonPayload); 
+  return JSON.parse(jsonPayload);
 };
 
 const getProfileLink = computed(() => {
-  return userRole.value === 'guia' 
-    ? { name: 'GuiaPerfil', params: { id: userId.value } } 
+  return userRole.value === 'guia'
+    ? { name: 'GuiaPerfil', params: { id: userId.value } }
     : { name: 'Perfil', params: { id: userId.value } };
+});
+
+const getInicioLink = computed(() => {
+  return userRole.value === 'guia'
+    ? { name: 'inicioGuia', params: { id: userId.value } }
+    : { name: 'Home', params: { id: userId.value } };
+});
+
+const getCrearLink = computed(() => {
+  return userRole.value === 'guia'
+    ? { name: 'crearTur', params: { id: userId.value } }
+    : { name: 'Crear', params: { id: userId.value } };
 });
 
 onMounted(() => {
   const token = localStorage.getItem('token');
-  
+
   if (token) {
     try {
       const decodedToken = decodeJWT(token);
       userId.value = decodedToken.userId;
-      userRole.value = decodedToken.rols;  
+      userRole.value = decodedToken.rols;
     } catch (error) {
       console.error('Error decodificando el token:', error);
     }
-  } 
-  
-  setActive('/');
+  }
+
+  if (userRole.value === 'guia') {
+    setActive('/inicioguia'); 
+  } else {
+    setActive('/');  
+  }
 });
 </script>
 
@@ -68,44 +102,40 @@ onMounted(() => {
     <div class="flex items-center justify-center h-14 w-full relative">
       <ul class="flex justify-around w-full">
         <li class="relative flex-grow text-center">
-          <router-link
-            to="/"
-            class="relative block"
-            :class="{ 'text-[#4F6D3A]': isActive('/'), 'text-[#788B69]': !isActive('/') }"
-            @click="setActive('/')">
-            <IconoInicio v-if="!isActive('/')" class="h-8 w-8 mx-auto transition-colors duration-300" />
+          <router-link :to="getInicioLink" class="relative block"
+            :class="{ 'text-[#4F6D3A]': isActive(userRole === 'guia' ? '/inicioguia' : '/'), 'text-[#788B69]': !isActive('/') }"
+            @click="setActive(userRole === 'guia' ? '/inicioguia' : '/')">
+            <IconoInicio v-if="!isActive(userRole === 'guia' ? '/inicioguia' : '/')" class="h-8 w-8 mx-auto transition-colors duration-300" />
           </router-link>
         </li>
         <li class="relative flex-grow text-center">
-          <router-link
-            to="/crear"
-            class="relative block"
-            :class="{ 'text-[#4F6D3A]': isActive('/crear'), 'text-[#788B69]': !isActive('/crear') }"
-            @click="setActive('/crear')">
-            <IconoMas v-if="!isActive('/crear')" class="h-8 w-8 mx-auto transition-colors duration-300" />
+          <router-link :to="getCrearLink" class="relative block"
+            :class="{ 'text-[#4F6D3A]': isActive(userRole === 'guia' ? '/crearTur' : '/crear'), 'text-[#788B69]': !isActive(userRole === 'guia' ? '/crearTur' : '/crear') }"
+            @click="setActive(userRole === 'guia' ? '/crearTur' : '/crear')">
+            <IconoMas v-if="!isActive(userRole === 'guia' ? '/crearTur' : '/crear')" class="h-8 w-8 mx-auto transition-colors duration-300" />
           </router-link>
         </li>
         <li class="relative flex-grow text-center" v-if="userId">
-          <router-link
-            :to="getProfileLink"
-            class="relative block"
+          <router-link :to="getProfileLink" class="relative block"
             :class="{ 'text-[#4F6D3A]': isActive(`/perfil/${userId}`), 'text-[#788B69]': !isActive(`/perfil/${userId}`) }"
             @click="setActive(`/perfil/${userId}`)">
-            <IconoUsuario v-if="!isActive(`/perfil/${userId}`)" class="h-8 w-8 mx-auto transition-colors duration-300" />
+            <IconoUsuario v-if="!isActive(`/perfil/${userId}`)"
+              class="h-8 w-8 mx-auto transition-colors duration-300" />
           </router-link>
         </li>
       </ul>
-      
-      <span class="w-16 h-16 bg-[#4F6D3A] border-[#222725] border-4 rounded-full absolute transition-all duration-300 ease-in-out"
+
+      <span
+        class="w-16 h-16 bg-[#4F6D3A] border-[#222725] border-4 rounded-full absolute transition-all duration-300 ease-in-out"
         :style="{ transform: `translateX(${circlePosition}px) translateY(-30%)` }">
-        <router-link v-if="isActive('/')" to="/">
-          <IconoInicio class="h-8 w-8 text-white absolute inset-0 m-auto"/>
+        <router-link v-if="isActive(userRole === 'guia' ? '/inicioguia' : '/')" :to="getInicioLink">
+          <IconoInicio class="h-8 w-8 text-white absolute inset-0 m-auto" />
         </router-link>
-        <router-link v-if="isActive('/crear')" to="/crear">
-          <IconoMas class="h-8 w-8 text-white absolute inset-0 m-auto"/>
+        <router-link v-if="isActive(userRole === 'guia' ? '/crearTur' : '/crear')" :to="getCrearLink">
+          <IconoMas class="h-8 w-8 text-white absolute inset-0 m-auto" />
         </router-link>
         <router-link v-if="isActive(`/perfil/${userId}`)" :to="getProfileLink">
-          <IconoUsuario class="h-8 w-8 text-white absolute inset-0 m-auto"/>
+          <IconoUsuario class="h-8 w-8 text-white absolute inset-0 m-auto" />
         </router-link>
       </span>
     </div>

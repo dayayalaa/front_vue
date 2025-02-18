@@ -92,9 +92,9 @@ onMounted(() => {
     <section class="flex flex-col justify-center items-center mb-20">
       <TituloSecundario>¡Conoce nuestros guías!</TituloSecundario>
 
-      <div class="flex justify-center gap-4 m-6 flex-wrap">
+      <div class="flex justify-center gap-2 m-2 flex-wrap">
         <div v-for="guia in guias.slice(0, 3)" :key="guia._id"
-          class="bg-white shadow-md rounded-lg overflow-hidden w-28 text-center">
+          class="bg-white shadow-md rounded-lg overflow-hidden w-28 mb-6 text-center">
           <router-link :to="`/guias/${guia._id}`">
             <img :src="guia.fotoPerfil" alt="Guía" class="w-28 h-28 object-cover" />
             <div class="p-2">

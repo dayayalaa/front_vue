@@ -22,7 +22,6 @@ import Ajustes from "../components/Ajustes.vue";
 import Pago from "../components/PagoVista.vue";
 import ProvinciasVistas from "../components/ProvinciasVistas.vue";
 import LugaresVistas from "../components/LugaresVistas.vue";
-
 import InicioGuiaVista from "../views/InicioGuiaVista.vue";
 
 const routes = [
@@ -49,7 +48,6 @@ const routes = [
   { path: "/pago",               name: "pago",              component: Pago,              meta: { requiresAuth: true }},
   { path: "/provincia/:id",      name: "ProvinciasVistas",  component: ProvinciasVistas,  meta: { requiresAuth: true }},
   { path: "/lugar/:id",          name: "LugaresVistas",  component: LugaresVistas,  meta: { requiresAuth: true }},
-
   { path: "/inicioguia",          name: "inicioGuia",  component: InicioGuiaVista,  meta: { requiresAuth: true }},
 ];
 
@@ -66,16 +64,53 @@ const router = createRouter({
   }
 });
 
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('token') !== null;
-
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-    next('/login');
-  } else if (to.matched.some(record => record.meta.publicRoutes) && isAuthenticated) {
-    next('/'); 
-  } else {
-    next();
+function isValidToken(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 > Date.now();
+  } catch (error) {
+    console.error("Error al verificar el token:", error);
+    return false;
   }
+}
+
+const decodeJWT = (token) => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+};
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  console.log("Token en localStorage:", token); 
+  
+  const isAuthenticated = token !== null && isValidToken(token);
+  console.log("isAuthenticated:", isAuthenticated);
+
+  if (isAuthenticated) {
+    const decodedToken = decodeJWT(token);
+    console.log("Decoded token:", decodedToken);
+    const userRole = decodedToken.rols;
+
+    console.log("Rol del usuario (decodificado):", userRole); 
+    
+    if (userRole === "guia" && to.path === "/") {
+      console.log("Redirigiendo a la vista de guía...");
+      return next("/inicioguia");
+    }
+  }
+
+  if (!isAuthenticated && to.matched.some(record => record.meta.requiresAuth)) {
+    console.log("No autenticado, redirigiendo a login...");
+    return next("/login");
+  }
+
+  console.log("Navegando a:", to.path); 
+  next();
 });
 
 export default router;

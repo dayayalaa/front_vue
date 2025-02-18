@@ -4,7 +4,6 @@ import NavSuperior from '../components/NavSuperior.vue';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import MiReservasUsuario from '../components/MiReservasUsuario.vue';
-import IrAtras from '../components/IrAtras.vue';
 
 
 const router = useRouter();
@@ -16,7 +15,6 @@ const goToCreateTour = () => {
 <template>
   <div>
     <NavSuperior />
-    <IrAtras />
     <div class="text-center mt-4">
       <TituloPrincipal>Bienvenido, guía</TituloPrincipal>
     </div>

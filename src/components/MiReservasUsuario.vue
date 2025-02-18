@@ -174,7 +174,7 @@ onMounted(async () => {
               <strong class="text-xl text-gray-900 block">
                 {{ grupo.tour.titulo }}
               </strong>
-              <p class="text-gray-600 text-sm mt-2">
+              <p class="text-gray-600 text-sm mt-2 text-left">
                 {{ grupo.tour.descripcion || 'Descripción no disponible' }}
               </p>
             </div>
