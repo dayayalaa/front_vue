@@ -10,7 +10,7 @@ const route = useRoute();
 const guia = ref(null);
 const tours = ref([]);
 const loading = ref(true);
-const error = ref(false); 
+const error = ref(false);
 
 const obtenerGuia = async (id) => {
   try {
@@ -18,7 +18,7 @@ const obtenerGuia = async (id) => {
     guia.value = response.data.data;
   } catch (error) {
     console.error('Error al obtener los detalles del guía:', error);
-    error.value = true; 
+    error.value = true;
   }
 };
 
@@ -28,9 +28,9 @@ const obtenerTours = async (id) => {
     tours.value = response.data;
   } catch (error) {
     console.error('Error al obtener los tours del guía:', error);
-    error.value = true; 
+    error.value = true;
   } finally {
-    loading.value = false; 
+    loading.value = false;
   }
 };
 
@@ -44,8 +44,6 @@ onMounted(() => {
 <template>
   <IrAtras />
   <div class="max-w-2xl mx-auto p-4">
-    <TituloSecundario>Perfil Guía</TituloSecundario>
-
     <div v-if="loading" class="text-center">
       <p>Cargando...</p>
     </div>
@@ -56,7 +54,7 @@ onMounted(() => {
           class="w-full h-32 object-cover rounded-lg border-2 border-gray-300" />
         <div class="absolute inset-x-0 top-16 flex justify-center">
           <img :src="guia.fotoPerfil" alt="Foto de perfil"
-            class="w-32 h-32 rounded-full border-4 border-white shadow-md" />
+            class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md" />
         </div>
       </div>
 
@@ -64,13 +62,17 @@ onMounted(() => {
         <TituloSecundario class="text-2xl">{{ guia.nombre }}</TituloSecundario>
         <p><strong>Provincia:</strong> {{ guia.provincia }}</p>
         <p>{{ guia.descripcion }}</p>
-        <TituloTerciario>Datos de contacto</TituloTerciario>
-        <ul>
-          <li>{{ guia.email }}</li>
-          <li>{{ guia.telefono }}</li>
+        <hr class="m-4">
+
+        <TituloTerciario class="mt-4">Datos de contacto</TituloTerciario>
+        <ul class="m-0 p-0">
+          <li v-if="guia.email"><strong>Email: </strong>{{ guia.email }}</li>
+          <li v-if="guia.telefono"><strong>Teléfono: </strong>{{ guia.telefono }}</li>
         </ul>
       </div>
 
+      <hr class="m-4">
+      
       <div v-if="tours.length > 0" class="mt-6">
         <TituloSecundario class="text-xl">Tours Disponibles</TituloSecundario>
         <ul class="space-y-4 mt-4">

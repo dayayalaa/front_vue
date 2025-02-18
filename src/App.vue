@@ -7,13 +7,17 @@ import VistaBienvenida from './components/VistaBienvenida.vue';
 
 const hiddenRoutes = ['/login', '/opcion', '/registroUsuario', '/registroGuia'];
 const route = useRoute();
-const loading = ref(true);  
+const loading = ref(true);
 
 onMounted(() => {
   setTimeout(() => {
     loading.value = false;
   }, 5600); 
 });
+
+function onAfterEnter() {
+  console.log('La transición ha finalizado');
+}
 </script>
 
 <template>

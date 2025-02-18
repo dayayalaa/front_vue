@@ -144,7 +144,7 @@ const eliminarTour = async (tourId) => {
         class="w-full h-36 object-cover rounded-lg border-2 border-gray-300" />
       <div class="absolute inset-x-0 top-16 flex justify-center">
         <img :src="userProfileImage" alt="Foto de perfil"
-          class="w-32 h-32 object-cover rounded-full border-4 border-white shadow-md" />
+          class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md" />
       </div>
     </div>
 
