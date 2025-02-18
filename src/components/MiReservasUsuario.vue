@@ -2,8 +2,6 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import IrAtras from '../components/IrAtras.vue';
-import TituloSecundario from '../components/TituloSecundario.vue';
 import TituloTerciario from '../components/TituloTerciario.vue';
 
 const userName = ref('');
@@ -156,12 +154,8 @@ onMounted(async () => {
 </script>
 
 <template>
-
   <div class="max-w-3xl mx-auto p-6 mb-16 bg-white rounded-xl shadow-xl border border-gray-200">
-    <div v-if="reservasPorTour.length > 0" class="mt-10 space-y-10">
-      <TituloSecundario class="text-2xl font-semibold text-gray-800 mb-4">
-        Reservas de tus Tours
-      </TituloSecundario>
+    <div v-if="reservasPorTour.length > 0" class="mt-10 space-y-10"> 
       <ul class="space-y-6">
         <li v-for="grupo in reservasPorTour" :key="grupo.tour._id" class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
           <div class="flex flex-col md:flex-row items-center md:items-start gap-4">
@@ -174,7 +168,6 @@ onMounted(async () => {
               <img :src="grupo.tour.fotoPortada" alt="Foto del tour"
                 class="w-full h-full object-cover shadow-md" />
             </div>
-            <!-- Comprobación de la foto de portada -->
             <p v-if="!grupo.tour.fotoPortada" class="text-red-500">¡Foto de portada no disponible!</p>
 
             <div class="flex-1 text-center md:text-left">
@@ -224,21 +217,13 @@ onMounted(async () => {
         </li>
       </ul>
     </div>
+
+    <!-- Mensaje si no hay reservas -->
+    <div v-else class="mt-10 text-center text-gray-500 text-lg">
+      No tienes reservas aún.
+    </div>
   </div>
 </template>
 
-<style scoped>
-/* Estilos generales de la aplicación */
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f7f7f7;
-}
 
-h1, h2, h3, h4 {
-  font-family: 'Sableklish', sans-serif;
-}
 
-.text-2xl {
-  font-size: 1.5rem;
-}
-</style>
