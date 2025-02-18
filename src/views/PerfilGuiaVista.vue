@@ -7,7 +7,6 @@ import IrAtras from '../components/IrAtras.vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import MiReservasUsuario from '../components/MiReservasUsuario.vue';
-
 const userName = ref('');
 const userProfileImage = ref('');
 const userCoverImage = ref('');
@@ -18,9 +17,7 @@ const telefono = ref('');
 const userId = ref('');
 const tours = ref([]);
 const loading = ref(true);
-
 const router = useRouter();
-
 const fetchUserData = async () => {
   try {
     console.log('Obteniendo datos del usuario con ID:', userId.value);
@@ -30,20 +27,15 @@ const fetchUserData = async () => {
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
     });
-
     if (!response.ok) {
       throw new Error(`Error al obtener los datos del usuario: ${response.statusText}`);
     }
-
     const data = await response.json();
     console.log('Respuesta de la API:', data);
-
     if (!data.data) {
       throw new Error('La API no devolvió datos válidos.');
     }
-
     const { nombre, fotoPerfil, fotoPortada, descripcion: desc, email: correo, telefono: tel, provincia: prov } = data.data;
-
     userName.value = nombre;
     userProfileImage.value = fotoPerfil;
     userCoverImage.value = fotoPortada;
@@ -51,17 +43,13 @@ const fetchUserData = async () => {
     email.value = correo;
     telefono.value = tel;
     provincia.value = prov;
-
     console.log('Nombre del usuario:', userName.value);
-
   } catch (error) {
     console.error(error);
   } finally {
     loading.value = false;
   }
 };
-
-
 const obtenerTours = async (id) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/segunGuia?id=${id}`);
@@ -70,7 +58,6 @@ const obtenerTours = async (id) => {
     console.error('Error al obtener los tours del guía:', error);
   }
 };
-
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split('.')[1];
@@ -79,24 +66,16 @@ const decodeJWT = (token) => {
       .split('')
       .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
       .join('');
-
     return JSON.parse(decodeURIComponent(jsonPayload));
   } catch (error) {
     console.error('Error decodificando el token:', error);
     return null;
   }
 };
-
-
-
-
-
 onMounted(async () => {
   const token = localStorage.getItem('token');
-
   if (token) {
     const decodedToken = decodeJWT(token);
-
     if (decodedToken && decodedToken.userId) {
       userId.value = decodedToken.userId;
       await fetchUserData();
@@ -107,11 +86,9 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
 const goToCreateTour = () => {
   router.push('/crearTur');
 };
-
 const eliminarTour = async (tourId) => {
   try {
     const response = await axios.delete(`https://back-tesis-lovat.vercel.app/arcana/tur/${tourId}`, {
@@ -136,7 +113,7 @@ const eliminarTour = async (tourId) => {
         class="w-full h-36 object-cover rounded-lg border-2 border-gray-300" />
       <div class="absolute inset-x-0 top-16 flex justify-center">
         <img :src="userProfileImage" alt="Foto de perfil"
-          class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md" />
+          class="w-32 h-32 object-cover rounded-full border-4 border-white shadow-md" />
       </div>
     </div>
 
