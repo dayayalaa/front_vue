@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import NavSuperior from '../components/NavSuperior.vue';
 import TituloPrincipal from '../components/TituloPrincipal.vue';
 import TituloSecundario from '../components/TituloSecundario.vue';

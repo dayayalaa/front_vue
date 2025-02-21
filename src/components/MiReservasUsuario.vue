@@ -16,6 +16,11 @@ const reservas = ref([]);
 const loading = ref(true);
 
 const router = useRouter();
+const activeAccordion = ref(null);
+
+const toggle = (index) => {
+  activeAccordion.value = activeAccordion.value === index ? null : index;
+};
 
 const fetchUserData = async () => {
   try {
@@ -79,6 +84,7 @@ const obtenerReservas = async (idGuia) => {
     reservas.value = await Promise.all(
       response.data.data.map(async (reserva) => {
         const tourData = await obtenerTourData(reserva.tourId._id);
+        console.log(reserva.tourId);
         return {
           ...reserva,
           tour: tourData,
@@ -154,63 +160,53 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto p-6 mb-16">
-    <div v-if="reservasPorTour.length > 0" class="mt-6 space-y-10"> 
+    <div v-if="reservasPorTour.length > 0" class="p-3">
       <ul class="space-y-6">
-        <li v-for="grupo in reservasPorTour" :key="grupo.tour._id" class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-          <div class="flex flex-col md:flex-row items-center md:items-start gap-4">
+        <li v-for="grupo in reservasPorTour" :key="grupo.tour._id"
+          class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
 
-            <img v-if="grupo.tour.fotoPerfil" :src="grupo.tour.fotoPerfil" alt="Foto de perfil del tour"
-              class="w-24 h-24 rounded-full object-cover shadow-md" />
-
-            <div v-if="grupo.tour.fotoPortada" class="w-full h-56 md:h-72 rounded-lg overflow-hidden">
-              <img :src="grupo.tour.fotoPortada" alt="Foto del tour"
-                class="w-full h-full object-cover shadow-md" />
-            </div>
-            <p v-if="!grupo.tour.fotoPortada" class="text-red-500">¡Foto de portada no disponible!</p>
-
-            <div class="flex-1 text-center md:text-left">
-              <strong class="text-xl text-gray-900 block">
+          <div @click="toggle(grupo.tour._id)"
+            class="cursor-pointer flex md:flex-row items-center md:items-start gap-4">
+            
+            <img v-if="grupo.tour.fotoPortada" :src="grupo.tour.fotoPortada" alt="Foto de perfil del tour"
+              class="w-24 h-24 rounded-lg object-cover" />
+            
+            <div class="flex-1">
+              <strong class="text-xm text-gray-900 block">
                 {{ grupo.tour.titulo }}
               </strong>
-              <p class="text-gray-600 text-sm mt-2 text-left">
-                {{ grupo.tour.descripcion || 'Descripción no disponible' }}
-              </p>
             </div>
+            
+            <svg v-bind:class="{'rotate-180': activeAccordion === grupo.tour._id}" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
           </div>
 
-          <div v-if="grupo.reservas.length > 0" class="mt-6">
+          <div v-if="activeAccordion === grupo.tour._id" class="mt-6">
             <TituloTerciario class="text-xl text-gray-800 font-semibold mb-4">
               Reservas
             </TituloTerciario>
-            <ul class="space-y-4">
-              <li v-for="reserva in grupo.reservas" :key="reserva._id"
-                class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
-                <div v-if="reserva.userId && reserva.userId.fotoPerfil">
-                  <img :src="reserva.userId.fotoPerfil" alt="Foto de perfil" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+
+            <div v-for="(reserva, index) in grupo.reservas" :key="reserva._id"
+              class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 mb-2">
+
+              <div class="flex justify-arown items-center">
+                <img v-if="reserva.userId.fotoPerfil" :src="reserva.userId.fotoPerfil" alt="Foto de perfil del tour"
+                  class="w-24 h-24 rounded-lg object-cover" />
+                
+                <div class="ps-6">
+                  <p class="text-gray-700 font-medium">Nombre:</p>
+                  <p class="text-gray-900">{{ reserva.userId?.nombre || 'Nombre no disponible' }}</p>
+                  <p class="text-gray-700 font-medium">Email:</p>
+                  <p class="text-gray-900">{{ reserva.userId?.email || 'Email no disponible' }}</p>
+                  <p class="text-gray-700 font-medium">Fecha de reserva:</p>
+                  <p class="text-gray-900">
+                    {{ reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : 'Fecha no disponible' }}
+                  </p>
+                  <p class="text-gray-700 font-medium">Personas: {{ reserva.cantidadPersonas }}</p>
                 </div>
-                <div class="flex-1">
-                  <div class="flex justify-between">
-                    <p class="text-gray-700 font-medium">Usuario:</p>
-                    <p class="text-gray-900 font-semibold">{{ reserva.userId?.nombre || 'Nombre no disponible' }}</p>
-                  </div>
-                  <div class="flex justify-between mt-2">
-                    <p class="text-gray-700 font-medium">Email:</p>
-                    <p class="text-gray-900">{{ reserva.userId?.email || 'Email no disponible' }}</p>
-                  </div>
-                  <div class="flex justify-between mt-2">
-                    <p class="text-gray-700 font-medium">Fecha de reserva:</p>
-                    <p class="text-gray-900">
-                      {{ reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : 'Fecha no disponible' }}
-                    </p>
-                  </div>
-                  <div class="flex justify-between mt-2">
-                    <p class="text-gray-700 font-medium">Personas:</p>
-                    <p class="text-gray-900">{{ reserva.cantidadPersonas }}</p>
-                  </div>
-                </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </li>
       </ul>
@@ -219,8 +215,4 @@ onMounted(async () => {
     <div v-else class="mt-10 text-center text-gray-500 text-lg">
       No tienes reservas aún.
     </div>
-  </div>
 </template>
-
-
-
