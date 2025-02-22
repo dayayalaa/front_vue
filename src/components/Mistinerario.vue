@@ -3,10 +3,12 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TituloSecundario from './TituloSecundario.vue';
 import IconoMas from './icons/IconoMas.vue';
+import SpinnerCarga from './SpinnerCarga.vue';
+
 
 const userId = ref(null);
 const itinerarios = ref([]);
-const loading = ref(true);
+const cargando = ref(true);
 const lugaresTuristicos = ref([]);
 const provinciaInfo = ref({ gallery: [] });
 
@@ -40,17 +42,17 @@ const fetchUserData = async () => {
   } catch (error) {
     console.error('Error al obtener los itinerarios:', error);
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 
 
 const obtenerProvincia = async (provincia) => {
-  console.log('Buscando lugares turísticos para la provincia:', provincia);
+  //console.log('Buscando lugares turísticos para la provincia:', provincia);
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/provincia?provincia=${provincia}`);
 
-    console.log('Estructura de response.data:', response.data);
+    //console.log('Estructura de response.data:', response.data);
 
     if (response && response.data) {
       provinciaInfo.value = {
@@ -61,7 +63,7 @@ const obtenerProvincia = async (provincia) => {
       };
 
       const data_id = response.data.data_id;
-      console.log('data_id:', data_id);
+      //console.log('data_id:', data_id);
       obtenerImagenes(data_id);
     } else {
       console.error('Formato inesperado en la respuesta de la API');
@@ -74,7 +76,7 @@ const obtenerProvincia = async (provincia) => {
 const obtenerImagenes = async (data_id) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
-    console.log('Respuesta de la API img:', response.data);
+    //console.log('Respuesta de la API img:', response.data);
 
     if (response.data && response.data.images && Array.isArray(response.data.images) && response.data.images.length > 0) {
       const validImage = response.data.images.find(image => isValidImage(image));
@@ -108,7 +110,7 @@ onMounted(() => {
       localStorage.removeItem('token');
     }
   } else {
-    loading.value = false;
+    cargando.value = false;
   }
 });
 </script>
@@ -119,7 +121,7 @@ onMounted(() => {
       <TituloSecundario>Mi itinerario:</TituloSecundario>
     </div>
 
-    <div v-if="loading" class="text-center text-gray-500">Cargando itinerarios...</div>
+    <SpinnerCarga v-if="cargando" />
 
     <div v-else class="overflow-x-auto">
       <div v-if="itinerarios.length > 0" class="flex gap-4 ml-3">
@@ -145,7 +147,7 @@ onMounted(() => {
 
       <!-- Mensaje si no hay itinerarios -->
       <div v-else class="text-center text-gray-500 mt-4">
-        No tienes itinerarios aún. <router-link to="/crear" class="text-blue-500 hover:underline">Crea uno
+        No tienes itinerarios aún. <router-link to="/crear" class="text-[#A86A36] hover:underline">Crea uno
           aquí</router-link>.
       </div>
     </div>

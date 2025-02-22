@@ -34,18 +34,18 @@ const decodeJWT = (token) => {
 
 const checkUserRole = () => {
   const token = localStorage.getItem('token');
-  console.log('Token:', token);
+  //console.log('Token:', token);
 
   if (token) {
     try {
       const decodedToken = decodeJWT(token);
-      console.log('Decoded Token:', decodedToken);
+      //console.log('Decoded Token:', decodedToken);
 
      
       if (typeof decodedToken.rols === 'string') {
         isGuia.value = decodedToken.rols === 'guia';
         isUser.value = decodedToken.rols === 'user';
-        console.log('isUser:', isUser.value, 'isGuia:', isGuia.value);
+       // console.log('isUser:', isUser.value, 'isGuia:', isGuia.value);
       } else {
         console.error('El campo "rols" no es una cadena:', decodedToken.rols);
       }
@@ -57,7 +57,7 @@ const checkUserRole = () => {
 
 const obtenerProvincia = async () => {
     const provinciaId = route.params.id;
-    console.log('La provincia es:', provinciaId);
+   // console.log('La provincia es:', provinciaId);
 
     if (!provinciaId) {
         console.error('No se ha especificado una provincia');
@@ -71,7 +71,7 @@ const obtenerProvincia = async () => {
             `https://back-tesis-lovat.vercel.app/arcana/destino/provincia?provincia=${provinciaId}`
         );
 
-        console.log('Estructura de response.data:', response.data);
+       // console.log('Estructura de response.data:', response.data);
 
         if (response && response.data) {
             provinciaInfo.value = {
@@ -82,7 +82,7 @@ const obtenerProvincia = async () => {
             };
 
             const data_id = response.data.data_id;
-            console.log('data_id:', data_id);
+           // console.log('data_id:', data_id);
             obtenerImagenes(data_id);
         } else {
             console.error('No se encontró la información esperada en la respuesta de la API');
@@ -103,11 +103,11 @@ const obtenerGuias = async () => {
         const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/usuarios/guia');
         guias.value = response.data.data;
 
-        console.log('Guías obtenidas:', guias.value);
+       // console.log('Guías obtenidas:', guias.value);
 
         guiasFiltrados.value = guias.value.filter(guia => guia.provincia === provincia);
 
-        console.log('Guías filtradas:', guiasFiltrados.value);
+        //console.log('Guías filtradas:', guiasFiltrados.value);
     } catch (error) {
         console.error('Error al obtener guías:', error);
     } finally {
@@ -117,10 +117,10 @@ const obtenerGuias = async () => {
 
 const obtenerLugares = async () => {
     const provincia = route.params.id;
-    console.log('Para lugar:', provincia)
+    //console.log('Para lugar:', provincia)
     try {
         const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugar?provincia=${provincia}`);
-        console.log('Lugares turísticos obtenidos:', response.data);
+       // console.log('Lugares turísticos obtenidos:', response.data);
 
         if (response.data && Array.isArray(response.data)) {
             lugaresTuristicos.value = response.data;
@@ -138,11 +138,11 @@ const obtenerImagenes = async (data_id) => {
     try {
         const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
 
-        console.log('Respuesta de la API img:', response.data);
+       // console.log('Respuesta de la API img:', response.data);
 
         if (response.data && response.data.images && Array.isArray(response.data.images)) {
             provinciaInfo.value.gallery = response.data.images;
-            console.log('Galería después de asignar:', provinciaInfo.value.gallery);
+            //console.log('Galería después de asignar:', provinciaInfo.value.gallery);
         } else {
             console.warn('No se encontraron imágenes en la respuesta o el formato es incorrecto');
         }
@@ -159,7 +159,7 @@ const obtenerProvinciasPopulares = async () => {
       if (provincia.data_id) {
         obtenerImagenesP(provincia);
       } else {
-        console.log('No se encontró data_id en la provincia:', provincia.provincia);
+       // console.log('No se encontró data_id en la provincia:', provincia.provincia);
       }
     });
   } catch (error) {
@@ -205,10 +205,8 @@ const irADetalleGuia = (id) => {
 <template>
     <IrAtras />
     <div class="w-full max-w-4xl mx-auto">
-        <div v-if="cargando" class="text-center">
-            <SpinnerCarga />
-        </div>
-
+        <SpinnerCarga v-if="cargando"/>
+        
         <div v-else-if="provinciaInfo" class="text-center">
             <TituloSecundario class="text-center">Descubre {{ provinciaInfo.title }}</TituloSecundario>
             <TituloTerciario class="text-gray-600 mt-4">{{ provinciaInfo.address }}</TituloTerciario>
@@ -257,7 +255,7 @@ const irADetalleGuia = (id) => {
 
         <div v-if="isUser" class="flex justify-center items-center mt-8 mb-8">
             <router-link to="/crear">
-                <BotonPrincipal class="bg-[#3C4A28] hover:bg-[#788B69]">Crear viaje</BotonPrincipal>
+                <BotonPrincipal >Crear viaje</BotonPrincipal>
             </router-link>
         </div>
 

@@ -25,7 +25,7 @@ const decodeJWT = (token) => {
 
         return JSON.parse(jsonPayload);
     } catch (error) {
-        console.error('Error al decodificar el token JWT:', error);
+        //console.error('Error al decodificar el token JWT:', error);
         return null;
     }
 };
@@ -45,7 +45,7 @@ onMounted(() => {
                 activeLink.value = `/perfil/${userId.value}`;
             }
         } catch (error) {
-            console.error('Error decodificando el token:', error);
+            //console.error('Error decodificando el token:', error);
         }
     }
 });

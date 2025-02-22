@@ -7,6 +7,7 @@ import TituloPrincipal from '../components/TituloPrincipal.vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import MiReservasUsuario from '../components/MiReservasUsuario.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 const router = useRouter();
 const userId = ref(null);
@@ -17,13 +18,13 @@ const descripcion = ref('');
 const email = ref('');
 const telefono = ref('');
 const provincia = ref('');
-const loading = ref(true);
+const cargando = ref(true);
 
 const fetchUserData = async () => {
   if (!userId.value) return;
 
   try {
-    console.log('Obteniendo datos del usuario con ID:', userId.value);
+   // console.log('Obteniendo datos del usuario con ID:', userId.value);
     const response = await fetch(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, {
       method: 'GET',
       headers: {
@@ -36,7 +37,7 @@ const fetchUserData = async () => {
     }
 
     const data = await response.json();
-    console.log('Respuesta de la API:', data);
+    //console.log('Respuesta de la API:', data);
 
     if (!data.data) {
       throw new Error('La API no devolvió datos válidos.');
@@ -51,11 +52,11 @@ const fetchUserData = async () => {
     telefono.value = tel || '';
     provincia.value = prov || '';
 
-    console.log('Nombre del usuario:', userName.value);
+  //  console.log('Nombre del usuario:', userName.value);
   } catch (error) {
     console.error(error);
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 
@@ -88,7 +89,7 @@ const obtenerProvinciasPopulares = async () => {
         // console.log('data_id encontrado:', provincia.data_id);
         obtenerImagenes(provincia);
       } else {
-        console.log('No se encontró data_id en la provincia:', provincia.provincia);
+        //console.log('No se encontró data_id en la provincia:', provincia.provincia);
       }
     });
   } catch (error) {
@@ -132,7 +133,7 @@ onMounted(async () => {
       await fetchUserData();
     }
   } else {
-    loading.value = false;
+    cargando.value = false;
   }
   obtenerProvinciasPopulares();
 });
@@ -141,7 +142,7 @@ onMounted(async () => {
 <template>
   <div>
     <NavSuperior />
-
+    <SpinnerCarga v-if="cargando"/>
     <section class="text-center mt-4">
       <TituloPrincipal>Bienvenido, {{ userName }}</TituloPrincipal>
     </section>
@@ -170,7 +171,7 @@ onMounted(async () => {
     </section>
 
     <section class="flex justify-center mb-8">
-      <BotonPrincipal class="w-3/4 py-3 text-sm" @click="router.push('/crear-tour')">
+      <BotonPrincipal class="w-3/4 py-3 text-sm" @click="router.push('/crearTur')">
         Crear Tour
       </BotonPrincipal>
     </section>

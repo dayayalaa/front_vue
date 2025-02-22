@@ -5,6 +5,7 @@ import axios from 'axios';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import TituloTerciario from '../components/TituloTerciario.vue';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 import IconoLista from '../components/icons/IconoLista.vue';
 import IconoCalendario from '../components/icons/IconoCalendario.vue';
@@ -13,12 +14,12 @@ import IconoMapa from '../components/icons/IconoMapa.vue';
 const route = useRoute();
 const itinerario = ref(null);
 const provinciaInfo = ref(null);
-const isLoading = ref(true);
+const cargando = ref(true);
 const error = ref(null);
 
 const obtenerProvincia = async () => {
     const provinciaId = itinerario.value.destino;
-    console.log('La provincia es:', provinciaId);
+   // console.log('La provincia es:', provinciaId);
 
     if (!provinciaId) {
         console.error('No se ha especificado una provincia');
@@ -26,13 +27,13 @@ const obtenerProvincia = async () => {
         return;
     }
 
-    isLoading.value = true;
+   cargando.value = true;
     try {
         const response = await axios.get(
             `https://back-tesis-lovat.vercel.app/arcana/destino/provincia?provincia=${provinciaId}`
         );
 
-        console.log('Estructura de response.data:', response.data);
+       // console.log('Estructura de response.data:', response.data);
 
         if (response && response.data) {
             provinciaInfo.value = {
@@ -43,7 +44,7 @@ const obtenerProvincia = async () => {
             };
 
             const data_id = response.data.data_id;
-            console.log('data_id:', data_id);
+          //  console.log('data_id:', data_id);
             obtenerImagenes(data_id);
         } else {
             console.error('No se encontró la información esperada en la respuesta de la API');
@@ -54,7 +55,7 @@ const obtenerProvincia = async () => {
         console.error('Error al obtener la información de la provincia:', error);
         provinciaInfo.value = null;
     } finally {
-      isLoading.value = false;
+     cargando.value = false;
     }
 };
 
@@ -62,11 +63,11 @@ const obtenerImagenes = async (data_id) => {
     try {
         const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
 
-        console.log('Respuesta de la API img:', response.data);
+       // console.log('Respuesta de la API img:', response.data);
 
         if (response.data && response.data.images && Array.isArray(response.data.images)) {
             provinciaInfo.value.gallery = response.data.images;
-            console.log('Galería después de asignar:', provinciaInfo.value.gallery);
+           // console.log('Galería después de asignar:', provinciaInfo.value.gallery);
         } else {
             console.warn('No se encontraron imágenes en la respuesta o el formato es incorrecto');
         }
@@ -81,15 +82,15 @@ onMounted(async () => {
 
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/${id}`);
 
-    console.log(response.data);
+   // console.log(response.data);
 
     itinerario.value = response.data;
-    isLoading.value = false;
+   cargando.value = false;
     
     obtenerProvincia();
   } catch (err) {
     error.value = err.message || 'Ocurrió un error al cargar el itinerario.';
-    isLoading.value = false;
+   cargando.value = false;
   }
 });
 
@@ -97,7 +98,7 @@ onMounted(async () => {
 
 <template>
   <IrAtras />
-  <div v-if="isLoading" class="text-center text-gray-600">Cargando...</div>
+  <SpinnerCarga v-if="cargando"/>
   <div v-else-if="error" class="text-center text-red-600">{{ error }}</div>
   <div
     v-else-if="itinerario && itinerario.vueloIda && itinerario.vueloIda.details && itinerario.vueloIda.details.flights.length > 0"
@@ -144,7 +145,7 @@ onMounted(async () => {
 
         <hr class="m-6">
 
-        <!-- Aquí va tu contenido -->
+        
         <TituloSecundario class="text-center text-4xl">Vuelos reservados</TituloSecundario>
 
         <div class="px-6 py-4">

@@ -29,7 +29,7 @@ const numAdultos = ref(2);
 
 let departureTokenSeleccionado = "";
 
-console.log('--INICIO DE LA BUSQUDA--');
+//console.log('--INICIO DE LA BUSQUDA--');
 
 const obtenerVueloDeVuelta = async (departureToken) => {
   if (!departureToken) {
@@ -56,7 +56,7 @@ const obtenerVueloDeVuelta = async (departureToken) => {
       }
     });
 
-    console.log('vuelta:', response);
+    //console.log('vuelta:', response);
 
     if (response.data && response.data.length > 0) {
       vuelta.value = response.data;
@@ -92,7 +92,7 @@ const obtenerVuelos = async () => {
       }
     });
 
-    console.log('vuelos:', response);
+    //console.log('vuelos:', response);
 
     if (Array.isArray(response.data) && response.data.length > 0) {
       vuelos.value = response.data;
@@ -143,7 +143,7 @@ const obtenerHoteles = async () => {
       }
     });
 
-    console.log('hotel:', response);
+    //console.log('hotel:', response);
 
     if (response.status === 200 && response.data && response.data.hoteles && response.data.hoteles.length > 0) {
       hoteles.value = response.data.hoteles;
@@ -207,7 +207,7 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
             token: tokenSeleccionado,
             details: vueloSeleccionado
           };
-          console.log('Vuelo de ida actualizado:', reserva.value.idaReserva);
+          //console.log('Vuelo de ida actualizado:', reserva.value.idaReserva);
         } else {
           console.error('No se encontró el vuelo de ida seleccionado.');
         }
@@ -219,16 +219,16 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
     case 'vuelta':
       if (vuelta.value.length > 0) {
         const vueloVueltaSeleccionado = vuelta.value.find(v => v.arrival_token === tokenSeleccionado);
-        console.log(arrival_id);
-        console.log(vueloVueltaSeleccionado.arrival_id);
-        console.log(vueloVueltaSeleccionado);
+        //console.log(arrival_id);
+       // console.log(vueloVueltaSeleccionado.arrival_id);
+       // console.log(vueloVueltaSeleccionado);
         if (vueloVueltaSeleccionado) {
           reserva.value.vueltaReserva = {
             token: tokenSeleccionado,
             details: vueloVueltaSeleccionado,
             arrival_id: vueloVueltaSeleccionado.arrival_id
           };
-          console.log('Vuelo de vuelta actualizado:', reserva.value.vueltaReserva);
+          //console.log('Vuelo de vuelta actualizado:', reserva.value.vueltaReserva);
         } else {
           console.error('No se encontró el vuelo de vuelta seleccionado.');
         }
@@ -238,14 +238,14 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
       break;
 
     case 'hotel':
-    console.log('Seleccionando hotel:', hotelSeleccionado);
-    console.log('Property Token del hotel seleccionado:', hotelSeleccionado);
+    //console.log('Seleccionando hotel:', hotelSeleccionado);
+   // console.log('Property Token del hotel seleccionado:', hotelSeleccionado);
 
     if (hoteles.value.length > 0) {
         const hotelEncontrado = hoteles.value.find(h => h.property_token === tokenSeleccionado);
         if (hotelEncontrado) {
           reserva.value.hotelReserva = hotelEncontrado;
-          console.log('Hotel reservado actualizado:', reserva.value.hotelReserva);
+         // console.log('Hotel reservado actualizado:', reserva.value.hotelReserva);
         } else {
           console.error('No se encontró el hotel seleccionado. Verifica que el ID sea correcto.');
         }
@@ -260,7 +260,7 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
   }
 
   localStorage.setItem('Reserva', JSON.stringify(reserva.value));
-  console.log('Reserva actualizada:', reserva.value);
+  //console.log('Reserva actualizada:', reserva.value);
   
   pasoActual.value += 1;
 };
@@ -294,31 +294,27 @@ const confirmarReserva = async () => {
       userId = decodedToken.userId;
     } catch (error) {
       console.error('Error al decodificar el token:', error);
-      alert('Error al verificar el token. Intenta nuevamente.');
       return;
     }
   } else {
-    alert('No se encontró el token de autenticación. Por favor, inicia sesión.');
     return;
   }
 
   if (!userId) {
-    alert('Hubo un problema con la autenticación. Intenta nuevamente.');
     return;
   }
   if (!reserva.value || !reserva.value.vueltaReserva || !reserva.value.vueltaReserva.details) {
-    alert('No se encontró la reserva de vuelta. Por favor, intenta nuevamente.');
     return;
   }
 
   const arrival_idCodificado = new URLSearchParams(window.location.search).get('arrival_id');
   const destinoId = decodeURIComponent(arrival_idCodificado);
 
-  console.log('Lugar:', destinoId);
+ // console.log('Lugar:', destinoId);
 
   const destinoNombre = obtenerNombreAeropuerto(destinoId);
 
-  console.log('Lugar del viaje:', destinoNombre);
+ // console.log('Lugar del viaje:', destinoNombre);
 
 
   const reservaParaEnviar = {
@@ -334,22 +330,22 @@ const confirmarReserva = async () => {
     const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/reservas/crear', reservaParaEnviar);
 
     if (response.status === 200) {
-      console.log('¡Reserva confirmada exitosamente!');
+      //console.log('¡Reserva confirmada exitosamente!');
       // localStorage.removeItem('reserva');
       // reserva.value = null;
       router.push('/pago');
     } else {
-      console.log('Hubo un problema al confirmar la reserva');
+      //console.log('Hubo un problema al confirmar la reserva');
     }
   } catch (error) {
   if (error.response) {
-    alert('Error en la respuesta del servidor: ' + error.response.status);
+
     console.error('Detalles del error:', error.response.data);
   } else if (error.request) {
-    alert('No se recibió respuesta del servidor. Intenta nuevamente más tarde.');
+
     console.error('La solicitud fue hecha pero no se recibió respuesta:', error.request);
   } else {
-    alert('Error al configurar la solicitud: ' + error.message);
+  
     console.error('Error al configurar la solicitud:', error);
   }
 }
@@ -395,10 +391,7 @@ onBeforeUnmount(() => {
 
     <!-- Step 1: Vuelos de Ida -->
     <div v-if="pasoActual === 1" class="mb-6">
-      <div v-if="cargando" class="flex justify-center">
-        <SpinnerCarga />
-      </div>
-
+      <SpinnerCarga v-if="cargando"/>
       <div v-else-if="errorMensaje" class="text-red-500">
         <p>{{ errorMensaje }}</p>
       </div>
@@ -482,10 +475,7 @@ onBeforeUnmount(() => {
 
     <!-- Step 2: Vuelos de Vuelta -->
     <div v-if="pasoActual === 2" class="mb-6">
-      <div v-if="cargando" class="flex justify-center">
-        <SpinnerCarga />
-      </div>
-
+      <SpinnerCarga v-if="cargando" />
       <div v-else-if="errorMensaje" class="text-red-500">
         <p>{{ errorMensaje }}</p>
       </div>
@@ -573,15 +563,14 @@ onBeforeUnmount(() => {
           <input id="adults" v-model="numAdultos" type="number" min="1" max="10"
             class="w-[70px] text-center h-10 rounded-md border-gray-300 shadow-sm appearance-none" placeholder="0" />
 
-          <button @click="obtenerHoteles" class="h-10 px-4 py-2 bg-[#3C4A28] text-white rounded-md">
+          <BotonPrincipal @click="obtenerHoteles" class="h-10 px-4 py-2">
             Buscar Hoteles
-          </button>
+          </BotonPrincipal>
         </div>
       </div>
 
-      <div v-if="cargando" class="flex justify-center">
-        <SpinnerCarga />
-      </div>
+      <SpinnerCarga v-if="cargando" />
+      
 
       <div v-else-if="errorMensaje" class="text-red-500">
         <p>{{ errorMensaje }}</p>

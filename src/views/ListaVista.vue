@@ -6,10 +6,11 @@ import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IconoBorrar from '../components/icons/IconoBorrar.vue';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 const route = useRoute();
 const itinerario = ref(null);
-const isLoading = ref(true);
+const cargando = ref(true);
 const error = ref(null);
 const nuevoItem = ref('');
 const checklistItems = ref([]);
@@ -24,7 +25,7 @@ async function addItem() {
         estado: 'pendiente',
       });
 
-      console.log("Respuesta al agregar:", response.data);
+      //console.log("Respuesta al agregar:", response.data);
 
       await loadChecklistItems();
 
@@ -43,7 +44,7 @@ async function loadChecklistItems() {
     itinerario.value = response.data;
     checklistItems.value = itinerario.value.checklist;
 
-    console.log('Lista de ítems actualizada:', checklistItems.value);
+   // console.log('Lista de ítems actualizada:', checklistItems.value);
   } catch (err) {
     error.value = err.message || 'Ocurrió un error al cargar el itinerario.';
     console.error('Error al cargar los ítems:', err.message);
@@ -52,7 +53,7 @@ async function loadChecklistItems() {
 
 
 async function removeItem(itemId) {
-  console.log('🗑 Item a eliminar:', itemId);
+  //console.log('🗑 Item a eliminar:', itemId);
 
   if (!itemId) {
     console.error("Error: itemId no está definido.");
@@ -65,12 +66,12 @@ async function removeItem(itemId) {
       data: { id, itemId }
     });
 
-    console.log('📌 Respuesta de la API después de eliminar:', response.data);
+    //console.log('📌 Respuesta de la API después de eliminar:', response.data);
 
     await loadChecklistItems();
 
   } catch (err) {
-    console.error('❌ Error al eliminar item:', err.message);
+    console.error(' Error al eliminar item:', err.message);
   }
 }
 
@@ -82,13 +83,13 @@ onMounted(async () => {
 
     itinerario.value = response.data;
     checklistItems.value = itinerario.value.checklist;
-    isLoading.value = false;
+    cargando.value = false;
 
-    console.log('lista: ', checklistItems.value);
+    //console.log('lista: ', checklistItems.value);
 
   } catch (err) {
     error.value = err.message || 'Ocurrió un error al cargar el itinerario.';
-    isLoading.value = false;
+    cargando.value = false;
   }
 });
 
@@ -97,8 +98,8 @@ async function toggleItemStatus(item) {
         const id = route.params.id;
         const nuevoEstado = item.estado === 'pendiente' ? 'realizado' : 'pendiente';
 
-        console.log('item:', item._id);
-        console.log("Estado a enviar:", nuevoEstado);
+       // console.log('item:', item._id);
+       // console.log("Estado a enviar:", nuevoEstado);
 
         const itemIndex = checklistItems.value.findIndex(checklistItem => checklistItem._id === item._id);
         if (itemIndex !== -1) {
@@ -114,7 +115,7 @@ async function toggleItemStatus(item) {
 
       if (response.data && response.data.checklist) {
             checklistItems.value = response.data.checklist;
-            console.log("Lista actualizada:", checklistItems.value);
+           // console.log("Lista actualizada:", checklistItems.value);
         }
          else {
             console.error("Error: Respuesta del servidor inesperada", response.data);
@@ -147,7 +148,7 @@ async function toggleItemStatus(item) {
     </div>
 
     <div v-if="error" class="text-red-500 mb-4">{{ error }}</div>
-    <div v-if="isLoading" class="text-blue-500 mb-4">Cargando checklist...</div>
+    <SpinnerCarga v-if="cargando" />
 
     <div v-for="item in checklistItems" :key="item._id"
       class="bg-white shadow-md rounded-lg p-4 mb-4 flex items-center">

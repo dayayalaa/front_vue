@@ -3,6 +3,8 @@ import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from './SpinnerCarga.vue'; 
+import BotonPrincipal from './BotonPrincipal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -20,7 +22,7 @@ const tur = reactive({
 });
 
 const fotoPreview = ref('');
-const loading = ref(true);
+const cargando = ref(true);
 const fotoArchivo = ref(null);
 const fechaTemp = ref('');
 
@@ -54,11 +56,11 @@ const fetchTour = async () => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`);
     Object.assign(tur, response.data);
-    fotoPreview.value = tur.fotoPortada; // Cargar la foto de portada actual
+    fotoPreview.value = tur.fotoPortada; 
   } catch (error) {
     console.error('Error al obtener el tour:', error);
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 
@@ -68,7 +70,7 @@ const handleFileChange = (event) => {
     fotoArchivo.value = file;
     const reader = new FileReader();
     reader.onload = (e) => {
-      fotoPreview.value = e.target.result; // Mostrar vista previa de la nueva imagen
+      fotoPreview.value = e.target.result; 
     };
     reader.readAsDataURL(file);
   }
@@ -77,7 +79,7 @@ const handleFileChange = (event) => {
 const agregarFecha = () => {
   if (fechaTemp.value) {
     tur.fechasDisponibles.push(fechaTemp.value);
-    fechaTemp.value = ''; // Limpiar el campo de fecha temporal
+    fechaTemp.value = ''; 
   }
 };
 
@@ -103,7 +105,7 @@ const updateTour = async () => {
       );
 
       if (fotoResponse.data && fotoResponse.data.secure_url) {
-        console.log('URL de la imagen recibida:', fotoResponse.data.secure_url);
+        //console.log('URL de la imagen recibida:', fotoResponse.data.secure_url);
         tur.fotoPortada = fotoResponse.data.secure_url;
         fotoPreview.value = fotoResponse.data.secure_url;
       } else {
@@ -156,7 +158,7 @@ onMounted(() => {
     <IrAtras />
     <h1 class="text-2xl font-bold mb-4">Editar Tour</h1>
 
-    <div v-if="loading">Cargando datos del tour...</div>
+    <SpinnerCarga v-if="cargando"/>
 
     <form v-else @submit.prevent="updateTour" class="space-y-4">
       <div>
@@ -193,9 +195,7 @@ onMounted(() => {
         <label for="fechas" class="block font-medium">Fechas Disponibles</label>
         <div class="flex items-center space-x-2">
           <input type="date" v-model="fechaTemp" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-          <button type="button" @click="agregarFecha" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none">
-            Agregar
-          </button>
+          <BotonPrincipal type="button" @click="agregarFecha">Agregar</BotonPrincipal>
         </div>
         <ul class="mt-2 space-y-1">
           <li v-for="(fecha, index) in tur.fechasDisponibles" :key="index" class="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md">
@@ -222,9 +222,7 @@ onMounted(() => {
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Guardar Cambios
-        </button>
+        <BotonPrincipal type="submit">Guardar Cambios </BotonPrincipal>
       </div>
     </form>
   </div>

@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from './SpinnerCarga.vue';
+import BotonPrincipal from './BotonPrincipal.vue';
 
 const decodeJWT = (token) => {
     const base64Url = token.split('.')[1];
@@ -29,7 +31,7 @@ const contrasenia = ref('');
 const confirmarContrasenia = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
-const loading = ref(true);
+const cargando = ref(true);
 const userId = ref(null);
 
 const fotoPerfilPreview = ref(null);
@@ -73,10 +75,10 @@ const fetchUserData = async () => {
         } else {
             errorMessage.value = 'No se encontró la información del usuario.';
         }
-        loading.value = false;
+        cargando.value = false;
     } catch (error) {
         errorMessage.value = 'Error al obtener los datos del usuario.';
-        loading.value = false;
+        cargando.value = false;
     }
 };
 
@@ -216,15 +218,15 @@ onMounted(() => {
                 fetchUserData();
             } else {
                 errorMessage.value = 'No se encontró un userId en el token.';
-                loading.value = false;
+                cargando.value = false;
             }
         } catch (error) {
             errorMessage.value = 'Error al decodificar el token.';
-            loading.value = false;
+            cargando.value = false;
         }
     } else {
         errorMessage.value = 'No se encontró un token válido.';
-        loading.value = false;
+        cargando.value = false;
     }
 });
 </script>
@@ -233,7 +235,7 @@ onMounted(() => {
     <IrAtras />
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4 text-center">Editar Perfil</h2>
-        <div v-if="loading" class="text-center text-gray-500">Cargando...</div>
+        <SpinnerCarga v-if="cargando" />
         
         <form v-else @submit.prevent="actualizarDatosPerfil" enctype="multipart/form-data"
             class="bg-white p-6 shadow-md rounded-lg">
@@ -284,7 +286,7 @@ onMounted(() => {
             <div class="mb-4">
                 <label for="fotoPerfil" class="block text-sm font-medium text-gray-700">Foto de Perfil</label>
                 <input type="file" id="fotoPerfil" accept="image/*" @change="previewFotoPerfil" class="mt-1" />
-                <p class="text-sm text-gray-500">El tamaño máximo permitido es de 5 MB.</p>
+                <p class="text-sm text-gray-500">El tamaño máximo es de 5 MB.</p>
                 <div v-if="fotoPerfilPreview" class="mt-2">
                     <img :src="fotoPerfilPreview" alt="Vista previa Foto de Perfil"
                         class="w-32 h-32 object-cover rounded-full" />
@@ -294,7 +296,7 @@ onMounted(() => {
             <div class="mb-4">
                 <label for="fotoPortada" class="block text-sm font-medium text-gray-700">Foto de Portada</label>
                 <input type="file" id="fotoPortada" accept="image/*" @change="previewFotoPortada" class="mt-1" />
-                <p class="text-sm text-gray-500">El tamaño máximo permitido es de 5 MB.</p>
+                <p class="text-sm text-gray-500">El tamaño máximo es de 5 MB.</p>
                 <div v-if="fotoPortadaPreview" class="mt-2">
                     <img :src="fotoPortadaPreview" alt="Vista previa Foto de Portada"
                         class="w-full h-48 object-cover rounded-lg" />
@@ -324,10 +326,7 @@ onMounted(() => {
 
             <!-- Botón de Actualizar Perfil -->
             <div class="mt-6 text-center">
-                <button type="submit"
-                    class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    Actualizar Perfil
-                </button>
+                <BotonPrincipal >Actualizar Perfil</BotonPrincipal>
             </div>
         </form>
     </div>

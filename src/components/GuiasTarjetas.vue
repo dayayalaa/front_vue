@@ -5,10 +5,12 @@ import axios from 'axios';
 import TituloSecundario from './TituloSecundario.vue';
 import IrAtras from './IrAtras.vue';
 import IconoBuscador from './icons/IconoBuscador.vue';
+import SpinnerCarga from './SpinnerCarga.vue';
 
 const router = useRouter();
-const guias = ref([]); 
+const guias = ref([]);
 const searchQuery = ref('');
+const cargando = ref(true); 
 
 const irADetalleGuia = (id) => {
   router.push({ name: 'GuiasPerfilVista', params: { id } });
@@ -39,12 +41,15 @@ const resaltadoTexto = (text) => {
 
   return text;
 };
+
 const obtenerGuias = async () => {
   try {
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/usuarios/guia'); 
-    guias.value = response.data.data; 
+    guias.value = response.data.data;
   } catch (error) {
-    console.error('Error al obtener guías:', error); 
+    console.error('Error al obtener guías:', error);
+  } finally {
+    cargando.value = false; 
   }
 };
 
@@ -74,8 +79,11 @@ onMounted(() => {
       </span>
     </div>
 
+    <!-- Estado de carga -->
+    <SpinnerCarga v-if="cargando"/>
+
     <!-- Lista de guías -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div
         v-for="guia in filtroGuias"
         :key="guia.id"

@@ -10,7 +10,7 @@ const router = useRouter();
 const nombre = ref('');
 const email = ref('');
 const contrasenia = ref('');
-const loading = ref(false);
+const cargando = ref(false);
 const backendError = ref('');
 const errors = ref({ nombre: '', email: '', contrasenia: '' });
 const isPasswordVisible = ref(false);
@@ -55,7 +55,7 @@ const registroUsuario = async () => {
     return;
   }
 
-  loading.value = true;
+  cargando.value = true;
   backendError.value = '';
 
   try {
@@ -80,7 +80,7 @@ const registroUsuario = async () => {
       backendError.value = 'Error desconocido de red: ' + error.message;
     }
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 </script>
@@ -131,7 +131,7 @@ const registroUsuario = async () => {
 
         <!-- Botón de Registro -->
         <div class="flex justify-center">
-          <BotonPrincipal :disabled="loading">{{ loading ? 'Registrando...' : 'Registrarse' }}</BotonPrincipal>
+          <BotonPrincipal :disabled="cargando">{{ cargando ? 'Registrando...' : 'Registrarse' }}</BotonPrincipal>
         </div>
       </form>
     </div>

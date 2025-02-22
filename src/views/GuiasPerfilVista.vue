@@ -5,11 +5,12 @@ import axios from 'axios';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import TituloTerciario from '../components/TituloTerciario.vue';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 const route = useRoute();
 const guia = ref(null);
 const tours = ref([]);
-const loading = ref(true);
+const cargando = ref(true);
 const error = ref(false);
 
 const obtenerGuia = async (id) => {
@@ -30,7 +31,7 @@ const obtenerTours = async (id) => {
     console.error('Error al obtener los tours del guía:', error);
     error.value = true;
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 
@@ -44,9 +45,8 @@ onMounted(() => {
 <template>
   <IrAtras />
   <div class="max-w-2xl mx-auto p-4">
-    <div v-if="loading" class="text-center">
-      <p>Cargando...</p>
-    </div>
+    <SpinnerCarga v-if="cargando" />
+  
 
     <div v-if="guia && !error" class="bg-white shadow-md rounded-lg p-4">
       <div class="relative mb-4">

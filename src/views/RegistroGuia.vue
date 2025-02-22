@@ -3,14 +3,14 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import TituloSecundario from '../components/TituloSecundario.vue';
-import BotonPrincipal from '../components/BotonPrincipal.vue';
+
 
 const router = useRouter();
 const nombre = ref('');
 const email = ref('');
 const contrasenia = ref('');
 const provincia = ref('');
-const loading = ref(false);
+const cargando = ref(false);
 const backendError = ref('');
 
 const errorNombre = ref('');
@@ -56,7 +56,7 @@ const registroUsuario = async () => {
     return;
   }
 
-  loading.value = true;
+  cargando.value = true;
   backendError.value = '';
 
   try {
@@ -84,7 +84,7 @@ const registroUsuario = async () => {
       backendError.value = 'Error desconocido al registrar el usuario';
     }
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 
@@ -179,7 +179,7 @@ const validateForm = () => {
 
         <!-- Botón de Registro -->
         <div class="flex justify-center">
-          <BotonPrincipal :disabled="loading">{{ loading ? 'Registrando...' : 'Registrarse' }}</BotonPrincipal>
+          <BotonPrincipal :disabled="cargando">{{ cargando ? 'Registrando...' : 'Registrarse' }}</BotonPrincipal>
         </div>
       </form>
     </div>

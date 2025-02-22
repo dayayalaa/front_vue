@@ -15,35 +15,35 @@ const errorMessage = ref('');
 const obtenerLugar = async () => {
     const lugarId = route.params.id;
 
-    console.log('El lugarId recibido es:', lugarId);
+    //console.log('El lugarId recibido es:', lugarId);
 
     try {
         const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/infoLugar/?provincia=${lugarId}`);
 
-        console.log('Respuesta de la API para lugar:', response.data);
+        //console.log('Respuesta de la API para lugar:', response.data);
 
         if (response.data) {
             let lugarEncontrado = null;
 
             if (response.data.local_results && Array.isArray(response.data.local_results)) {
-                console.log('Lista de lugares en local_results:', response.data.local_results);
+                //console.log('Lista de lugares en local_results:', response.data.local_results);
                 lugarEncontrado = response.data.local_results.find(lugar => {
-                    console.log(`Comparando lugar.title: ${lugar.title} con lugarId: ${lugarId}`);
+                   // console.log(`Comparando lugar.title: ${lugar.title} con lugarId: ${lugarId}`);
                     return lugar.title === lugarId;
                 });
             }
 
             if (!lugarEncontrado && response.data.place_results) {
-                console.log('Lugar único en place_results:', response.data.place_results);
+                //console.log('Lugar único en place_results:', response.data.place_results);
                 lugarEncontrado = response.data.place_results;
             }
 
             if (lugarEncontrado) {
                 lugarInfo.value = lugarEncontrado;
-                console.log('Lugar encontrado:', lugarInfo.value);
+                //console.log('Lugar encontrado:', lugarInfo.value);
 
                 const data_id = lugarEncontrado.data_id;
-                console.log('data_id recibido:', data_id);
+                //console.log('data_id recibido:', data_id);
 
                 obtenerImagenes(data_id);
             } else {
@@ -59,7 +59,7 @@ const obtenerLugar = async () => {
         errorMessage.value = 'Hubo un problema al obtener la información. Inténtalo más tarde.';
     } finally {
         cargando.value = false;
-        console.log('Carga finalizada');
+        //console.log('Carga finalizada');
     }
 };
 
@@ -68,11 +68,11 @@ const obtenerImagenes = async (data_id) => {
     try {
         const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
 
-        console.log('Respuesta de la API para imágenes:', response.data);
+        //console.log('Respuesta de la API para imágenes:', response.data);
 
         if (response.data && response.data.images && Array.isArray(response.data.images)) {
             lugarInfo.value.gallery = response.data.images;
-            console.log('Galería después de asignar las imágenes:', lugarInfo.value.gallery);
+            //console.log('Galería después de asignar las imágenes:', lugarInfo.value.gallery);
         } else {
             console.warn('No se encontraron imágenes en la respuesta o el formato es incorrecto');
         }
@@ -90,9 +90,9 @@ onMounted(() => {
     <IrAtras />
     <div class="w-full max-w-4xl mx-auto p-4">
 
-        <div v-if="cargando" class="text-center">
-            <SpinnerCarga />
-        </div>
+        <SpinnerCarga v-if="cargando" class="text-center"/>
+            
+        
 
         <div v-if="lugarInfo && !errorMessage" class="text-center">
             <TituloSecundario class="text-center">Descubre {{ lugarInfo.title }}</TituloSecundario>

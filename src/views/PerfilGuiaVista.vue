@@ -1,12 +1,14 @@
 <script setup>
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import TituloTerciario from '../components/TituloTerciario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IrAtras from '../components/IrAtras.vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
 import MiReservasUsuario from '../components/MiReservasUsuario.vue';
+
+
 const userName = ref('');
 const userProfileImage = ref('');
 const userCoverImage = ref('');
@@ -16,7 +18,7 @@ const provincia = ref('');
 const telefono = ref('');
 const userId = ref('');
 const tours = ref([]);
-const loading = ref(true);
+const cargando = ref(true);
 const router = useRouter();
 const fetchUserData = async () => {
   try {
@@ -47,7 +49,7 @@ const fetchUserData = async () => {
   } catch (error) {
     console.error(error);
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 const obtenerTours = async (id) => {
@@ -83,7 +85,7 @@ onMounted(async () => {
    
     }
   } else {
-    loading.value = false;
+    cargando.value = false;
   }
 });
 const goToCreateTour = () => {
@@ -120,7 +122,7 @@ const eliminarTour = async (tourId) => {
     <!-- Información de usuario -->
     <div class="text-center mb-8 mt-16">
       <TituloSecundario class="text-2xl font-semibold text-gray-800">
-        {{ loading ? 'Cargando...' : userName }}
+        {{ userName }}
       </TituloSecundario>
 
       <p v-if="descripcion" class="text-gray-600 mt-2 ms-3 me-2 text-sm text-left">{{ descripcion }}</p>
@@ -165,17 +167,17 @@ const eliminarTour = async (tourId) => {
             <!-- Botones abajo de todo -->
             <div class="flex space-x-3 mt-4">
               <router-link :to="`/vistaTur/${tour._id}`"
-                class="px-4 py-2 flex items-center bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-all duration-300">
+                class="px-4 py-2 flex items-center bg-[#788A68] text-white text-sm rounded ">
                 <i class="fas fa-eye mr-2"></i> Ver
               </router-link>
 
               <router-link :to="`/editarTur/${tour._id}`"
-                class="px-4 py-2 flex items-center bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-all duration-300">
+                class="px-4 py-2 flex items-center bg-[#A86A36] text-white text-sm rounded ">
                 <i class="fas fa-edit mr-2"></i> Editar
               </router-link>
 
               <button @click="eliminarTour(tour._id)"
-                class="px-4 py-2 flex items-center bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-all duration-300">
+                class="px-4 py-2 flex items-center bg-[#7E2323] text-white text-sm rounded">
                 <i class="fas fa-trash-alt mr-2"></i> Eliminar
               </button>
             </div>

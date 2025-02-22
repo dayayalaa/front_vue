@@ -7,11 +7,11 @@ import VistaBienvenida from './components/VistaBienvenida.vue';
 
 const hiddenRoutes = ['/login', '/opcion', '/registroUsuario', '/registroGuia'];
 const route = useRoute();
-const loading = ref(true);
+const cargando = ref(true);
 
 onMounted(() => {
   setTimeout(() => {
-    loading.value = false;
+    cargando.value = false;
   }, 5600); 
 });
 
@@ -23,16 +23,16 @@ function onAfterEnter() {
 <template>
   <main>
     <transition name="fade" @after-enter="onAfterEnter">
-      <div v-if="loading" class="fixed inset-0 bg-green-500 flex justify-center items-center z-50">
+      <div v-if="cargando" class="fixed inset-0 bg-green-500 flex justify-center items-center z-50">
         <VistaBienvenida />
       </div>
     </transition>
 
-    <div v-if="!loading" class="mb-16">
+    <div v-if="!cargando" class="mb-16">
       <RouterView />
     </div>
 
-    <NavInferior v-if="!hiddenRoutes.includes(route.path) && !loading" />
+    <NavInferior v-if="!hiddenRoutes.includes(route.path) && !cargando" />
   </main>
 </template>
 

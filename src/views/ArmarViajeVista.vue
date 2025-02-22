@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
+
 
 const router = useRouter();
 const arrival_id = ref('');
@@ -13,6 +15,7 @@ const return_date = ref('');
 const arrival_idError = ref('');
 const departure_idError = ref('');
 const return_dateError = ref('');
+const cargando = ref(false);
 
 const lugaresArgentinos = {
   'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
@@ -42,7 +45,6 @@ const lugaresArgentinos = {
   'Trelew - Aeropuerto Almirante Marcos A. Zar': 'REL',
   'Ushuaia - Aeropuerto Internacional Ushuaia - Malvinas Argentinas': 'USH'
 };
-
 
 const irARuta = () => {
   arrival_idError.value = '';
@@ -76,16 +78,21 @@ const irARuta = () => {
     return;
   }
 
-  router.push({
-    path: '/resultados',
-    query: {
-      engine: 'google_flights',
-      arrival_id: lugaresArgentinos[arrival_id.value],
-      departure_id: lugaresArgentinos[departure_id.value],
-      outbound_date: outbound_date.value,
-      return_date: return_date.value,
-    },
-  });
+  cargando.value = true;
+  
+  setTimeout(() => {
+    router.push({
+      path: '/resultados',
+      query: {
+        engine: 'google_flights',
+        arrival_id: lugaresArgentinos[arrival_id.value],
+        departure_id: lugaresArgentinos[departure_id.value],
+        outbound_date: outbound_date.value,
+        return_date: return_date.value,
+      },
+    });
+    cargando.value = false;
+  }, 2000);
 };
 </script>
 
@@ -95,33 +102,36 @@ const irARuta = () => {
     <div class="max-w-md p-4 m-4 bg-white rounded shadow-lg">
       <TituloSecundario>Buscar vuelos</TituloSecundario>
       <form @submit.prevent="irARuta">
-        <div class="mb-4">
-          <label for="departure_id" class="block text-sm font-medium">Lugar de salida:</label>
-          <select id="departure_id" v-model="departure_id" class="border border-gray-300 p-2 rounded w-full" required>
-            <option value="" disabled>Selecciona un lugar</option>
-            <option v-for="(iata, lugar) in lugaresArgentinos" :key="iata" :value="lugar">{{ lugar }}</option>
-          </select>
-          <p v-if="departure_idError" class="text-red-500 text-sm">{{ departure_idError }}</p>
-        </div>
-        <div class="mb-4">
-          <label for="arrival_id" class="block text-sm font-medium">Lugar de llegada:</label>
-          <select id="arrival_id" v-model="arrival_id" class="border border-gray-300 p-2 rounded w-full" required>
-            <option value="" disabled>Selecciona un lugar</option>
-            <option v-for="(iata, lugar) in lugaresArgentinos" :key="iata" :value="lugar">{{ lugar }}</option>
-          </select>
-          <p v-if="arrival_idError" class="text-red-500 text-sm">{{ arrival_idError }}</p>
-        </div>
-        <div class="mb-4">
-          <label for="outbound_date" class="block text-sm font-medium">Fecha de ida:</label>
-          <input type="date" id="outbound_date" v-model="outbound_date" class="border border-gray-300 p-2 rounded w-full" required>
-        </div>
-        <div class="mb-4">
-          <label for="return_date" class="block text-sm font-medium">Fecha de vuelta:</label>
-          <input type="date" id="return_date" v-model="return_date" class="border border-gray-300 p-2 rounded w-full" required>
-          <p v-if="return_dateError" class="text-red-500 text-sm">{{ return_dateError }}</p>
-        </div>
-        <div class="flex justify-center">
-          <BotonPrincipal type="submit">Buscar vuelos</BotonPrincipal>
+        <SpinnerCarga v-if="cargando"/>
+        <div v-else>
+          <div class="mb-4">
+            <label for="departure_id" class="block text-sm font-medium">Lugar de salida:</label>
+            <select id="departure_id" v-model="departure_id" class="border border-gray-300 p-2 rounded w-full" required>
+              <option value="" disabled>Selecciona un lugar</option>
+              <option v-for="(iata, lugar) in lugaresArgentinos" :key="iata" :value="lugar">{{ lugar }}</option>
+            </select>
+            <p v-if="departure_idError" class="text-red-500 text-sm">{{ departure_idError }}</p>
+          </div>
+          <div class="mb-4">
+            <label for="arrival_id" class="block text-sm font-medium">Lugar de llegada:</label>
+            <select id="arrival_id" v-model="arrival_id" class="border border-gray-300 p-2 rounded w-full" required>
+              <option value="" disabled>Selecciona un lugar</option>
+              <option v-for="(iata, lugar) in lugaresArgentinos" :key="iata" :value="lugar">{{ lugar }}</option>
+            </select>
+            <p v-if="arrival_idError" class="text-red-500 text-sm">{{ arrival_idError }}</p>
+          </div>
+          <div class="mb-4">
+            <label for="outbound_date" class="block text-sm font-medium">Fecha de ida:</label>
+            <input type="date" id="outbound_date" v-model="outbound_date" class="border border-gray-300 p-2 rounded w-full" required>
+          </div>
+          <div class="mb-4">
+            <label for="return_date" class="block text-sm font-medium">Fecha de vuelta:</label>
+            <input type="date" id="return_date" v-model="return_date" class="border border-gray-300 p-2 rounded w-full" required>
+            <p v-if="return_dateError" class="text-red-500 text-sm">{{ return_dateError }}</p>
+          </div>
+          <div class="flex justify-center">
+            <BotonPrincipal type="submit">Buscar vuelos</BotonPrincipal>
+          </div>
         </div>
       </form>
     </div>

@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import TituloTerciario from '../components/TituloTerciario.vue';
+import SpinnerCarga from './SpinnerCarga.vue';
 
 const userName = ref('');
 const userProfileImage = ref('');
@@ -13,7 +14,7 @@ const provincia = ref('');
 const telefono = ref('');
 const userId = ref('');
 const reservas = ref([]);
-const loading = ref(true);
+const cargando = ref(true);
 
 const router = useRouter();
 const activeAccordion = ref(null);
@@ -48,7 +49,7 @@ const fetchUserData = async () => {
   } catch (error) {
     console.error(error);
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 
@@ -84,7 +85,7 @@ const obtenerReservas = async (idGuia) => {
     reservas.value = await Promise.all(
       response.data.data.map(async (reserva) => {
         const tourData = await obtenerTourData(reserva.tourId._id);
-        console.log(reserva.tourId);
+       // console.log(reserva.tourId);
         return {
           ...reserva,
           tour: tourData,
@@ -153,7 +154,7 @@ onMounted(async () => {
       await obtenerReservas(userId.value);
     }
   } else {
-    loading.value = false;
+    cargando.value = false;
     router.push('/login');
   }
 });
@@ -161,6 +162,8 @@ onMounted(async () => {
 
 <template>
     <div v-if="reservasPorTour.length > 0" class="p-3">
+      <SpinnerCarga v-if="cargando" />
+    
       <ul class="space-y-6">
         <li v-for="grupo in reservasPorTour" :key="grupo.tour._id"
           class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">

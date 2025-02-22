@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import IrAtras from '../components/IrAtras.vue';
+import BotonPrincipal from './BotonPrincipal.vue';
 
 const decodeJWT = (token) => {
   const base64Url = token.split('.')[1];
@@ -14,9 +15,10 @@ const decodeJWT = (token) => {
 };
 
 const router = useRouter();
-const loading = ref(false);
+const cargando = ref(false);
 const token = localStorage.getItem('token');
 const userId = ref(null);
+const mensajeError = ref('');
 
 const tourData = ref({
   titulo: '',
@@ -72,7 +74,6 @@ onMounted(() => {
     try {
       const decodedToken = decodeJWT(token);
       userId.value = decodedToken.userId;
-      // console.log('ID del usuario extraído del token:', userId.value);
     } catch (error) {
       console.error('Error al decodificar el token:', error);
     }
@@ -139,12 +140,12 @@ const actualizarFoto = (event) => {
 
 const crearTour = async () => {
   if (!formIsValid()) {
-    alert('Por favor corrige los errores antes de continuar.');
+    // alert('Por favor corrige los errores antes de continuar.');
     return;
   }
 
   try {
-    loading.value = true;
+    cargando.value = true;
     const datosTour = {
       ...tourData.value,
       fotoPortada: tourData.value.fotoPortada || '/img/default_portada.png',
@@ -157,14 +158,13 @@ const crearTour = async () => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    // console.log('Respuesta del backend:', response.data);
     const tourId = response.data.tour._id; 
     router.push({ name: 'vistaTur', params: { id: tourId } });
   } catch (error) {
     console.error('Error creando el tour:', error);
-    alert('Ocurrió un error al crear el tour.');
+    mensajeError.value = 'Ocurrió un error al crear el tour. Inténtalo de nuevo.';
   } finally {
-    loading.value = false;
+    cargando.value = false;
   }
 };
 </script>
@@ -256,13 +256,13 @@ const crearTour = async () => {
           v-model="fechaTemp"
           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
         />
-        <button
+        <BotonPrincipal
           type="button"
           @click="agregarFecha"
-          class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none"
+          class="px-4 py-2 text-white "
         >
           Agregar
-        </button>
+        </BotonPrincipal>
       </div>
       <ul class="mt-2 space-y-1">
         <li
@@ -283,7 +283,7 @@ const crearTour = async () => {
       <p v-if="errors.fechasDisponibles" class="text-red-500 text-sm mt-1">{{ errors.fechasDisponibles }}</p>
     </div>
 
-   <!-- Foto de Portada -->
+    <!-- Foto de Portada -->
     <div class="mb-4">
       <label for="fotoPortada" class="block text-sm font-medium text-gray-700">Foto de Portada</label>
       <input
@@ -302,24 +302,22 @@ const crearTour = async () => {
         id="politicaCancelacion"
         v-model="tourData.politicaCancelacion"
         @blur="validarCampo('politicaCancelacion', tourData.politicaCancelacion)"
-        placeholder="Describe la política de cancelación"
+        placeholder="Escribe la política de cancelación"
         rows="4"
         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
       ></textarea>
       <p v-if="errors.politicaCancelacion" class="text-red-500 text-sm mt-1">{{ errors.politicaCancelacion }}</p>
     </div>
 
-    <!-- Botón de Crear -->
-    <button
-      type="button"
-      @click="crearTour"
-      :disabled="loading"
-      class="w-full px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600 focus:outline-none disabled:opacity-50"
-    >
-      {{ loading ? 'Creando...' : 'Crear Tour' }}
-    </button>
+    <!-- Error Mensaje -->
+    <p v-if="mensajeError" class="text-red-500 text-sm mt-4">{{ mensajeError }}</p>
+
+    <div class="mt-6">
+      <BotonPrincipal @click="crearTour" :disabled="cargando">{{ cargando ? 'Cargando...' : 'Crear Tour' }}</BotonPrincipal>
+    </div>
   </div>
 </template>
+
 
 
 

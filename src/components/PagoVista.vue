@@ -36,13 +36,13 @@ const realizarPago = async () => {
             },
         ];
 
-        console.log('Los elementos son:', items);
+       // console.log('Los elementos son:', items);
 
         const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/pago/mercado', {
             items: items,
         });
 
-        console.log('Verificacion:', response);
+        //console.log('Verificacion:', response);
 
         if (response.data?.init_point) {
             window.location.href = response.data.init_point; 
@@ -51,7 +51,7 @@ const realizarPago = async () => {
         }
     } catch (error) {
         console.error('Error al procesar el pago:', error);
-        alert('Ocurrió un error al procesar el pago. Intenta nuevamente.');
+        //alert('Ocurrió un error al procesar el pago. Intenta nuevamente.');
     }
 };
 </script>

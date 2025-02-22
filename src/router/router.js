@@ -9,7 +9,7 @@ import GuiasTarjetas from "../components/GuiasTarjetas.vue";
 import GuiasPerfilVista from "../views/GuiasPerfilVista.vue";
 import Listas from "../views/ListaVista.vue";
 import ItinerarioDetalle from "../views/ItinerarioDetalle.vue";
-import DestinosArcana from "../components/DestinosArcana.vue";
+
 import HotelesVista from "../views/HotelesVista.vue";
 import InicioSesion from "../views/InicioSesion.vue";
 import OpcionInicio from "../views/OpcionInicio.vue";
@@ -35,7 +35,7 @@ const routes = [
   { path: "/guias/:id",          name: "GuiasPerfilVista",  component: GuiasPerfilVista,  meta: { requiresAuth: true } },
   { path: "/listas/:id",         name: "Listas",            component: Listas,            meta: { requiresAuth: true } },
   { path: "/itinerario/:id",     name: "ItinerarioDetalle", component: ItinerarioDetalle, meta: { requiresAuth: true }},
-  { path: "/arcana/lugares/:id", name: "lugarDetalle",      component: DestinosArcana,    meta: { requiresAuth: true } },
+ 
   { path: "/hoteles/:id",        name: "opcionesHoteles",   component: HotelesVista,      meta: { requiresAuth: true }},
   { path: "/login",              name: "login",             component: InicioSesion},
   { path: "/opcion",             name: "opcion",            component: OpcionInicio,      meta: { publicRoutes: true }},
@@ -47,8 +47,8 @@ const routes = [
   { path: "/ajustes",            name: "ajustes",           component: Ajustes,           meta: { requiresAuth: true }},
   { path: "/pago",               name: "pago",              component: Pago,              meta: { requiresAuth: true }},
   { path: "/provincia/:id",      name: "ProvinciasVistas",  component: ProvinciasVistas,  meta: { requiresAuth: true }},
-  { path: "/lugar/:id",          name: "LugaresVistas",  component: LugaresVistas,  meta: { requiresAuth: true }},
-  { path: "/inicioguia",          name: "inicioGuia",  component: InicioGuiaVista,  meta: { requiresAuth: true }},
+  { path: "/lugar/:id",          name: "LugaresVistas",     component: LugaresVistas,  meta: { requiresAuth: true }},
+  { path: "/inicioguia",         name: "inicioGuia",       component: InicioGuiaVista,  meta: { requiresAuth: true }},
 ];
 
 const router = createRouter({
@@ -69,7 +69,7 @@ function isValidToken(token) {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.exp * 1000 > Date.now();
   } catch (error) {
-    console.error("Error al verificar el token:", error);
+   // console.error("Error al verificar el token:", error);
     return false;
   }
 }
@@ -86,30 +86,30 @@ const decodeJWT = (token) => {
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
-  console.log("Token en localStorage:", token); 
+  //console.log("Token en localStorage:", token); 
   
   const isAuthenticated = token !== null && isValidToken(token);
-  console.log("isAuthenticated:", isAuthenticated);
+ // console.log("isAuthenticated:", isAuthenticated);
 
   if (isAuthenticated) {
     const decodedToken = decodeJWT(token);
-    console.log("Decoded token:", decodedToken);
+   // console.log("Decoded token:", decodedToken);
     const userRole = decodedToken.rols;
 
-    console.log("Rol del usuario (decodificado):", userRole); 
+   // console.log("Rol del usuario (decodificado):", userRole); 
     
     if (userRole === "guia" && to.path === "/") {
-      console.log("Redirigiendo a la vista de guía...");
+      //console.log("Redirigiendo a la vista de guía...");
       return next("/inicioguia");
     }
   }
 
   if (!isAuthenticated && to.matched.some(record => record.meta.requiresAuth)) {
-    console.log("No autenticado, redirigiendo a login...");
+   // console.log("No autenticado, redirigiendo a login...");
     return next("/login");
   }
 
-  console.log("Navegando a:", to.path); 
+ // console.log("Navegando a:", to.path); 
   next();
 });
 

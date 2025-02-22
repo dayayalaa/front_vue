@@ -3,7 +3,8 @@ import { ref, onMounted } from 'vue';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import Mistinerario from '../components/Mistinerario.vue';
 import IrAtras from '../components/IrAtras.vue';
-import IconoMapa from '../components/icons/IconoMapa.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
+
 
 const userName = ref('');
 const userProfileImage = ref('');
@@ -11,7 +12,7 @@ const userCoverImage = ref('');
 const userDescripcion = ref('');
 const userProvincia = ref('');
 const userId = ref('');
-const loading = ref(true);
+const cargando = ref(true);
 
 const fetchUserData = async () => {
   if (!userId.value) {
@@ -40,10 +41,10 @@ const fetchUserData = async () => {
     userDescripcion.value = data.data.descripcion;
     userProvincia.value = data.data.provincia;
 
-    loading.value = false;
+    cargando.value = false;
   } catch (error) {
     console.error(error);
-    loading.value = false;
+    cargando.value = false;
   }
 };
 
@@ -68,7 +69,7 @@ onMounted(() => {
       fetchUserData();
     } catch (error) {
       console.error('Error decodificando el token:', error);
-      loading.value = false;
+      cargando.value = false;
     }
   }
 });
@@ -77,6 +78,7 @@ onMounted(() => {
 <template>
   <IrAtras />
   <div class="max-w-md mx-auto p-2">
+    <SpinnerCarga v-if="cargando"/>
     <div class="relative mb-4">
       <img :src="userCoverImage" alt="Banner de perfil"
         class="w-full h-36 object-cover rounded-lg border-2 border-gray-300" />
@@ -87,7 +89,7 @@ onMounted(() => {
     </div>
 
     <div class="text-center mb-4 mt-16">
-      <TituloSecundario class="text-2xl">{{ loading ? 'Cargando...' : userName }}</TituloSecundario>
+      <TituloSecundario class="text-2xl">{{ userName }}</TituloSecundario>
 
       <p v-if="userDescripcion" class="text-left m-4">{{ userDescripcion }}</p>
 

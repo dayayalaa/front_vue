@@ -5,10 +5,11 @@ import axios from 'axios';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import TituloTerciario from '../components/TituloTerciario.vue';
 import IrAtras from '../components/IrAtras.vue';
+import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 const route = useRoute();
 const itinerario = ref(null);
-const isLoading = ref(true);
+const cargando = ref(true);
 const error = ref(null);
 
 onMounted(async () => {
@@ -17,20 +18,20 @@ onMounted(async () => {
 
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/${id}`);
 
-    console.log(response.data);
+    //console.log(response.data);
 
     itinerario.value = response.data;
-    isLoading.value = false;
+    cargando.value = false;
   } catch (err) {
     error.value = err.message || 'Ocurrió un error al cargar el itinerario.';
-    isLoading.value = false;
+    cargando.value = false;
   }
 });
 </script>
 
 <template>
   <IrAtras />
-  <div v-if="isLoading" class="text-center text-gray-600">Cargando...</div>
+  <SpinnerCarga v-if="cargando" />
   <div v-else-if="error" class="text-center text-red-600">{{ error }}</div>
   <div
     v-else-if="itinerario && itinerario.vueloIda && itinerario.vueloIda.details && itinerario.vueloIda.details.flights.length > 0"
