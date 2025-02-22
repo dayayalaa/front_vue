@@ -32,6 +32,8 @@ const fetchGuiaData = async (guiaId) => {
       throw new Error('ID del guía no válido');
     }
 
+    console.log('Fetching data for guiaId:', guiaId);
+
     const url = `https://back-tesis-lovat.vercel.app/arcana/usuarios/${guiaId}`;
     const response = await fetch(url, {
       method: 'GET',
@@ -55,7 +57,8 @@ const fetchGuiaData = async (guiaId) => {
     guiaProvincia.value = provincia;
     guiasId.value = _id;
 
-    console.log('ID del guía:', guiaId.value);
+    console.log('ID del guía:', _id); 
+
   } catch (error) {
     console.error('Error al obtener los datos del guía:', error);
   }
@@ -63,6 +66,8 @@ const fetchGuiaData = async (guiaId) => {
 
 const fetchTourData = async () => {
   try {
+    console.log('Fetching data for tourId:', tourId);
+
     const response = await fetch(`https://back-tesis-lovat.vercel.app/arcana/tur/${tourId}`);
     if (!response.ok) {
       throw new Error('No se pudo encontrar el tour');
@@ -70,8 +75,13 @@ const fetchTourData = async () => {
     const data = await response.json();
     tour.value = data;
 
+    console.log('Tour data:', tour.value);
+
     if (tour.value && tour.value.guia) {
+      console.log('Guia found, fetching guia data');
       await fetchGuiaData(tour.value.guia);
+    } else {
+      console.log('No guia found for this tour');
     }
   } catch (error) {
     console.error('Error al obtener los datos del tour:', error);
@@ -82,7 +92,7 @@ const formattedFechas = computed(() => {
   if (tour.value && tour.value.fechasDisponibles && tour.value.fechasDisponibles.length > 0) {
     return tour.value.fechasDisponibles.map(fecha => {
       const date = new Date(fecha);
-      if (isNaN(date)) {
+      if (isNaN(date.getTime())) { 
         return 'Fecha no válida';
       }
       return date.toLocaleDateString('es-AR', {
@@ -92,8 +102,9 @@ const formattedFechas = computed(() => {
       });
     });
   }
-  return [];
+  return ['No hay fechas disponibles']; 
 });
+
 
 const decodeJWT = (token) => {
   const base64Url = token.split('.')[1]
@@ -107,15 +118,15 @@ const decodeJWT = (token) => {
 
 const checkUserRole = () => {
   const token = localStorage.getItem('token');
-  // console.log('Token:', token);
+  console.log('Token:', token);
   if (token) {
     try {
       const decodedToken = decodeJWT(token);
-      // console.log('Decoded Token:', decodedToken);
+      console.log('Decoded Token:', decodedToken);
       if (typeof decodedToken.rols === 'string') {
         isGuia.value = decodedToken.rols === 'guia';
         isUser.value = decodedToken.rols === 'user';
-        // console.log('isUser:', isUser.value, 'isGuia:', isGuia.value);
+        console.log('isUser:', isUser.value, 'isGuia:', isGuia.value);
       } else {
         console.error('El campo "rols" no es una cadena:', decodedToken.rols);
       }
@@ -126,6 +137,7 @@ const checkUserRole = () => {
 }
 
 onMounted(() => {
+  console.log('Component mounted');
   fetchTourData()
   checkUserRole()
 })
@@ -133,8 +145,9 @@ onMounted(() => {
 const reservarTour = async () => {
   const token = localStorage.getItem('token');
   const userId = token ? decodeJWT(token).userId : null;
+  const userName = token ? decodeJWT(token).userName : ''; 
 
-  // console.log("User ID:", userId);
+  console.log("User ID:", userId);
   if (!userId || !tour.value._id || !tour.value.fechasDisponibles || cantidadPersonas.value <= 0) {
     errorMessage.value = 'Por favor, verifica que todos los campos estén completos y válidos.';
     return;
@@ -142,13 +155,16 @@ const reservarTour = async () => {
 
   const reserva = {
     userId: userId,
+    userName: userName,  
     tourId: tour.value._id,
+    tourTitulo: tour.value.titulo,
     fechaTour: tour.value.fechasDisponibles[0],
     cantidadPersonas: cantidadPersonas.value,
     destino: tour.value.provincia,
+    precio: tour.value.precio,
   };
 
-  // console.log("Reserva:", reserva);
+  console.log("Reserva:", reserva);
 
   try {
     const response = await axios.post(
@@ -160,16 +176,51 @@ const reservarTour = async () => {
         },
       }
     );
-    // console.log("Reserva creada:", response.data);
+    console.log("Reserva creada:", response.data);
     reservaExitosa.value = true;
+    const userResponse = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const userEmail = userResponse.data.data.email;
+
+    await enviarCorreos(userEmail, guiaEmail.value, reserva);
+
     setTimeout(() => {
       reservaExitosa.value = false;
     }, 3000);
+
   } catch (error) {
     console.error("Error al crear la reserva:", error);
     errorMessage.value = 'Hubo un error al realizar la reserva. Intenta más tarde.';
   }
 };
+
+
+const enviarCorreos = async (usuarioEmail, guiaEmail, reserva) => {
+  try {
+    console.log('Datos para enviar el correo:');
+    console.log('Email usuario:', usuarioEmail);
+    console.log('Email guía:', guiaEmail);
+    console.log('Detalles de la reserva:', reserva);
+
+    const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/mail/reserva', {
+      usuarioEmail,
+      guiaEmail,
+      reserva,
+    });
+
+    console.log('mail:', response);
+
+    if (response.status === 200) {
+      console.log('Correos enviados exitosamente');
+    } else {
+      console.error('Error al enviar los correos');
+    }
+  } catch (error) {
+    console.error('Error al llamar al servicio de correos:', error);
+  }
+};
+
 
 const costoTotal = computed(() => {
   if (tour.value && tour.value.precio) {
@@ -178,6 +229,7 @@ const costoTotal = computed(() => {
   return 0;
 })
 </script>
+
 
 <template>
   <IrAtras />
