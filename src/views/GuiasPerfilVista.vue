@@ -60,14 +60,14 @@ onMounted(() => {
 
       <div class="text-center mb-4 mt-20">
         <TituloSecundario class="text-2xl">{{ guia.nombre }}</TituloSecundario>
-        <p><strong>Provincia:</strong> {{ guia.provincia }}</p>
+        <p><strong class="text-[#788A68]">Provincia:</strong> {{ guia.provincia }}</p>
         <p>{{ guia.descripcion }}</p>
         <hr class="m-4">
 
-        <TituloTerciario class="mt-4">Datos de contacto</TituloTerciario>
+        <TituloTerciario class="mt-4"><strong>Datos de contacto</strong></TituloTerciario>
         <ul class="m-0 p-0">
-          <li v-if="guia.email"><strong>Email: </strong>{{ guia.email }}</li>
-          <li v-if="guia.telefono"><strong>Teléfono: </strong>{{ guia.telefono }}</li>
+          <li v-if="guia.email"><strong class="text-[#788A68]">Email: </strong>{{ guia.email }}</li>
+          <li v-if="guia.telefono"><strong class="text-[#788A68]">Teléfono: </strong>{{ guia.telefono }}</li>
         </ul>
       </div>
 
@@ -77,13 +77,13 @@ onMounted(() => {
         <TituloSecundario class="text-xl">Tours Disponibles</TituloSecundario>
         <ul class="space-y-4 mt-4">
           <li v-for="tour in tours" :key="tour._id" class="bg-white p-4 rounded-lg shadow-md">
-            <strong class="text-lg">{{ tour.titulo }}</strong>
+            <strong class="text-lg text-[#A86A36]">{{ tour.titulo }}</strong>
             <p class="text-gray-600">{{ tour.descripcion }}</p>
             <p><strong>Precio:</strong> {{ tour.precio }} ARS</p>
             <p><strong>Duración:</strong> {{ tour.duracion }}</p>
             <div class="mt-4 text-right">
               <router-link :to="`/vistaTur/${tour._id}`"
-                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">
+                class="px-4 py-2 bg-[#A86A36] text-white rounded">
                 Ver más
               </router-link>
             </div>

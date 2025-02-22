@@ -80,11 +80,9 @@ onMounted(async () => {
       <Mistinerario />
     </div>
 
-    <!-- Estado de carga -->
    <SpinnerCarga v-if="cargando"/>
 
     <template v-else>
-      <!-- Guías -->
       <section class="flex flex-col justify-center items-center mb-20">
         <TituloSecundario>¡Conoce nuestros guías!</TituloSecundario>
 
@@ -105,11 +103,9 @@ onMounted(async () => {
         </RouterLink>
       </section>
 
-      <!-- Provincias Populares -->
       <section class="flex flex-col justify-center items-center mb-20">
         <TituloSecundario>Provincias Populares</TituloSecundario>
 
-        <!-- Verificar si hay provincias y renderizarlas -->
         <div v-if="provinciasPopulares.length > 0" class="flex flex-wrap gap-5 justify-center m-2">
           <RouterLink v-for="provincia in provinciasPopulares" :key="provincia.provincia"
             :to="{ name: 'ProvinciasVistas', params: { id: provincia.provincia } }">
@@ -123,9 +119,8 @@ onMounted(async () => {
           </RouterLink>
         </div>
 
-        <!-- Mensaje si no hay provincias -->
         <div v-else>
-          <p>No hay provincias populares disponibles en este momento.</p>
+          <p class="text-[#7E2323]">No hay provincias populares disponibles en este momento.</p>
         </div>
       </section>
     </template>

@@ -136,10 +136,10 @@ const eliminarTour = async (tourId) => {
       </TituloTerciario>
       <ul class="mt-2 text-gray-600 text-sm">
         <li v-if="email" class="mb-1">
-          <strong>Email:</strong> {{ email }}
+          <strong class="text-[#A86A36]">Email:</strong> {{ email }}
         </li>
         <li v-if="telefono" class="mb-1">
-          <strong>Teléfono:</strong> {{ telefono }}
+          <strong class="text-[#A86A36]">Teléfono:</strong> {{ telefono }}
         </li>
       </ul>
     </div>

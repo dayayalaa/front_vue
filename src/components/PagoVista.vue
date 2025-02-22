@@ -16,6 +16,29 @@ const calcularTotal = () => {
     return precioVueloIda + precioVueloVuelta + precioHotel;
 };
 
+const enviarCorreoConfirmacion = async () => {
+    try {
+        const response = await axios.post('https://back-tesis-lovat.vercel.app/arcana/reservaViaje', {
+            email: reserva.usuario.email, 
+            nombre: reserva.usuario.nombre,
+            detalles: {
+                vueloIda: reserva.idaReserva.details.flights[0].airline,
+                vueloVuelta: reserva.vueltaReserva.details.flights[0].airline,
+                hotel: reserva.hotelReserva.name,
+                total: calcularTotal(),
+            },
+        });
+
+        if (response.data.success) {
+            console.log('Correo de confirmación enviado correctamente.');
+        } else {
+            console.error('Error al enviar el correo:', response.data.message);
+        }
+    } catch (error) {
+        console.error('Error al enviar el correo de confirmación:', error);
+    }
+};
+
 const realizarPago = async () => {
     try {
         const items = [
@@ -45,7 +68,11 @@ const realizarPago = async () => {
         //console.log('Verificacion:', response);
 
         if (response.data?.init_point) {
-            window.location.href = response.data.init_point; 
+            // Llamamos a la función para enviar el correo de confirmación antes de redirigir
+            await enviarCorreoConfirmacion();
+
+            // Redirigimos a Mercado Pago
+            window.location.href = response.data.init_point;
         } else {
             throw new Error('No se recibió init_point de la respuesta.');
         }

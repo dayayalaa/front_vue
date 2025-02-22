@@ -93,7 +93,7 @@ onMounted(() => {
 
       <p v-if="userDescripcion" class="text-left m-4">{{ userDescripcion }}</p>
 
-      <p v-if="userProvincia"><strong>Ubicación: </strong>{{ userProvincia }}</p>
+      <p v-if="userProvincia"><strong class="text-[#A86A36]">Ubicación: </strong>{{ userProvincia }}</p>
     </div>
 
     <Mistinerario />
