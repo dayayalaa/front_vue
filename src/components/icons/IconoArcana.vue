@@ -1,5 +1,6 @@
 <template>
     <svg id="Capa_1"
+    fill="#222725"
     data-name="Capa 1"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 997.71 984.48"

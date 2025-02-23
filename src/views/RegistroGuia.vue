@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import TituloSecundario from '../components/TituloSecundario.vue';
+import BotonPrincipal from '../components/BotonPrincipal.vue';
 
 
 const router = useRouter();
@@ -141,7 +142,7 @@ const validateForm = () => {
         <!-- Email -->
         <div class="mb-4">
           <label for="email" class="block text-sm font-medium text-gray-600">Correo Electrónico</label>
-          <input type="email" id="email" v-model="email" placeholder="Ingresa tu correo electrónico"
+          <input type="email" id="email" v-model="email" placeholder="Ingresa tu correo electrónico" autocomplete="email"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           <p class="text-red-500 text-sm mt-1" v-if="errorEmail">{{ errorEmail }}</p>
         </div>
@@ -150,7 +151,7 @@ const validateForm = () => {
         <div class="mb-4 relative">
           <label for="contrasenia" class="block text-sm font-medium text-gray-600">Contraseña</label>
           <input :type="isPasswordVisible ? 'text' : 'password'" id="contrasenia" v-model="contrasenia"
-            placeholder="Ingresa tu contraseña"
+            placeholder="Ingresa tu contraseña"  autocomplete="current-password"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           <button type="button" @click="togglePasswordVisibility"
             class="absolute right-3 top-1/2 transform  flex items-center justify-center">
@@ -179,7 +180,7 @@ const validateForm = () => {
 
         <!-- Botón de Registro -->
         <div class="flex justify-center">
-          <BotonPrincipal :disabled="cargando">{{ cargando ? 'Registrando...' : 'Registrarse' }}</BotonPrincipal>
+          <BotonPrincipal :disabled="cargando">{{ cargando ? 'Registrando...' : 'Registrarse' }} </BotonPrincipal>
         </div>
       </form>
     </div>

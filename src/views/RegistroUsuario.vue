@@ -103,7 +103,7 @@ const registroUsuario = async () => {
         <!-- Email -->
         <div class="mb-4">
           <label for="email" class="block text-sm font-medium text-gray-600">Correo Electrónico</label>
-          <input type="email" id="email" v-model="email" placeholder="Ingresa tu correo electrónico"
+          <input type="email" id="email" v-model="email" placeholder="Ingresa tu correo electrónico" autocomplete="email"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           <p class="text-red-500 text-sm mt-1" v-if="errors.email">{{ errors.email }}</p>
         </div>
@@ -112,7 +112,7 @@ const registroUsuario = async () => {
         <div class="mb-4 relative">
           <label for="contrasenia" class="block text-sm font-medium text-gray-600">Contraseña</label>
           <input :type="isPasswordVisible ? 'text' : 'password'" id="contrasenia" v-model="contrasenia"
-            placeholder="Ingresa tu contraseña"
+            placeholder="Ingresa tu contraseña" autocomplete="current-password"
             class="border border-gray-300 p-3 rounded w-full mt-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           <button type="button" @click="togglePasswordVisibility"
             class="absolute right-3 top-1/2 transform  flex items-center justify-center">

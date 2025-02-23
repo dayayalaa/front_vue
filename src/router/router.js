@@ -48,7 +48,7 @@ const routes = [
   { path: "/pago",               name: "pago",              component: Pago,              meta: { requiresAuth: true }},
   { path: "/provincia/:id",      name: "ProvinciasVistas",  component: ProvinciasVistas,  meta: { requiresAuth: true }},
   { path: "/lugar/:id",          name: "LugaresVistas",     component: LugaresVistas,  meta: { requiresAuth: true }},
-  { path: "/inicioguia",         name: "inicioGuia",       component: InicioGuiaVista,  meta: { requiresAuth: true }},
+  { path: "/inicioguia",         name: "inicioGuia",        component: InicioGuiaVista,  meta: { requiresAuth: true }},
 ];
 
 const router = createRouter({
