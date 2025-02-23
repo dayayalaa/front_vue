@@ -128,7 +128,6 @@ onMounted(() => {
         <router-link v-for="itinerario in itinerarios" :key="itinerario._id"
           :to="{ path: `/itinerario/${itinerario._id}` }" class="flex flex-col justify-between items-center w-[150px]">
 
-          <!-- Mostrar la imagen del destino -->
           <div class="w-[150px] h-[150px] overflow-hidden">
             <img :src="itinerario.thumbnail || '/img/default_portada.png'" :alt="itinerario.destino"
               class="w-full h-full object-cover rounded-lg" />
@@ -140,7 +139,7 @@ onMounted(() => {
         <router-link to="/crear">
           <div
             class="w-[150px] h-[150px] flex-none rounded-lg border border-gray-600 flex items-center justify-center hover:bg-gray-100 transition">
-            <IconoMas class="w-20 h-20 text-gray-600" />
+            <IconoMas class="w-20 h-20 text-[#788A68]" />
           </div>
         </router-link>
       </div>

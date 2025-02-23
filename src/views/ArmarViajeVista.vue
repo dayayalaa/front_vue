@@ -5,8 +5,6 @@ import TituloSecundario from '../components/TituloSecundario.vue';
 import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IrAtras from '../components/IrAtras.vue';
 
-
-
 const router = useRouter();
 const arrival_id = ref('');
 const departure_id = ref('');
@@ -15,7 +13,6 @@ const return_date = ref('');
 const arrival_idError = ref('');
 const departure_idError = ref('');
 const return_dateError = ref('');
-
 
 const lugaresArgentinos = {
   'Buenos Aires - Aeropuerto Internacional Ministro Pistarini': 'EZE',
@@ -44,8 +41,7 @@ const lugaresArgentinos = {
   'Termas de Río Hondo - Aeropuerto Internacional Termas de Río Hondo': 'RHD',
   'Trelew - Aeropuerto Almirante Marcos A. Zar': 'REL',
   'Ushuaia - Aeropuerto Internacional Ushuaia - Malvinas Argentinas': 'USH'
-};
-
+}
 
 const irARuta = () => {
   arrival_idError.value = '';

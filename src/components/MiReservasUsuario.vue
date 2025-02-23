@@ -175,7 +175,7 @@ onMounted(async () => {
               class="w-24 h-24 rounded-lg object-cover" />
             
             <div class="flex-1">
-              <strong class="text-xm text-gray-900 block">
+              <strong class="text-xm text-[#222725] block">
                 {{ grupo.tour.titulo }}
               </strong>
             </div>
@@ -198,15 +198,15 @@ onMounted(async () => {
                   class="w-24 h-24 rounded-lg object-cover" />
                 
                 <div class="ps-6">
-                  <p class="text-gray-700 font-medium">Nombre:</p>
-                  <p class="text-gray-900">{{ reserva.userId?.nombre || 'Nombre no disponible' }}</p>
-                  <p class="text-gray-700 font-medium">Email:</p>
-                  <p class="text-gray-900">{{ reserva.userId?.email || 'Email no disponible' }}</p>
-                  <p class="text-gray-700 font-medium">Fecha de reserva:</p>
-                  <p class="text-gray-900">
+                  <p class="text-[#788A68] font-medium">Nombre:</p>
+                  <p class="text-[#222725]">{{ reserva.userId?.nombre || 'Nombre no disponible' }}</p>
+                  <p class="text-[#788A68] font-medium">Email:</p>
+                  <p class="text-[#222725]">{{ reserva.userId?.email || 'Email no disponible' }}</p>
+                  <p class="text-[#788A68] font-medium">Fecha de reserva:</p>
+                  <p class="text-[#222725]">
                     {{ reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : 'Fecha no disponible' }}
                   </p>
-                  <p class="text-gray-700 font-medium">Personas: {{ reserva.cantidadPersonas }}</p>
+                  <p class="text-[#788A68] font-medium">Personas: {{ reserva.cantidadPersonas }}</p>
                 </div>
               </div>
             </div>

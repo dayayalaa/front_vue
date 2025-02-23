@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import TituloSecundario from '../components/TituloSecundario.vue';
 import TituloTerciario from '../components/TituloTerciario.vue';
@@ -12,6 +12,7 @@ import IconoCalendario from '../components/icons/IconoCalendario.vue';
 import IconoMapa from '../components/icons/IconoMapa.vue';
 
 const route = useRoute();
+const router = useRouter();
 const itinerario = ref(null);
 const provinciaInfo = ref(null);
 const cargando = ref(true);
@@ -59,6 +60,38 @@ const obtenerProvincia = async () => {
     }
 };
 
+const obtenerReserva = async () => {
+    const provinciaId = itinerario.value.destino;  
+
+    if (!provinciaId) {
+        console.error('No se ha especificado una provincia');
+        return;
+    }
+
+    try {
+        const response = await axios.get(
+            `https://back-tesis-lovat.vercel.app/arcana/reservastou/tours/provincia/${provinciaId}`
+        );
+
+        if (response && response.data) {
+            const reservaId = response.data.id; 
+            console.log('reserva:', reservaId);
+            
+            if (reservaId) {
+                router.push(`/reservaDetalle/${reservaId}`);
+            } else {
+                router.push('/guiasTarjetas');
+            }
+        } else {
+            router.push('/guiasTarjetas');
+        }
+
+    } catch (error) {
+        console.error('Error al obtener la reserva:', error);
+        router.push('/guiasTarjetas');
+    }
+};
+
 const obtenerImagenes = async (data_id) => {
     try {
         const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
@@ -87,6 +120,7 @@ onMounted(async () => {
     itinerario.value = response.data;
    cargando.value = false;
     
+   obtenerReserva();
     obtenerProvincia();
   } catch (err) {
     error.value = err.message || 'Ocurrió un error al cargar el itinerario.';
@@ -139,7 +173,7 @@ onMounted(async () => {
             <RouterLink to="/guiasTarjetas"
                 class="flex flex-col items-center p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 text-[#3C4A28] hover:bg-[#f0f0f0]">
                 <IconoMapa class="w-12 h-12 mb-2 text-[#3C4A28] fill-current" />
-                <p class="text-sm text-gray-700">Guias</p>
+                <p class="text-sm text-gray-700">Tour</p>
             </RouterLink>
         </div>
 
@@ -183,7 +217,7 @@ onMounted(async () => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </div> 
 
         </div>
     </div>
