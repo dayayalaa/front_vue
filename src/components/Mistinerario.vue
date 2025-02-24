@@ -3,13 +3,11 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TituloSecundario from './TituloSecundario.vue';
 import IconoMas from './icons/IconoMas.vue';
-import SpinnerCarga from './SpinnerCarga.vue';
-
+import SpinnerCarga from '../components/SpinnerCarga.vue';
 
 const userId = ref(null);
 const itinerarios = ref([]);
-const cargando = ref(true);
-const lugaresTuristicos = ref([]);
+const loading = ref(true);
 const provinciaInfo = ref({ gallery: [] });
 
 const decodeJWT = (token) => {
@@ -30,9 +28,11 @@ const decodeJWT = (token) => {
 const fetchUserData = async () => {
   try {
     if (!userId.value) return;
+    // console.log('Id del usuario:', userId.value);
 
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/reservas/usuario/${userId.value}`);
     itinerarios.value = response.data.data;
+    // console.log('Itinerario:', itinerarios.value);
 
     itinerarios.value.forEach(async (itinerario) => {
       await obtenerProvincia(itinerario.destino);
@@ -42,17 +42,16 @@ const fetchUserData = async () => {
   } catch (error) {
     console.error('Error al obtener los itinerarios:', error);
   } finally {
-    cargando.value = false;
+    loading.value = false;
   }
 };
 
-
 const obtenerProvincia = async (provincia) => {
-  //console.log('Buscando lugares turísticos para la provincia:', provincia);
+  // console.log('Provincia:', provincia);
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/provincia?provincia=${provincia}`);
 
-    //console.log('Estructura de response.data:', response.data);
+    // console.log('Estructura de response.data:', response.data);
 
     if (response && response.data) {
       provinciaInfo.value = {
@@ -63,7 +62,7 @@ const obtenerProvincia = async (provincia) => {
       };
 
       const data_id = response.data.data_id;
-      //console.log('data_id:', data_id);
+      // console.log('data_id:', data_id);
       obtenerImagenes(data_id);
     } else {
       console.error('Formato inesperado en la respuesta de la API');
@@ -76,14 +75,14 @@ const obtenerProvincia = async (provincia) => {
 const obtenerImagenes = async (data_id) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/destino/lugarImagen?data_id=${data_id}`);
-    //console.log('Respuesta de la API img:', response.data);
+    // console.log('Respuesta de la API img:', response.data);
 
     if (response.data && response.data.images && Array.isArray(response.data.images) && response.data.images.length > 0) {
       const validImage = response.data.images.find(image => isValidImage(image));
-      provinciaInfo.value.thumbnail = validImage || '/img/default_portada.png'; 
+      provinciaInfo.value.thumbnail = validImage || '/img/default_portada.png';
     } else {
       console.warn('No se encontraron imágenes, se asignará una imagen predeterminada');
-      provinciaInfo.value.thumbnail = '/img/default_portada.png'; 
+      provinciaInfo.value.thumbnail = '/img/default_portada.png';
     }
   } catch (error) {
     console.error('Error al obtener imágenes:', error);
@@ -110,18 +109,18 @@ onMounted(() => {
       localStorage.removeItem('token');
     }
   } else {
-    cargando.value = false;
+    loading.value = false;
   }
 });
 </script>
 
 <template>
   <div class="w-full mb-16">
+
     <div class="flex justify-between m-3">
       <TituloSecundario>Mi itinerario:</TituloSecundario>
     </div>
-
-    <SpinnerCarga v-if="cargando" />
+    <SpinnerCarga v-if="loading" />
 
     <div v-else class="overflow-x-auto">
       <div v-if="itinerarios.length > 0" class="flex gap-4 ml-3">
@@ -144,7 +143,6 @@ onMounted(() => {
         </router-link>
       </div>
 
-      <!-- Mensaje si no hay itinerarios -->
       <div v-else class="text-center text-gray-500 mt-4">
         No tienes itinerarios aún. <router-link to="/crear" class="text-[#A86A36] hover:underline">Crea uno
           aquí</router-link>.

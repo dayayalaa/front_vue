@@ -51,7 +51,7 @@ const routes = [
   { path: "/provincia/:id",      name: "ProvinciasVistas",  component: ProvinciasVistas,  meta: { requiresAuth: true }},
   { path: "/lugar/:id",          name: "LugaresVistas",     component: LugaresVistas,  meta: { requiresAuth: true }},
   { path: "/inicioguia",         name: "inicioGuia",        component: InicioGuiaVista,  meta: { requiresAuth: true }},
-  { path: "/vistaReserva", name: "vistaReserva",    component: VistaReserva,  meta: { requiresAuth: true }},
+  { path: "/vistaReserva",       name: "vistaReserva",      component: VistaReserva,  meta: { requiresAuth: true }},
   { path: "/reservaDetalle/:id", name: "reservaDetalle",    component: VistaTourUsuario,  meta: { requiresAuth: true }},
 ];
 
