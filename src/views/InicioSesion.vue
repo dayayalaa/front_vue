@@ -60,9 +60,11 @@ const inicioSesion = async () => {
                 const userRole = decodedToken.roles;
 
                 if (userRole === 'guia') {
-                    await router.push('/inicioguia'); 
+                    await router.push({ path: '/inicioguia' });
+
                 } else {
-                    await router.push('/');  
+                    await router.push({ path: '/' });
+
                 }
             } else {
                 errorMessage.value = 'Token no válido recibido.';

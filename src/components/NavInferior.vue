@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, useId } from 'vue';
 import IconoInicio from './icons/IconoInicio.vue';
 import IconoMas from './icons/IconoMas.vue';
 import IconoUsuario from './icons/IconoUsuario.vue';
@@ -31,6 +31,9 @@ const getIndex = (link) => {
 };
 
 const setActive = (link) => {
+
+  // console.log('User Id:', userId.value);
+
   if (link.startsWith('/perfil/') && !userId.value) {
     console.error('No user ID available');
     return;
@@ -59,21 +62,24 @@ const decodeJWT = (token) => {
 };
 
 const getProfileLink = computed(() => {
+  if (!userId.value) return { name: 'Perfil' };
   return userRole.value === 'guia'
     ? { name: 'GuiaPerfil', params: { id: userId.value } }
     : { name: 'Perfil', params: { id: userId.value } };
 });
 
 const getInicioLink = computed(() => {
+  if (!userId.value) return { name: 'Home' };
   return userRole.value === 'guia'
-    ? { name: 'inicioGuia', params: { id: userId.value } }
-    : { name: 'Home', params: { id: userId.value } };
+    ? { name: 'inicioGuia' }
+    : { name: 'Home' };
 });
 
 const getCrearLink = computed(() => {
+  if (!userId.value) return { name: 'Crear' };
   return userRole.value === 'guia'
-    ? { name: 'crearTur', params: { id: userId.value } }
-    : { name: 'Crear', params: { id: userId.value } };
+    ? { name: 'crearTur' }
+    : { name: 'Crear' };
 });
 
 onMounted(() => {
