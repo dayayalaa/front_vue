@@ -54,6 +54,9 @@ const fetchGuiaData = async (guiaId) => {
     guiaProvincia.value = provincia;
     guiasId.value = _id;
 
+    // console.log('datos del guia:', data);
+    // console.log('mail del guia:', data.data.email);
+
   } catch (error) {
     console.error('Error al obtener los datos del guía:', error);
   } finally {
@@ -86,6 +89,8 @@ const fetchTourDetails = async () => {
     const tourId = tourData.value.tourId._id;
     // console.log('tourData:', tourData.value);
     // console.log('Id del tour:', tourId);
+    // console.log('Id usuario:', tourData.value.userId._id);
+    // console.log('Mail usuario:', tourData.value.userId.email);
 
     fetchTour(tourId);
 
@@ -96,12 +101,63 @@ const fetchTourDetails = async () => {
   }
 };
 
+const mailCancelacion = async () => {
+  try {
+    // console.log('Email usuario:', tourData.value.userId.email);
+    // console.log('Email guía:', guiaEmail.value);
+    const usuarioEmail = tourData.value.userId.email;
+    const guiaEmailValue = guiaEmail.value;
+
+    if (!guiaEmailValue) {
+      console.error('Correo del guía no disponible');
+      return;
+    }
+
+    const reserva = {
+      userId: tourData.value.userId._id,  
+      tourId: tourData._rawValue.tourId._id,  
+      cantidadPersonas: tourData.value.cantidadPersonas,
+      fechaTour: tourData.value.fechaTour,  
+      destino: tourData.value.destino,  
+      precio: tourData._rawValue.tourId.precio,  
+    };
+
+    // console.log('Datos para enviar el correo:');
+    // console.log('Email usuario:', usuarioEmail);
+    // console.log('Email guía:', guiaEmailValue);
+    // console.log('Detalles de la reserva:', reserva);
+
+    if (!usuarioEmail || !guiaEmailValue || !tourData.value) {
+      console.error('Faltan datos para enviar el correo');
+      return;
+    }
+
+    const correoResponse = await axios.post('https://back-tesis-lovat.vercel.app/arcana/mail/cancelacion', {
+      usuarioEmail,
+      guiaEmailValue,
+      reserva,
+    });
+
+    // console.log('Mail: ', correoResponse);
+
+    if (correoResponse.status === 200) {
+      // console.log('Correo de cancelación enviado');
+    } else {
+      console.error('Error al enviar correo de cancelación');
+    }
+  } catch (error) {
+    console.error("Error al cancelar la reserva:", error);
+  }
+}
+
+
 const cancelarReserva = async () => {
   try {
     const response = await axios.put(`https://back-tesis-lovat.vercel.app/arcana/reservastour/tours/${reservaId}/cancelar`);
 
     if (response.status === 200) {
       tourData.value.estado = 'cancelada';
+      mailCancelacion();
     }
   } catch (error) {
     console.error("Error al cancelar la reserva:", error);
@@ -186,7 +242,7 @@ onMounted(() => {
         </p>
       </div>
 
-      <div v-if="tourData.estado !== 'cancelada'" class="flex justify-center mt-4">
+      <div v-if="tourData.estado == 'pendiente'" class="flex justify-center mt-4">
         <BotonPrincipal @click="cancelarReserva" class="w-full px-4 py-2 bg-[#7E2323]">
           Cancelar Reserva
         </BotonPrincipal>
