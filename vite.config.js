@@ -19,13 +19,20 @@ export default defineConfig({
         theme_color: "#788A68",
         icons: [
           {
-            src: "/icono/icon-147x192.png",
+            src: "/icono/icon_192x192.png",
             sizes: "147x192",
             type: "image/png",
           },
           {
-            src: "/icono/icon-391x512.png",
+            src: "/icono/icon_512x512.png",
             sizes: "391x512",
+            type: "image/png",
+          },
+        ],
+        screenshots: [
+          {
+            src: "/icono/pantalla_930x1920",
+            sizes: "930x1920",
             type: "image/png",
           },
         ],
