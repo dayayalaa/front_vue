@@ -11,14 +11,14 @@ const routeNames = {
   Home: 'Inicio',
   Crear: 'Crear Viaje',
   Resultados: 'Resultados de Búsqueda',
-  Perfil: 'Perfil de Usuario',
-  GuiaPerfil: 'Perfil de Guía',
+  Perfil: 'Perfil',
+  GuiaPerfil: 'Perfil',
   EditarPerfil: 'Editar Perfil',
   GuiasTarjetas: 'Guías Disponibles',
-  GuiasPerfilVista: 'Perfil de Guía',
-  Listas: 'Listas de Lugares',
-  ItinerarioDetalle: 'Detalle del Itinerario',
-  opcionesHoteles: 'Opciones de Hoteles',
+  GuiasPerfilVista: 'Perfil',
+  Listas: 'Lugares',
+  ItinerarioDetalle: 'Mi itinerario',
+  opcionesHoteles: 'Hoteles',
   login: 'Iniciar Sesión',
   opcion: 'Elige tu Rol',
   registroUsuario: 'Registro de Usuario',
@@ -30,7 +30,7 @@ const routeNames = {
   pago: 'Pago',
   ProvinciasVistas: 'Provincias',
   LugaresVistas: 'Lugares',
-  inicioGuia: 'Inicio Guía',
+  inicioGuia: 'Inicio',
   vistaReserva: 'Reservas',
   reservaDetalle: 'Detalle de Reserva',
 };
@@ -72,7 +72,7 @@ const irAtras = () => {
 
       <div class="flex items-center space-x-2">
         <span v-for="(crumb, index) in breadcrumbs" :key="index">
-          <span v-if="index > 0" class="text-gray-400">/</span>
+          <span v-if="index > 0" class="text-gray-400">/ </span>
           <span class="text-sm text-[#788B69]">{{ crumb.name }}</span>
         </span>
       </div>

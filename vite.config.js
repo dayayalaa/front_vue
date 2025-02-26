@@ -20,27 +20,27 @@ export default defineConfig({
         icons: [
           {
             src: "/icono/icon_192x192.png",
-            sizes: "147x192",
+            sizes: "192x192",
             type: "image/png",
           },
           {
             src: "/icono/icon_512x512.png",
-            sizes: "391x512",
+            sizes: "512x512",
             type: "image/png",
           },
         ],
         screenshots: [
           {
-            src: "/icono/pantalla_930x1920",
+            src: "/icono/pantalla_930x1920.png",
             sizes: "930x1920",
             type: "image/png",
           },
-        ],
+        ],        
       },
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.miapi\.com/,
+            urlPattern: /^https:\/\/front_vue\.vercel\.app/,
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
