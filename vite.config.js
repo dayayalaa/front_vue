@@ -15,7 +15,7 @@ export default defineConfig({
           "Arcana es una solución integral para facilitar la planificación de viajes. Permite reservar vuelos y hoteles, planificar itinerarios y descubrir nuevos destinos, todo desde un solo lugar, simplificando el proceso de organización y promoviendo el turismo local.",
         start_url: "/",
         display: "standalone",
-        background_color: "#3C4A28",
+        background_color: "#F7F5EB",
         theme_color: "#3C4A28",
         icons: [
           {
