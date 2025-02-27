@@ -68,34 +68,49 @@ const obtenerTourData = async (tourId) => {
   }
 };
 
-const obtenerReservas = async (idGuia) => {
+const obtenerReservas = async () => {
+  // console.log('Guía: ', userId);
+  const idGuia = userId.value;
+  // console.log('Id del guía: ', idGuia);
+
   if (!idGuia) {
-    console.error('Error: idGuia es inválido o está vacío');
+    console.error('Error: ID del guía no definido');
     return;
   }
+
   try {
-    const response = await axios.get(
-      `https://back-tesis-lovat.vercel.app/arcana/reservastour/tours/guia/${idGuia}`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
-        },
-      }
-    );
-    reservas.value = await Promise.all(
-      response.data.data.map(async (reserva) => {
-        const tourData = await obtenerTourData(reserva.tourId._id);
-       // console.log(reserva.tourId);
-        return {
-          ...reserva,
-          tour: tourData,
-        };
-      })
-    );
+    const url = `https://back-tesis-lovat.vercel.app/arcana/reservastour/tours/guia/${idGuia}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    });
+
+    // console.log('Reservas encontradas:', response.data);
+
+    if (response.data && Array.isArray(response.data.data)) {
+      reservas.value = await Promise.all(
+        response.data.data.map(async (reserva) => {
+          if (!reserva.tourId?._id) {
+            console.warn('Advertencia: tourId no encontrado en la reserva', reserva);
+            return reserva;
+          }
+          const tourData = await obtenerTourData(reserva.tourId._id);
+          return {
+            ...reserva,
+            tour: tourData,
+          };
+        })
+      );
+    } else {
+      // console.log('No se encontraron reservas para el guía.');
+    }
   } catch (error) {
-    console.error('Error al obtener las reservas:', error);
+    console.error('Error al obtener las reservas:', error.response?.data || error.message);
   }
 };
+
 
 const decodeJWT = (token) => {
   try {
@@ -161,61 +176,63 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div v-if="reservasPorTour.length > 0" class="p-3">
-      <SpinnerCarga v-if="cargando" />
-    
-      <ul class="space-y-6">
-        <li v-for="grupo in reservasPorTour" :key="grupo.tour._id"
-          class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+  <div v-if="reservasPorTour.length > 0" class="p-3">
+    <SpinnerCarga v-if="cargando" />
 
-          <div @click="toggle(grupo.tour._id)"
-            class="cursor-pointer flex md:flex-row items-center md:items-start gap-4">
-            
-            <img v-if="grupo.tour.fotoPortada" :src="grupo.tour.fotoPortada" alt="Foto de perfil del tour"
-              class="w-24 h-24 rounded-lg object-cover" />
-            
-            <div class="flex-1">
-              <strong class="text-xm text-[#222725] block">
-                {{ grupo.tour.titulo }}
-              </strong>
-            </div>
-            
-            <svg v-bind:class="{'rotate-180': activeAccordion === grupo.tour._id}" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
+    <ul class="space-y-6">
+      <li v-for="grupo in reservasPorTour" :key="grupo.tour._id"
+        class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+
+        <div @click="toggle(grupo.tour._id)" class="cursor-pointer flex md:flex-row items-center md:items-start gap-4">
+
+          <img v-if="grupo.tour.fotoPortada" :src="grupo.tour.fotoPortada" alt="Foto de perfil del tour"
+            class="w-24 h-24 rounded-lg object-cover" />
+
+          <div class="flex-1">
+            <strong class="text-xm text-[#222725] block">
+              {{ grupo.tour.titulo }}
+            </strong>
           </div>
 
-          <div v-if="activeAccordion === grupo.tour._id" class="mt-6">
-            <TituloTerciario class="text-xl text-gray-800 font-semibold mb-4">
-              Reservas
-            </TituloTerciario>
+          <svg v-bind:class="{ 'rotate-180': activeAccordion === grupo.tour._id }" xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-gray-600 transition-transform duration-200" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
 
-            <div v-for="(reserva, index) in grupo.reservas" :key="reserva._id"
-              class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 mb-2">
+        <div v-if="activeAccordion === grupo.tour._id" class="mt-6">
+          <TituloTerciario class="text-xl text-gray-800 font-semibold mb-4">
+            Reservas
+          </TituloTerciario>
 
-              <div class="flex justify-arown items-center">
-                <img v-if="reserva.userId.fotoPerfil" :src="reserva.userId.fotoPerfil" alt="Foto de perfil del tour"
-                  class="w-24 h-24 rounded-lg object-cover" />
-                
-                <div class="ps-6">
-                  <p class="text-[#788A68] font-medium">Nombre:</p>
-                  <p class="text-[#222725]">{{ reserva.userId?.nombre || 'Nombre no disponible' }}</p>
-                  <p class="text-[#788A68] font-medium">Email:</p>
-                  <p class="text-[#222725]">{{ reserva.userId?.email || 'Email no disponible' }}</p>
-                  <p class="text-[#788A68] font-medium">Fecha de reserva:</p>
-                  <p class="text-[#222725]">
-                    {{ reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : 'Fecha no disponible' }}
-                  </p>
-                  <p class="text-[#788A68] font-medium">Personas: {{ reserva.cantidadPersonas }}</p>
-                </div>
+          <div v-for="(reserva, index) in grupo.reservas" :key="reserva._id"
+            class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 mb-2">
+
+            <div class="flex justify-arown items-center">
+              <img v-if="reserva.userId.fotoPerfil" :src="reserva.userId.fotoPerfil" alt="Foto de perfil del tour"
+                class="w-24 h-24 rounded-lg object-cover" />
+
+              <div class="ps-6">
+                <p class="text-[#788A68] font-medium">Nombre:</p>
+                <p class="text-[#222725]">{{ reserva.userId?.nombre || 'Nombre no disponible' }}</p>
+                <p class="text-[#788A68] font-medium">Email:</p>
+                <p class="text-[#222725]">{{ reserva.userId?.email || 'Email no disponible' }}</p>
+                <p class="text-[#788A68] font-medium">Fecha de reserva:</p>
+                <p class="text-[#222725]">
+                  {{ reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : 'Fecha no disponible'
+                  }}
+                </p>
+                <p class="text-[#788A68] font-medium">Personas: {{ reserva.cantidadPersonas }}</p>
               </div>
             </div>
           </div>
-        </li>
-      </ul>
-    </div>
+        </div>
+      </li>
+    </ul>
+  </div>
 
-    <div v-else class="mt-10 text-center text-gray-500 text-lg">
-      No tienes reservas aún.
-    </div>
+  <div v-else class="mt-10 text-center text-gray-500 text-lg">
+    No tienes reservas aún.
+  </div>
 </template>

@@ -21,6 +21,11 @@ const userId = ref(null);
 const mensajeError = ref('');
 const mensajeExito = ref('');
 
+const fileInput = ref(null);
+const abrirSelector = () => {
+  fileInput.value.click(); 
+};
+
 const tourData = ref({
   titulo: '',
   descripcion: '',
@@ -292,7 +297,7 @@ const crearTour = async () => {
         v-model="tourData.duracion"
         @blur="validarCampo('duracion', tourData.duracion)"
         placeholder="Ej: '2 horas' o '1 día'"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#788A68] focus:border-[#788A68]"
       />
       <p v-if="errors.duracion" class="text-red-500 text-sm mt-1">{{ errors.duracion }}</p>
     </div>
@@ -304,7 +309,7 @@ const crearTour = async () => {
         <input
           type="date"
           v-model="fechaTemp"
-          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#788A68] focus:border-[#788A68]"
         />
         <BotonPrincipal
           type="button"
@@ -337,11 +342,20 @@ const crearTour = async () => {
     <div class="mb-4">
       <label for="fotoPortada" class="block text-sm font-medium text-gray-700">Foto de Portada</label>
       <input
-        id="fotoPortada"
-        type="file"
-        @change="actualizarFoto"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      />
+      id="fotoPortada"
+      ref="fileInput"
+      type="file"
+      accept="image/*"
+      @change="actualizarFoto"
+      class="hidden"
+    />
+
+    <button
+      @click="abrirSelector"
+      class="bg-[#788A68] text-[#F7F5EB] font-bold py-2 px-4 rounded mt-1"
+    >
+      Seleccionar imagen
+    </button>
       <p v-if="errors.fotoPortada" class="text-red-500 text-sm mt-1">{{ errors.fotoPortada }}</p>
     </div>
 

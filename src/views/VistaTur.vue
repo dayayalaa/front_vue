@@ -237,7 +237,7 @@ const enviarCorreos = async (usuarioEmail, guiaEmail, reserva) => {
     });
 
     if (response.status === 200) {
-      console.log('Correos enviados exitosamente');
+      // console.log('Correos enviados exitosamente');
     } else {
       console.error('Error al enviar los correos');
     }

@@ -9,6 +9,11 @@ import BotonPrincipal from './BotonPrincipal.vue';
 const route = useRoute();
 const router = useRouter();
 
+const fileInput = ref(null);
+const abrirSelector = () => {
+  fileInput.value.click(); 
+};
+
 const turId = route.params.id;
 const tur = reactive({
   titulo: '',
@@ -196,7 +201,7 @@ const formIsValid = () => {
     }
   }
 
-  console.log("Estado de errores:", errors);
+  // console.log("Estado de errores:", errors);
   return valido;
 };
 
@@ -215,7 +220,7 @@ const updateTour = async () => {
       const formData = new FormData();
       formData.append('file', fotoArchivo.value);
 
-      console.log("Subiendo imagen...");
+      // console.log("Subiendo imagen...");
       const fotoResponse = await axios.put(
         `https://back-tesis-lovat.vercel.app/arcana/imagen/updateTourPortada/${turId}`,
         formData,
@@ -230,23 +235,23 @@ const updateTour = async () => {
       if (fotoResponse.data && fotoResponse.data.secure_url) {
         tur.fotoPortada = fotoResponse.data.secure_url;
         fotoPreview.value = fotoResponse.data.secure_url;
-        console.log("Imagen subida:", fotoResponse.data.secure_url);
+        // console.log("Imagen subida:", fotoResponse.data.secure_url);
       } else {
         console.error('No se recibió la URL de la imagen en la respuesta.');
       }
     }
 
     
-    console.log("Enviando datos actualizados:", {
-      titulo: tur.titulo,
-      descripcion: tur.descripcion,
-      precio: tur.precio,
-      provincia: tur.provincia,
-      duracion: tur.duracion,
-      fechasDisponibles: tur.fechasDisponibles,
-      politicaCancelacion: tur.politicaCancelacion,
-      fotoPortada: tur.fotoPortada,
-    });
+    // console.log("Enviando datos actualizados:", {
+    //   titulo: tur.titulo,
+    //   descripcion: tur.descripcion,
+    //   precio: tur.precio,
+    //   provincia: tur.provincia,
+    //   duracion: tur.duracion,
+    //   fechasDisponibles: tur.fechasDisponibles,
+    //   politicaCancelacion: tur.politicaCancelacion,
+    //   fotoPortada: tur.fotoPortada,
+    // });
 
     const response = await axios.put(
       `https://back-tesis-lovat.vercel.app/arcana/tur/${turId}`,
@@ -269,7 +274,7 @@ const updateTour = async () => {
     );
 
     if (response.status === 200) {
-      console.log("Tour actualizado exitosamente:", response.data);
+      // console.log("Tour actualizado exitosamente:", response.data);
       mensajeExito.value = 'Tour actualizado exitosamente!';
       setTimeout(() => {
         router.push(`/vistaTur/${turId}`);
@@ -410,12 +415,19 @@ onMounted(() => {
       <div>
         <label for="fotoPortada" class="block font-medium">Foto de Portada</label>
         <input
-          id="fotoPortada"
-          type="file"
-          @change="handleFileChange"
-          class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#3C4A28]"
-          accept="image/*"
-        />
+      id="fotoPortada"
+      ref="fileInput"
+      type="file"
+      accept="image/*"
+      @change="handleFileChange"
+      class="hidden"
+    />
+    <button
+      @click="abrirSelector"
+      class="bg-[#788A68] text-[#F7F5EB] font-bold py-2 px-4 rounded mt-1"
+    >
+      Seleccionar imagen
+    </button>
         <div v-if="fotoPreview" class="mt-4">
           <p class="font-medium">Vista previa:</p>
           <img :src="fotoPreview" alt="Foto de portada" class="w-full h-32 object-cover rounded border border-gray-300" />

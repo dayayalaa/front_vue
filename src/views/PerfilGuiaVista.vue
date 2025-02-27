@@ -22,7 +22,7 @@ const cargando = ref(true);
 const router = useRouter();
 const fetchUserData = async () => {
   try {
-    console.log('Obteniendo datos del usuario con ID:', userId.value);
+    // console.log('Obteniendo datos del usuario con ID:', userId.value);
     const response = await fetch(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, {
       method: 'GET',
       headers: {
@@ -33,7 +33,7 @@ const fetchUserData = async () => {
       throw new Error(`Error al obtener los datos del usuario: ${response.statusText}`);
     }
     const data = await response.json();
-    console.log('Respuesta de la API:', data);
+    // console.log('Respuesta de la API:', data);
     if (!data.data) {
       throw new Error('La API no devolvió datos válidos.');
     }
@@ -45,7 +45,7 @@ const fetchUserData = async () => {
     email.value = correo;
     telefono.value = tel;
     provincia.value = prov;
-    console.log('Nombre del usuario:', userName.value);
+    // console.log('Nombre del usuario:', userName.value);
   } catch (error) {
     console.error(error);
   } finally {
@@ -82,7 +82,7 @@ onMounted(async () => {
       userId.value = decodedToken.userId;
       await fetchUserData();
       await obtenerTours(userId.value);
-   
+
     }
   } else {
     cargando.value = false;
@@ -186,7 +186,7 @@ const eliminarTour = async (tourId) => {
       </ul>
     </div>
     <p v-else class="text-center text-gray-600 mt-4">No hay tours disponibles.</p>
-    
+
     <TituloSecundario class="mt-12 text-2xl font-semibold text-gray-800 mb-4">
         Reservas de tus Tours
       </TituloSecundario>
