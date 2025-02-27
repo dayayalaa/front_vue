@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; 
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const router = useRouter();
@@ -88,54 +88,50 @@ const eliminarCuenta = async () => {
 <template>
     <ul class="space-y-4">
         <!-- Perfil -->
-        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+        <li
+            class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
             <i class="fas fa-user text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
-            <router-link 
-                v-if="activeLink" 
-                :to="activeLink" 
+            <router-link v-if="activeLink" :to="activeLink"
                 class="text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
                 Perfil
             </router-link>
         </li>
 
         <!-- Editar perfil -->
-        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+        <li
+            class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
             <i class="fas fa-edit text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
-            <router-link 
-                v-if="userId" 
-                :to="{ name: 'EditarPerfil', params: { id: userId } }" 
+            <router-link v-if="userId" :to="{ name: 'EditarPerfil', params: { id: userId } }"
                 class="text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
                 Editar Perfil
             </router-link>
         </li>
 
         <!-- Preguntas frecuentes -->
-        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+        <li
+            class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
             <i class="fas fa-question-circle text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
-            <router-link 
-                to="https://arcanatur.ar/#Preguntas" 
+            <a href="https://arcanatur.ar/#Preguntas"
                 class="text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
                 Preguntas frecuentes
-            </router-link>
-        </li>    
-
+            </a>
+        </li>
+        
         <!-- Cerrar sesión -->
-        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
+        <li
+            class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
             <i class="fas fa-sign-out-alt text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
-            <button 
-                @click.prevent="cerrarSesion" 
-                aria-label="Cerrar sesión" 
+            <button @click.prevent="cerrarSesion" aria-label="Cerrar sesión"
                 class="w-full text-left text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
                 Cerrar sesión
             </button>
         </li>
 
         <!-- Eliminar cuenta -->
-        <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#fef0f0] transition-all duration-300">
+        <li
+            class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#fef0f0] transition-all duration-300">
             <i class="fas fa-trash-alt text-[#E30755] hover:text-[#f39200] text-2xl"></i>
-            <button 
-                @click.prevent="showModal = true" 
-                aria-label="Eliminar cuenta" 
+            <button @click.prevent="showModal = true" aria-label="Eliminar cuenta"
                 class="w-full text-left text-[#E30755] hover:text-[#f39200] text-lg font-semibold transition-colors duration-300">
                 Eliminar cuenta
             </button>
@@ -150,18 +146,13 @@ const eliminarCuenta = async () => {
                 ¿Estás seguro de que deseas eliminar tu cuenta?
             </p>
             <div class="flex flex-col gap-4">
-                <button 
-                    @click="showModal = false" 
-                    class="bg-[#788B69] text-white py-2 rounded">
+                <button @click="showModal = false" class="bg-[#788B69] text-white py-2 rounded">
                     Cancelar
                 </button>
-                <button 
-                    @click="eliminarCuenta" 
-                    class="bg-red-500 text-white py-2 rounded">
+                <button @click="eliminarCuenta" class="bg-red-500 text-white py-2 rounded">
                     Confirmar
                 </button>
             </div>
         </div>
     </div>
 </template>
-
