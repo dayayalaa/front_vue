@@ -113,7 +113,7 @@ const eliminarCuenta = async () => {
         <li class="flex items-center space-x-4 p-3 rounded-lg bg-[#f7f7f7] hover:shadow-md hover:bg-[#e5f1e0] transition-all duration-300">
             <i class="fas fa-question-circle text-[#3C4A28] hover:text-[#788B69] text-2xl"></i>
             <router-link 
-                to="/" 
+                to="https://arcanatur.ar/#Preguntas" 
                 class="text-[#3C4A28] hover:text-[#788B69] text-lg font-semibold transition-colors duration-300">
                 Preguntas frecuentes
             </router-link>
