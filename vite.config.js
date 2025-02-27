@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: 'autoUpdate',
       manifest: {
         name: "Arcana",
         short_name: "Arcana",
@@ -16,7 +16,7 @@ export default defineConfig({
         start_url: "/",
         display: "standalone",
         background_color: "#F7F5EB",
-        theme_color: "#3C4A28",
+        theme_color: "#788A68",
         icons: [
           {
             src: "/icono/icon_192x192.png",
@@ -35,7 +35,7 @@ export default defineConfig({
             sizes: "930x1920",
             type: "image/png",
           },
-        ],
+        ],        
       },
       workbox: {
         runtimeCaching: [
