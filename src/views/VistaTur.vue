@@ -362,18 +362,14 @@ const costoTotal = computed(() => {
         </p>
 
 
-        <div v-if="reservaExitosa" class="mt-4 p-4 bg-green-100 border-l-4 border-[#788A68] text-[#222725]">
+        <div v-if="reservaExitosa" class="mt-4 mb-4 p-4 bg-green-100 border-l-4 border-[#788A68] text-[#222725]">
           <p>¡Reserva realizada con éxito!</p>
+          <p class="text-sm">Pronto recibirás un correo con los detalles de la reserva.</p>
         </div>
 
         <BotonPrincipal @click="reservarTour" :disabled="reservaEnProceso" class="w-full px-4 py-2">
           {{ reservaEnProceso ? 'Reservando...' : 'Reservar' }}
         </BotonPrincipal>
-
-        <div v-if="reservaExitosa" class="p-6 text-center">
-          <p class="text-lg text-green-600 font-semibold">¡Reserva realizada con éxito!</p>
-          <p class="text-sm">Pronto recibirás un correo con los detalles de la reserva.</p>
-        </div>
 
       </form>
     </div>

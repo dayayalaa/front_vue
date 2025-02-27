@@ -35,14 +35,23 @@ const contrasenia = ref('');
 const confirmarContrasenia = ref('');
 const cargando = ref(true);
 const userId = ref(null);
-const enviando = ref(false); 
+const enviando = ref(false);
 
 const fotoPerfilPreview = ref(null);
+const archivoPerfil = ref(null);
 const fotoPortadaPreview = ref(null);
+const archivoPortada = ref(null);
 const originalValues = ref({});
 
-const router = useRouter();
+const abrirDialogoArchivoPerfil = () => {
+    archivoPerfil.value.click();
+};
 
+const abrirDialogoArchivoPortada = () => {
+    archivoPortada.value.click();
+};
+
+const router = useRouter();
 
 const provincias = [
     'Buenos Aires', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba', 'Corrientes',
@@ -87,7 +96,7 @@ const fetchUserData = async () => {
             fotoPerfilPreview.value = usuario.fotoPerfil || null;
             fotoPortadaPreview.value = usuario.fotoPortada || null;
 
-        
+
             originalValues.value = {
                 nombre: usuario.nombre || '',
                 email: usuario.email || '',
@@ -137,7 +146,7 @@ const actualizarFoto = async (tipo, archivo) => {
 
 
 const actualizarDatosPerfil = async () => {
-    if (enviando.value) return; 
+    if (enviando.value) return;
     enviando.value = true;
 
     if (!validarEmail(email.value)) {
@@ -169,11 +178,11 @@ const actualizarDatosPerfil = async () => {
 
             if (respuesta.status === 200) {
                 successMessage.value = 'Datos del perfil actualizados exitosamente!';
-                fetchUserData(); 
+                fetchUserData();
             }
         }
 
-      
+
         if (fotoPerfil.value) await actualizarFoto('Perfil', fotoPerfil.value);
         if (fotoPortada.value) await actualizarFoto('Portada', fotoPortada.value);
     } catch (error) {
@@ -221,7 +230,7 @@ onMounted(() => {
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-bold mb-4 text-center">Editar Perfil</h2>
         <SpinnerCarga v-if="cargando" />
-        
+
         <form v-else @submit.prevent="actualizarDatosPerfil" enctype="multipart/form-data"
             class="bg-white p-6 shadow-md rounded-lg">
             <!-- Campos del formulario -->
@@ -240,7 +249,8 @@ onMounted(() => {
                 <input v-model="email" type="email" id="email" autocomplete="username"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     required />
-                <div v-if="!validarEmail(email)" class="text-red-500 text-sm">Ingresa un correo electrónico válido.</div>
+                <div v-if="!validarEmail(email)" class="text-red-500 text-sm">Ingresa un correo electrónico válido.
+                </div>
             </div>
 
             <div class="mb-4">
@@ -270,7 +280,11 @@ onMounted(() => {
 
             <div class="mb-4">
                 <label for="fotoPerfil" class="block text-sm font-medium text-gray-700">Foto de Perfil</label>
-                <input type="file" id="fotoPerfil" accept="image/*" @change="previewFotoPerfil" class="mt-1" />
+                <button type="button" class="bg-[#788A68] text-[#F7F5EB] font-bold py-2 px-4 rounded mt-1"
+                    @click="abrirDialogoArchivoPerfil">
+                    Seleccionar archivo
+                </button>
+                <input type="file" ref="archivoPerfil" accept="image/*" @change="previewFotoPerfil" class="hidden" />
                 <p class="text-sm text-gray-500">El tamaño máximo es de 5 MB.</p>
                 <div v-if="fotoPerfilPreview" class="mt-2">
                     <img :src="fotoPerfilPreview" alt="Vista previa Foto de Perfil"
@@ -280,7 +294,11 @@ onMounted(() => {
 
             <div class="mb-4">
                 <label for="fotoPortada" class="block text-sm font-medium text-gray-700">Foto de Portada</label>
-                <input type="file" id="fotoPortada" accept="image/*" @change="previewFotoPortada" class="mt-1" />
+                <button type="button" class="bg-[#788A68] text-[#F7F5EB] font-bold py-2 px-4 rounded mt-1"
+                    @click="abrirDialogoArchivoPortada">
+                    Seleccionar archivo
+                </button>
+                <input ref="archivoPortada" type="file" accept="image/*" class="hidden" @change="previewFotoPortada" />
                 <p class="text-sm text-gray-500">El tamaño máximo es de 5 MB.</p>
                 <div v-if="fotoPortadaPreview" class="mt-2">
                     <img :src="fotoPortadaPreview" alt="Vista previa Foto de Portada"
@@ -289,7 +307,7 @@ onMounted(() => {
             </div>
 
 
-        <!-- Contraseña -->
+            <!-- Contraseña -->
             <div class="mb-4">
                 <label for="contrasenia" class="block text-sm font-medium text-gray-700">Contraseña</label>
                 <input v-model="contrasenia" type="password" id="contrasenia" autocomplete="new-password"

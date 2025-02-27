@@ -154,12 +154,14 @@ const obtenerImagenes = async (data_id) => {
 const obtenerProvinciasPopulares = async () => {
   try {
     const response = await axios.get('https://back-tesis-lovat.vercel.app/arcana/destino/populares');
+    // console.log('Provincias Populares:', response.data);
+    
     provinciasPopulares.value = response.data;
     response.data.forEach(provincia => {
       if (provincia.data_id) {
         obtenerImagenesP(provincia);
       } else {
-       // console.log('No se encontró data_id en la provincia:', provincia.provincia);
+        provincia.thumbnail = '/img/default_portada.png';
       }
     });
   } catch (error) {
@@ -238,7 +240,7 @@ const irADetalleGuia = (id) => {
             <TituloSecundario class="text-center mt-8">
                 Guías turísticos en {{ provinciaInfo?.title || route.params.id }}
             </TituloSecundario>
-            <div v-if="guiasFiltrados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div v-if="guiasFiltrados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-4 my-6">
                 <div v-for="guia in guiasFiltrados" :key="guia.id"
                     class="bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow duration-300"
                     @click="irADetalleGuia(guia._id)">
@@ -266,7 +268,7 @@ const irADetalleGuia = (id) => {
         <div class="overflow-x-auto mt-8">
             <div class="flex gap-4 ml-3 mb-8">
                 <RouterLink v-for="provincia in provinciasPopulares" :key="provincia.provincia"
-                    :to="{ name: 'lugarDetalle', params: { id: provincia.provincia } }"
+                    :to="{ name: 'ProvinciasVistas', params: { id: provincia.provincia } }"
                     class="w-[140px] h-[200px] flex-none">
                     <div class="relative w-full h-full">
                         <img :src="provincia.thumbnail" :alt="'Imagen de ' + provincia.provincia"
