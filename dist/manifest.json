@@ -3,7 +3,7 @@
   "short_name": "Arcana",
   "description": "Reserva tus viajes con facilidad",
   "start_url": "/",
-  "display": "fullscreen",
+  "display": "standalone",
  "background_color": "#F7F5EB",
     "theme_color": "#3C4A28",
   "icons": [
