@@ -40,7 +40,7 @@ export default defineConfig({
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/front_vue\.vercel\.app/,
+            urlPattern: /^https:\/\/front-vue-omega\.vercel\.app/,
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
