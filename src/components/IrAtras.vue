@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { computed } from 'vue'; 
+import { useRouter, useRoute } from 'vue-router'; 
 import IconoAtras from './icons/IconoAtras.vue';
 import ModalAjustes from './ModalAjustes.vue';
 
@@ -11,51 +11,50 @@ const routeNames = {
   Home: 'Inicio',
   Crear: 'Crear Viaje',
   Resultados: 'Resultados de Búsqueda',
-  Perfil: 'Perfil',
-  GuiaPerfil: 'Perfil',
-  EditarPerfil: 'Editar Perfil',
+  Perfil: 'Perfil', 
+  GuiaPerfil: 'Perfil', 
+  EditarPerfil: 'Editar Perfil', 
   GuiasTarjetas: 'Guías Disponibles',
-  GuiasPerfilVista: 'Perfil',
-  Listas: 'Lugares',
-  ItinerarioDetalle: 'Mi itinerario',
-  opcionesHoteles: 'Hoteles',
+  GuiasPerfilVista: 'Perfil de Guía',
+  Listas: 'Listas de Lugares', 
+  ItinerarioDetalle: 'Detalle del Itinerario', 
+  opcionesHoteles: 'Opciones de Hoteles', 
   login: 'Iniciar Sesión',
   opcion: 'Elige tu Rol',
   registroUsuario: 'Registro de Usuario',
   registroGuia: 'Registro de Guía',
   crearTur: 'Crear Tour',
-  vistaTur: 'Detalle del Tour',
+  vistaTur: 'Detalle del Tour', 
   editarTur: 'Editar Tour',
   ajustes: 'Ajustes',
   pago: 'Pago',
-  ProvinciasVistas: 'Provincias',
+  ProvinciasVistas: 'Provincias', 
   LugaresVistas: 'Lugares',
-  inicioGuia: 'Inicio',
+  inicioGuia: 'Inicio Guía',
   vistaReserva: 'Reservas',
-  reservaDetalle: 'Detalle de Reserva',
+  reservaDetalle: 'Detalle de Reserva', 
 };
+
 
 const currentLocation = computed(() => {
   return routeNames[route.name] || 'Sin título';
 });
 
+
 const breadcrumbs = computed(() => {
   const segments = route.path.split('/').filter(segment => segment !== '');
-  const breadcrumbItems = [];
+  const uniqueSegments = [];
 
-  breadcrumbItems.push({ path: '/', name: 'Inicio' });
+  segments.forEach((segment, index) => {
+    const path = '/' + segments.slice(0, index + 1).join('/');
+    const name = routeNames[route.name] || segment;
 
-  let currentPath = '';
-  segments.forEach((segment) => {
-    currentPath += `/${segment}`;
-    const routeName = routeNames[route.name] || segment;
-
-    if (!breadcrumbItems.some(item => item.name === routeName)) {
-      breadcrumbItems.push({ path: currentPath, name: routeName });
+    if (!uniqueSegments.some(crumb => crumb.name === name)) {
+      uniqueSegments.push({ path, name });
     }
   });
 
-  return breadcrumbItems;
+  return uniqueSegments;
 });
 
 const irAtras = () => {
@@ -72,7 +71,7 @@ const irAtras = () => {
 
       <div class="flex items-center space-x-2">
         <span v-for="(crumb, index) in breadcrumbs" :key="index">
-          <span v-if="index > 0" class="text-gray-400">/ </span>
+          <span v-if="index > 0" class="text-gray-400">/</span>
           <span class="text-sm text-[#788B69]">{{ crumb.name }}</span>
         </span>
       </div>

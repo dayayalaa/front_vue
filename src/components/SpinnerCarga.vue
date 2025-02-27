@@ -1,7 +1,7 @@
 <template>
   <div class="loading-container">
     <div class="spinner"></div>
-    <span>Cargando...</span>
+    <span></span>
   </div>
 </template>
 

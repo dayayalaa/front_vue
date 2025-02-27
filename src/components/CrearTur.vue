@@ -19,6 +19,7 @@ const cargando = ref(false);
 const token = localStorage.getItem('token');
 const userId = ref(null);
 const mensajeError = ref('');
+const mensajeExito = ref('');
 
 const tourData = ref({
   titulo: '',
@@ -75,7 +76,7 @@ onMounted(() => {
       const decodedToken = decodeJWT(token);
       userId.value = decodedToken.userId;
     } catch (error) {
-      console.error('Error al decodificar el token:', error);
+      //console.error('Error al decodificar el token:', error);
     }
   }
 });
@@ -98,16 +99,52 @@ const validarCampo = (campo, valor) => {
   if (!valor) {
     errors.value[campo] = `El campo ${campo} es obligatorio.`;
     return false;
-  } else {
-    errors.value[campo] = '';
-    return true;
   }
+
+  switch (campo) {
+    case 'precio':
+      if (isNaN(valor)) {
+        errors.value[campo] = 'El precio debe ser un número.';
+        return false;
+      }
+      if (valor <= 0) {
+        errors.value[campo] = 'El precio debe ser mayor que 0.';
+        return false;
+      }
+      break;
+
+    case 'duracion':
+      if (!/^\d+\s*(horas?|días?)$/i.test(valor)) {
+        errors.value[campo] = 'Ingrese una duración válida (ej: "2 horas" o "1 día").';
+        return false;
+      }
+      break;
+
+    case 'fechasDisponibles':
+      if (tourData.value.fechasDisponibles.length === 0) {
+        errors.value[campo] = 'Debe agregar al menos una fecha disponible.';
+        return false;
+      }
+      break;
+
+    case 'fotoPortada':
+      if (valor && !valor.startsWith('data:image')) {
+        errors.value[campo] = 'El archivo debe ser una imagen válida.';
+        return false;
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  errors.value[campo] = '';
+  return true;
 };
 
 const formIsValid = () => {
   let valido = true;
 
-  //validacion
   for (const [campo, valor] of Object.entries(tourData.value)) {
     if (campo === 'fotoPortada') {
       continue;
@@ -127,6 +164,15 @@ const formIsValid = () => {
 const actualizarFoto = (event) => {
   const file = event.target.files[0];
   if (file) {
+    if (!file.type.startsWith('image/')) {
+      errors.value.fotoPortada = 'El archivo debe ser una imagen.';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) { 
+      errors.value.fotoPortada = 'El archivo no debe exceder 5 MB.';
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       tourData.value.fotoPortada = reader.result;
@@ -134,15 +180,12 @@ const actualizarFoto = (event) => {
     };
     reader.readAsDataURL(file);
   } else {
-    errors.value.fotoPortada = ''; 
+    errors.value.fotoPortada = '';
   }
 };
 
 const crearTour = async () => {
-  if (!formIsValid()) {
-    // alert('Por favor corrige los errores antes de continuar.');
-    return;
-  }
+  if (!formIsValid()) return;
 
   try {
     cargando.value = true;
@@ -158,11 +201,18 @@ const crearTour = async () => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    const tourId = response.data.tour._id; 
-    router.push({ name: 'vistaTur', params: { id: tourId } });
+    const tourId = response.data.tour._id;
+    mensajeExito.value = 'Tour creado exitosamente!';
+    setTimeout(() => {
+      router.push({ name: 'vistaTur', params: { id: tourId } });
+    }, 1500); 
   } catch (error) {
     console.error('Error creando el tour:', error);
-    mensajeError.value = 'Ocurrió un error al crear el tour. Inténtalo de nuevo.';
+    if (error.response && error.response.data) {
+      mensajeError.value = error.response.data.message || 'Ocurrió un error al crear el tour.';
+    } else {
+      mensajeError.value = 'Error de conexión. Inténtalo de nuevo.';
+    }
   } finally {
     cargando.value = false;
   }
@@ -241,7 +291,7 @@ const crearTour = async () => {
         type="text"
         v-model="tourData.duracion"
         @blur="validarCampo('duracion', tourData.duracion)"
-        placeholder="Duración del tour"
+        placeholder="Ej: '2 horas' o '1 día'"
         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
       />
       <p v-if="errors.duracion" class="text-red-500 text-sm mt-1">{{ errors.duracion }}</p>
@@ -259,7 +309,7 @@ const crearTour = async () => {
         <BotonPrincipal
           type="button"
           @click="agregarFecha"
-          class="px-4 py-2 text-white "
+          class="px-4 py-2 text-white"
         >
           Agregar
         </BotonPrincipal>
@@ -309,15 +359,12 @@ const crearTour = async () => {
       <p v-if="errors.politicaCancelacion" class="text-red-500 text-sm mt-1">{{ errors.politicaCancelacion }}</p>
     </div>
 
-    <!-- Error Mensaje -->
+    <!-- Mensajes de éxito y error -->
+    <p v-if="mensajeExito" class="text-green-500 text-sm mt-4">{{ mensajeExito }}</p>
     <p v-if="mensajeError" class="text-red-500 text-sm mt-4">{{ mensajeError }}</p>
 
-    <div class="mt-6">
-      <BotonPrincipal @click="crearTour" :disabled="cargando">{{ cargando ? 'Cargando...' : 'Crear Tour' }}</BotonPrincipal>
+    <div class="flex justify-center">
+      <BotonPrincipal @click="crearTour" :disabled="cargando">{{ cargando ? 'Creando Tour...' : 'Crear Tour' }}</BotonPrincipal>
     </div>
   </div>
 </template>
-
-
-
-

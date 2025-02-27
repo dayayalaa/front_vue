@@ -6,6 +6,7 @@ import IrAtras from '../components/IrAtras.vue';
 import SpinnerCarga from './SpinnerCarga.vue';
 import BotonPrincipal from './BotonPrincipal.vue';
 
+
 const decodeJWT = (token) => {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -20,6 +21,7 @@ const decodeJWT = (token) => {
     return JSON.parse(jsonPayload);
 };
 
+
 const nombre = ref('');
 const email = ref('');
 const descripcion = ref('');
@@ -27,20 +29,27 @@ const telefono = ref('');
 const fotoPerfil = ref(null);
 const fotoPortada = ref(null);
 const provincia = ref('');
-const contrasenia = ref('');
-const confirmarContrasenia = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
+const contrasenia = ref('');
+const confirmarContrasenia = ref('');
 const cargando = ref(true);
 const userId = ref(null);
+const enviando = ref(false); 
 
 const fotoPerfilPreview = ref(null);
 const fotoPortadaPreview = ref(null);
-
-
 const originalValues = ref({});
 
 const router = useRouter();
+
+
+const provincias = [
+    'Buenos Aires', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba', 'Corrientes',
+    'Entre Ríos', 'Formosa', 'Jujuy', 'La Pampa', 'La Rioja', 'Mendoza',
+    'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan', 'San Luis',
+    'Santa Cruz', 'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán'
+];
 
 const previewFotoPerfil = (event) => {
     const file = event.target.files[0];
@@ -50,6 +59,7 @@ const previewFotoPerfil = (event) => {
     }
 };
 
+
 const previewFotoPortada = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -57,6 +67,7 @@ const previewFotoPortada = (event) => {
         fotoPortada.value = file;
     }
 };
+
 
 const fetchUserData = async () => {
     const token = localStorage.getItem('token');
@@ -76,7 +87,7 @@ const fetchUserData = async () => {
             fotoPerfilPreview.value = usuario.fotoPerfil || null;
             fotoPortadaPreview.value = usuario.fotoPortada || null;
 
-            
+        
             originalValues.value = {
                 nombre: usuario.nombre || '',
                 email: usuario.email || '',
@@ -94,42 +105,17 @@ const fetchUserData = async () => {
     }
 };
 
-const provincias = [
-  'Buenos Aires',
-  'Catamarca',
-  'Chaco',
-  'Chubut',
-  'Córdoba',
-  'Corrientes',
-  'Entre Ríos',
-  'Formosa',
-  'Jujuy',
-  'La Pampa',
-  'La Rioja',
-  'Mendoza',
-  'Misiones',
-  'Neuquén',
-  'Río Negro',
-  'Salta',
-  'San Juan',
-  'San Luis',
-  'Santa Cruz',
-  'Santa Fe',
-  'Santiago del Estero',
-  'Tierra del Fuego',
-  'Tucumán'
-];
 
-const actualizarFotoPerfil = async () => {
-    if (!fotoPerfil.value) return; 
+const actualizarFoto = async (tipo, archivo) => {
+    if (!archivo) return;
 
     const token = localStorage.getItem('token');
     const datosAEnviar = new FormData();
-    datosAEnviar.append('file', fotoPerfil.value);
+    datosAEnviar.append('file', archivo);
 
     try {
         const respuesta = await axios.put(
-            `https://back-tesis-lovat.vercel.app/arcana/imagen/updatePerfil/${userId.value}`,
+            `https://back-tesis-lovat.vercel.app/arcana/imagen/update${tipo}/${userId.value}`,
             datosAEnviar,
             {
                 headers: {
@@ -140,57 +126,37 @@ const actualizarFotoPerfil = async () => {
         );
 
         if (respuesta.status === 200) {
-            successMessage.value = 'Foto de perfil actualizada exitosamente!';
+            successMessage.value = `Foto de ${tipo.toLowerCase()} actualizada exitosamente!`;
             fetchUserData();
         }
     } catch (error) {
-        console.error('Error al actualizar la foto de perfil:', error.response?.data || error.message);
-        errorMessage.value = 'Hubo un error al actualizar la foto de perfil.';
+        console.error(`Error al actualizar la foto de ${tipo.toLowerCase()}:`, error.response?.data || error.message);
+        errorMessage.value = `Hubo un error al actualizar la foto de ${tipo.toLowerCase()}.`;
     }
 };
 
-const actualizarFotoPortada = async () => {
-    if (!fotoPortada.value) return; 
-
-    const token = localStorage.getItem('token');
-    const datosAEnviar = new FormData();
-    datosAEnviar.append('file', fotoPortada.value);
-
-    try {
-        const respuesta = await axios.put(
-            `https://back-tesis-lovat.vercel.app/arcana/imagen/updatePortada/${userId.value}`,
-            datosAEnviar,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-
-        if (respuesta.status === 200) {
-            successMessage.value = 'Foto de portada actualizada exitosamente!';
-            fetchUserData();
-        }
-    } catch (error) {
-        console.error('Error al actualizar la foto de portada:', error.response?.data || error.message);
-        errorMessage.value = 'Hubo un error al actualizar la foto de portada.';
-    }
-};
 
 const actualizarDatosPerfil = async () => {
+    if (enviando.value) return; 
+    enviando.value = true;
+
+    if (!validarEmail(email.value)) {
+        errorMessage.value = 'Por favor, ingresa un correo electrónico válido.';
+        enviando.value = false;
+        return;
+    }
+
     const token = localStorage.getItem('token');
     const datosAEnviar = {};
 
- 
     if (nombre.value !== originalValues.value.nombre) datosAEnviar.nombre = nombre.value;
     if (email.value !== originalValues.value.email) datosAEnviar.email = email.value;
     if (descripcion.value !== originalValues.value.descripcion) datosAEnviar.descripcion = descripcion.value;
     if (telefono.value !== originalValues.value.telefono) datosAEnviar.telefono = telefono.value;
     if (provincia.value !== originalValues.value.provincia) datosAEnviar.provincia = provincia.value;
 
-    if (Object.keys(datosAEnviar).length > 0) {
-        try {
+    try {
+        if (Object.keys(datosAEnviar).length > 0) {
             const respuesta = await axios.put(
                 `https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`,
                 datosAEnviar,
@@ -205,16 +171,25 @@ const actualizarDatosPerfil = async () => {
                 successMessage.value = 'Datos del perfil actualizados exitosamente!';
                 fetchUserData(); 
             }
-        } catch (error) {
-            console.error('Error al actualizar los datos del perfil:', error);
-            errorMessage.value = 'Hubo un error al actualizar los datos del perfil.';
         }
-    }
 
-   
-    await actualizarFotoPerfil();
-    await actualizarFotoPortada();
+      
+        if (fotoPerfil.value) await actualizarFoto('Perfil', fotoPerfil.value);
+        if (fotoPortada.value) await actualizarFoto('Portada', fotoPortada.value);
+    } catch (error) {
+        console.error('Error al actualizar los datos del perfil:', error);
+        errorMessage.value = error.response?.data?.message || 'Hubo un error al actualizar los datos del perfil.';
+    } finally {
+        enviando.value = false;
+    }
 };
+
+
+const validarEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+};
+
 
 onMounted(() => {
     const token = localStorage.getItem('token');
@@ -240,6 +215,7 @@ onMounted(() => {
     }
 });
 </script>
+
 <template>
     <IrAtras />
     <div class="container mx-auto p-6">
@@ -264,7 +240,7 @@ onMounted(() => {
                 <input v-model="email" type="email" id="email" autocomplete="username"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     required />
-                <div v-if="!email" class="text-red-500 text-sm">El email es obligatorio.</div>
+                <div v-if="!validarEmail(email)" class="text-red-500 text-sm">Ingresa un correo electrónico válido.</div>
             </div>
 
             <div class="mb-4">
@@ -312,7 +288,8 @@ onMounted(() => {
                 </div>
             </div>
 
-            <!-- Contraseña y Confirmar Contraseña -->
+
+        <!-- Contraseña -->
             <div class="mb-4">
                 <label for="contrasenia" class="block text-sm font-medium text-gray-700">Contraseña</label>
                 <input v-model="contrasenia" type="password" id="contrasenia" autocomplete="new-password"
@@ -329,13 +306,16 @@ onMounted(() => {
                     class="text-red-500 text-sm">Las contraseñas no coinciden.</div>
             </div>
 
+
             <!-- Mensajes de error y éxito -->
             <div v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</div>
             <div v-if="successMessage" class="text-green-500 text-center mt-4">{{ successMessage }}</div>
 
             <!-- Botón de Actualizar Perfil -->
             <div class="mt-6 text-center">
-                <BotonPrincipal >Actualizar Perfil</BotonPrincipal>
+                <BotonPrincipal :disabled="enviando">
+                    {{ enviando ? 'Actualizando...' : 'Actualizar Perfil' }}
+                </BotonPrincipal>
             </div>
         </form>
     </div>
