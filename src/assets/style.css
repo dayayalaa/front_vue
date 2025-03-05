@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 body{
     background-color: #fcf9f4;
 }
@@ -14,8 +12,18 @@ body{
     font-weight: normal;
     font-style: normal;
   }
-  
+
+  @font-face {
+    font-family: 'SitkaB';
+    src: url('../fonts/SitkaB.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
   
   h1, h2 {
     font-family: 'Sableklish', sans-serif;
+  }
+
+  h3 {
+    font-family: 'SitkaB', sans-serif;
   }
