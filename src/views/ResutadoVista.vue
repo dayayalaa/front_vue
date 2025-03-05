@@ -18,6 +18,7 @@ const router = useRouter();
 
 const vuelos = ref([]);
 const vuelta = ref([]);
+const hotelSeleccionado = null;
 const hoteles = ref([]);
 const errorMensaje = ref('');
 const cargando = ref(true);
@@ -72,6 +73,8 @@ const obtenerVueloDeVuelta = async (departureToken) => {
 };
 
 const obtenerVuelos = async () => {
+  localStorage.removeItem('Reserva');
+
   const urlParams = new URLSearchParams(window.location.search);
   const departure_idCodificado = urlParams.get('departure_id');
   const arrival_idCodificado = urlParams.get('arrival_id');
@@ -147,8 +150,14 @@ const obtenerHoteles = async () => {
 
     if (response.status === 200 && response.data && response.data.hoteles && response.data.hoteles.length > 0) {
       hoteles.value = response.data.hoteles;
+      // Aquí se asegura de que la reserva no se establezca si no se seleccionó ningún hotel
+      if (hoteles.value.length === 0) {
+        reserva.value.hotelReserva = null;
+      }
     } else {
       errorMensaje.value = 'No se encontraron hoteles disponibles.';
+      // También dejamos hotelReserva en null si no hay hoteles disponibles
+      reserva.value.hotelReserva = null;
     }
   } catch (error) {
     console.error('Error al obtener hoteles:', error);
@@ -162,33 +171,33 @@ const stepClass = (step) => pasoActual.value === step ? 'text-[#788B69]' : 'text
 
 const obtenerNombreAeropuerto = (codigo) => {
   const lugaresArgentinos = {
-  'Buenos Aires - Ezeiza': 'EZE',
-  'Buenos Aires - Aeroparque': 'AEP',
-  'San Carlos de Bariloche': 'BRC',
-  'Comodoro Rivadavia': 'CRD',
-  'Córdoba': 'COR',
-  'Corrientes': 'CNQ',
-  'El Calafate': 'FTE',
-  'El Palomar': 'EPA',
-  'Esquel': 'EQS',
-  'Formosa': 'FMA',
-  'Mar del Plata': 'MDQ',
-  'Mendoza': 'MDZ',
-  'Neuquén': 'NQN',
-  'Posadas': 'PSS',
-  'Puerto Iguazú': 'IGR',
-  'Resistencia': 'RES',
-  'Río Gallegos': 'RGL',
-  'Río Grande': 'RGA',
-  'Rosario': 'ROS',
-  'Salta': 'SLA',
-  'San Miguel de Tucumán': 'TUC',
-  'San Salvador de Jujuy': 'JUJ',
-  'Santa Rosa del Conlara': 'RLO',
-  'Termas de Río Hondo': 'RHD',
-  'Trelew': 'REL',
-  'Ushuaia': 'USH'
-};
+    'Buenos Aires - Ezeiza': 'EZE',
+    'Buenos Aires - Aeroparque': 'AEP',
+    'San Carlos de Bariloche': 'BRC',
+    'Comodoro Rivadavia': 'CRD',
+    'Córdoba': 'COR',
+    'Corrientes': 'CNQ',
+    'El Calafate': 'FTE',
+    'El Palomar': 'EPA',
+    'Esquel': 'EQS',
+    'Formosa': 'FMA',
+    'Mar del Plata': 'MDQ',
+    'Mendoza': 'MDZ',
+    'Neuquén': 'NQN',
+    'Posadas': 'PSS',
+    'Puerto Iguazú': 'IGR',
+    'Resistencia': 'RES',
+    'Río Gallegos': 'RGL',
+    'Río Grande': 'RGA',
+    'Rosario': 'ROS',
+    'Salta': 'SLA',
+    'San Miguel de Tucumán': 'TUC',
+    'San Salvador de Jujuy': 'JUJ',
+    'Santa Rosa del Conlara': 'RLO',
+    'Termas de Río Hondo': 'RHD',
+    'Trelew': 'REL',
+    'Ushuaia': 'USH'
+  };
 
 
   const aeropuerto = Object.keys(lugaresArgentinos).find(key => lugaresArgentinos[key] === codigo);
@@ -238,19 +247,21 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
       break;
 
     case 'hotel':
-    // console.log('Seleccionando hotel:', hotelSeleccionado);
-    // console.log('Property Token del hotel seleccionado:', hotelSeleccionado);
 
-    if (hoteles.value.length > 0) {
-        const hotelEncontrado = hoteles.value.find(h => h.property_token === tokenSeleccionado);
-        if (hotelEncontrado) {
-          reserva.value.hotelReserva = hotelEncontrado;
-          // console.log('Hotel reservado actualizado:', reserva.value.hotelReserva);
+      if (hoteles.value.length > 0) {
+        const hotelSeleccionado = hoteles.value.find(h => h.property_token === tokenSeleccionado);
+        // console.log('Seleccionando hotel:', hotelSeleccionado, 'Con token:', tokenSeleccionado);
+
+        if (hotelSeleccionado) {
+          // console.log('Hotel encontrado:', hotelSeleccionado);
+          reserva.value.hotelReserva = hotelSeleccionado;
         } else {
           console.error('No se encontró el hotel seleccionado. Verifica que el ID sea correcto.');
+          reserva.value.hotelReserva = null;
         }
       } else {
         console.error('No se seleccionó un hotel. Verifica la lista de hoteles disponibles.');
+        reserva.value.hotelReserva = null;
       }
       break;
 
@@ -261,7 +272,7 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
 
   localStorage.setItem('Reserva', JSON.stringify(reserva.value));
   // console.log('Reserva actualizada:', reserva.value);
-  
+
   pasoActual.value += 1;
 };
 
@@ -342,17 +353,17 @@ const confirmarReserva = async () => {
       // console.log('Hubo un problema al confirmar la reserva');
     }
   } catch (error) {
-  if (error.response) {
-    alert('Error en la respuesta del servidor: ' + error.response.status);
-    console.error('Detalles del error:', error.response.data);
-  } else if (error.request) {
-    alert('No se recibió respuesta del servidor. Intenta nuevamente más tarde.');
-    console.error('La solicitud fue hecha pero no se recibió respuesta:', error.request);
-  } else {
-    alert('Error al configurar la solicitud: ' + error.message);
-    console.error('Error al configurar la solicitud:', error);
+    if (error.response) {
+      alert('Error en la respuesta del servidor: ' + error.response.status);
+      console.error('Detalles del error:', error.response.data);
+    } else if (error.request) {
+      alert('No se recibió respuesta del servidor. Intenta nuevamente más tarde.');
+      console.error('La solicitud fue hecha pero no se recibió respuesta:', error.request);
+    } else {
+      alert('Error al configurar la solicitud: ' + error.message);
+      console.error('Error al configurar la solicitud:', error);
+    }
   }
-}
 };
 
 onMounted(async () => {
@@ -360,17 +371,18 @@ onMounted(async () => {
     await obtenerVuelos();
     await obtenerHoteles();
   } catch (error) {
-    errorMensaje.value = 'Hubo un problema al cargar los datos. Intenta más tarde.';
+    if (error.message.includes('vuelos')) {
+      errorMensaje.value = 'Hubo un problema al cargar los vuelos. Intenta más tarde.';
+    } else if (error.message.includes('hoteles')) {
+      errorMensaje.value = 'Hubo un problema al cargar los hoteles. Intenta más tarde.';
+    } else {
+      errorMensaje.value = 'Hubo un problema al cargar los datos. Intenta más tarde.';
+    }
   }
-});
 
-onMounted(() => {
   window.addEventListener('storage', actualizarReservaDesdeLocalStorage);
 });
 
-onBeforeUnmount(() => {
-  window.removeEventListener('storage', actualizarReservaDesdeLocalStorage);
-});
 </script>
 
 <template>
@@ -467,8 +479,8 @@ onBeforeUnmount(() => {
               </div>
 
               <!-- Precio y botón de reserva -->
-              <div class="mt-4 flex justify-between items-center">
-                <span class="text-xl font-semibold text-green-600">${{ vuelo.price?.toLocaleString() }}</span>
+              <div class="mt-4 flex justify-between items-end">
+                <span class="text-xl font-semibold text-[#3C4A28]">${{ vuelo.price?.toLocaleString() }}</span>
                 <BotonPrincipal @click="manejarReserva('ida', vuelo.departure_token)">Reservar</BotonPrincipal>
               </div>
             </div>
@@ -576,6 +588,10 @@ onBeforeUnmount(() => {
           <button @click="obtenerHoteles" class="h-10 px-4 py-2 bg-[#3C4A28] text-white rounded-md">
             Buscar Hoteles
           </button>
+
+          <button @click="pasoActual = 4" class="h-10 px-4 py-2 bg-[#7E2323] text-white rounded-md">
+            Omitir
+          </button>
         </div>
       </div>
 
@@ -616,8 +632,10 @@ onBeforeUnmount(() => {
           <!-- Precio -->
           <p><strong>Precio:</strong> {{ hotel.total_rate.before_taxes_fees }}</p>
 
-          <!-- Botón de reserva -->
-          <BotonPrincipal @click="manejarReserva('hotel', hotel.property_token)">Reservar</BotonPrincipal>
+          <div class="flex justify-end mt-4">
+            <BotonPrincipal @click="manejarReserva('hotel', hotel.property_token)">Reservar</BotonPrincipal>
+          </div>
+
         </div>
       </div>
     </div>
@@ -655,26 +673,29 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <TituloTerciario>Hotel:</TituloTerciario>
-        <div v-if="reserva.hotelReserva && reserva.hotelReserva.images && reserva.hotelReserva.images.length > 0"
-          class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6 flex items-center">
-          <img :src="reserva.hotelReserva.images && reserva.hotelReserva.images.length > 0
-            ? (reserva.hotelReserva.images[0].original_image || reserva.hotelReserva.images[0].thumbnail)
-            : '/img/default_portada.png'
-            " alt="Imagen de {{ reserva.hotelReserva.name }}" class="w-24 h-24 object-cover rounded-lg mr-4" />
 
-          <div>
-            <p class="font-semibold">{{ reserva.hotelReserva.name }}</p>
+        <div v-if="reserva.hotelReserva && reserva.hotelReserva.images && reserva.hotelReserva.images.length > 0">
+          <TituloTerciario>Hotel:</TituloTerciario>
+          <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6 flex items-center">
+            <img :src="reserva.hotelReserva.images && reserva.hotelReserva.images.length > 0
+              ? (reserva.hotelReserva.images[0].original_image || reserva.hotelReserva.images[0].thumbnail)
+              : '/img/default_portada.png'
+              " alt="Imagen de {{ reserva.hotelReserva.name }}" class="w-24 h-24 object-cover rounded-lg mr-4" />
 
-            <!-- Estrellas -->
             <div>
-              <p><strong>Puntuación:</strong> {{ reserva.hotelReserva.location_rating }}</p>
-              <div class="flex">
-                <span v-for="n in 5" :key="n" class="text-xl"
-                  :class="{ 'text-yellow-500': n <= reserva.hotelReserva.location_rating, 'text-gray-300': n > reserva.hotelReserva.location_rating }">★</span>
+              <p class="font-semibold">{{ reserva.hotelReserva.name }}</p>
+
+              <!-- Estrellas -->
+              <div>
+                <p><strong>Puntuación:</strong> {{ reserva.hotelReserva.location_rating }}</p>
+                <div class="flex">
+                  <span v-for="n in 5" :key="n" class="text-xl"
+                    :class="{ 'text-yellow-500': n <= reserva.hotelReserva.location_rating, 'text-gray-300': n > reserva.hotelReserva.location_rating }">★</span>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
 
       </div>
