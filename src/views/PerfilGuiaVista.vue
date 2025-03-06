@@ -219,11 +219,11 @@ const cancelarEliminacion = () => {
     <MiReservasUsuario />
 
     <!-- Modal de confirmación -->
-    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-3">
       <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">¿Estás seguro de eliminar este tour?</h3>
         <div class="flex justify-end space-x-4">
-          <button @click="cancelarEliminacion" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">
+          <button @click="cancelarEliminacion" class="px-4 py-2 bg-[#788A68] text-white rounded hover:bg-gray-400">
             Cancelar
           </button>
           <button @click="eliminarTourConfirmado" class="px-4 py-2 bg-[#7E2323] text-white rounded hover:bg-[#6A1C1C]">

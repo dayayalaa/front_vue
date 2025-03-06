@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, useId } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import IconoInicio from './icons/IconoInicio.vue';
 import IconoMas from './icons/IconoMas.vue';
 import IconoUsuario from './icons/IconoUsuario.vue';
@@ -9,15 +9,7 @@ const circlePosition = ref(0);
 const itemWidth = 120; // Ancho de cada botón
 
 const isActive = (link) => {
-  if (link === '/') {
-    return activeLink.value === '/';
-  } else if (link.startsWith('/perfil/')) {
-    return activeLink.value.startsWith('/perfil/');
-  } else if (link === '/crear' || link === '/crearTur') {
-    return activeLink.value === '/crear' || activeLink.value === '/crearTur';
-  } else {
-    return activeLink.value === link;
-  }
+  return activeLink.value === link;
 };
 
 const userId = ref('');
@@ -65,17 +57,11 @@ const getProfileLink = computed(() => {
 });
 
 const getInicioLink = computed(() => {
-  if (!userId.value) return { name: 'Home' };
-  return userRole.value === 'guia'
-    ? { name: 'inicioGuia' }
-    : { name: 'Home' };
+  return { name: userRole.value === 'guia' ? 'inicioGuia' : 'Home' };
 });
 
 const getCrearLink = computed(() => {
-  if (!userId.value) return { name: 'Crear' };
-  return userRole.value === 'guia'
-    ? { name: 'crearTur' }
-    : { name: 'Crear' };
+  return { name: userRole.value === 'guia' ? 'crearTur' : 'Crear' };
 });
 
 onMounted(() => {
@@ -91,11 +77,8 @@ onMounted(() => {
     }
   }
 
-  if (userRole.value === 'guia') {
-    setActive('/inicioguia');
-  } else {
-    setActive('/');
-  }
+  // Inicializar el enlace activo
+  setActive(userRole.value === 'guia' ? '/inicioguia' : '/');
 });
 </script>
 
@@ -106,20 +89,18 @@ onMounted(() => {
         <!-- Ícono de Inicio -->
         <li class="relative flex-grow text-center">
           <router-link :to="getInicioLink" class="relative block"
-            :class="{ 'text-[#222725]': isActive(userRole === 'guia' ? '/inicioguia' : '/'), 'text-[#788B69]': !isActive('/') }"
-            @click="setActive(userRole === 'guia' ? '/inicioguia' : '/')">
-            <IconoInicio :class="isActive(userRole === 'guia' ? '/inicioguia' : '/') ? 'w-8 h-8' : 'w-8 h-8'"
-              class="mx-auto transition-colors duration-300" />
+            :class="{ 'text-[#222725]': isActive('/'), 'text-[#788B69]': !isActive('/') }"
+            @click="setActive('/')">
+            <IconoInicio :class="isActive('/') ? 'w-8 h-8' : 'w-8 h-8'" class="mx-auto transition-colors duration-300" />
           </router-link>
         </li>
 
         <!-- Ícono de Crear -->
         <li class="relative flex-grow text-center">
           <router-link :to="getCrearLink" class="relative block"
-            :class="{ 'text-[#222725]': isActive(userRole === 'guia' ? '/crearTur' : '/crear'), 'text-[#788B69]': !isActive(userRole === 'guia' ? '/crearTur' : '/crear') }"
-            @click="setActive(userRole === 'guia' ? '/crearTur' : '/crear')">
-            <IconoMas :class="isActive(userRole === 'guia' ? '/crearTur' : '/crear') ? 'w-8 h-8' : 'w-8 h-8'"
-              class="mx-auto transition-colors duration-300" />
+            :class="{ 'text-[#222725]': isActive('/crear') || isActive('/crearTur'), 'text-[#788B69]': !isActive('/crear') && !isActive('/crearTur') }"
+            @click="setActive('/crear')">
+            <IconoMas :class="isActive('/crear') || isActive('/crearTur') ? 'w-8 h-8' : 'w-8 h-8'" class="mx-auto transition-colors duration-300" />
           </router-link>
         </li>
 
@@ -128,20 +109,18 @@ onMounted(() => {
           <router-link :to="getProfileLink" class="relative block"
             :class="{ 'text-[#222725]': isActive(`/perfil/${userId}`), 'text-[#788B69]': !isActive(`/perfil/${userId}`) }"
             @click="setActive(`/perfil/${userId}`)">
-            <IconoUsuario :class="isActive(`/perfil/${userId}`) ? 'w-8 h-8' : 'w-8 h-8'"
-              class="mx-auto transition-colors duration-300" />
+            <IconoUsuario :class="isActive(`/perfil/${userId}`) ? 'w-8 h-8' : 'w-8 h-8'" class="mx-auto transition-colors duration-300" />
           </router-link>
         </li>
       </ul>
 
-
       <div
         class="absolute w-16 h-16 bg-[#4F6D3A] border-[#222725] border-4 rounded-full transition-all duration-300 ease-in-out"
         :style="{ transform: `translateX(${circlePosition}px) translateY(-30%)` }">
-        <router-link v-if="isActive(userRole === 'guia' ? '/inicioguia' : '/')" :to="getInicioLink">
+        <router-link v-if="isActive('/') || isActive('/inicioguia')" :to="getInicioLink">
           <IconoInicio class="h-8 w-8 text-white absolute inset-0 m-auto" />
         </router-link>
-        <router-link v-if="isActive(userRole === 'guia' ? '/crearTur' : '/crear')" :to="getCrearLink">
+        <router-link v-if="isActive('/crear') || isActive('/crearTur')" :to="getCrearLink">
           <IconoMas class="h-8 w-8 text-white absolute inset-0 m-auto" />
         </router-link>
         <router-link v-if="isActive(`/perfil/${userId}`)" :to="getProfileLink">

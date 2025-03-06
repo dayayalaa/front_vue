@@ -275,20 +275,22 @@ const costoTotal = computed(() => {
         <TituloTerciario><strong>Guía:</strong></TituloTerciario>
 
         <div v-if="tour && tour.guia"
-          class="bg-white p-4 shadow-md rounded-lg max-w-md mx-auto flex items-center justify-between">
+          class="bg-white p-4 shadow-md rounded-lg max-w-md mx-auto flex-col items-center">
 
-          <img :src="guiaProfileImage" alt="Foto del guía" class="w-32 h-32 rounded-full object-cover mr-4" />
-
+        <div class="space-y-2 flex items-center mb-2">
+          <img :src="guiaProfileImage" alt="Foto del guía" class="w-28 h-28 rounded-full object-cover mr-4" />
+          <p v-if="guiaName" class="font-bold text-lg font-sitka">{{ guiaName }}</p>
+        </div>
           <div class="space-y-2 flex flex-col">
-            <p v-if="guiaName" class="font-bold text-lg">{{ guiaName }}</p>
+            
             <p v-if="guiaEmail" class="text-gray-500">Email: {{ guiaEmail }}</p>
             <p v-if="guiaTelefono" class="text-gray-500">Teléfono:</p>
             <p v-if="guiaTelefono" class="text-gray-500">{{ guiaTelefono }}</p>
             <p v-if="guiaProvincia" class="text-gray-500">Provincia: {{ guiaProvincia }}</p>
 
-            <div class="flex justify-end">
+            <div class="flex justify-center">
               <router-link :to="`/guias/${guiasId}`">
-                <BotonPrincipal>Ver más</BotonPrincipal>
+                <BotonPrincipal class="mt-6">Ver más</BotonPrincipal>
               </router-link>
             </div>
           </div>

@@ -38,11 +38,11 @@ const fetchUserData = async () => {
     const dataGuia = await response.json();
     // console.log('Datos del Guia:', dataGuia);
 
-    const provinciaGuia = dataGuia.data?.provincia;
+    const provinciaGuia = dataGuia?.data?.provincia;
     if (provinciaGuia) {
       // console.log('Provincia del Guia:', provinciaGuia);
-      tourData.provincia = provinciaGuia;
-      // console.log('tourData.provincia:', tourData.provincia);
+      tourData.value.provincia = provinciaGuia;
+      // console.log('tourData.provincia:', tourData.value.provincia);
     } else {
       console.error('No se encontró la provincia del guía');
       tourData.provincia = 'Provincia desconocida';
@@ -71,6 +71,9 @@ const tourData = ref({
   politicaCancelacion: ''
 });
 
+// console.log('tourData: ', tourData.value);
+// console.log('Provincia: ', tourData.value.provincia);
+
 const errors = ref({
   titulo: '',
   descripcion: '',
@@ -93,7 +96,7 @@ onMounted(() => {
       //console.error('Error al decodificar el token:', error);
     }
   }
-  fetchUserData(userId);
+  fetchUserData();
 });
 
 const agregarFecha = () => {
@@ -244,7 +247,7 @@ const crearTour = async () => {
       <label for="titulo" class="block text-sm font-medium text-gray-700">Título del Tour</label>
       <input id="titulo" type="text" v-model="tourData.titulo" @blur="validarCampo('titulo', tourData.titulo)"
         placeholder="Ingresa el título del tour"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#3C4A28] focus:border-[#3C4A28]" />
       <p v-if="errors.titulo" class="text-red-500 text-sm mt-1">{{ errors.titulo }}</p>
     </div>
 
@@ -253,7 +256,7 @@ const crearTour = async () => {
       <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
       <textarea id="descripcion" v-model="tourData.descripcion"
         @blur="validarCampo('descripcion', tourData.descripcion)" placeholder="Describe el tour" rows="4"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#3C4A28] focus:border-[#3C4A28]"></textarea>
       <p v-if="errors.descripcion" class="text-red-500 text-sm mt-1">{{ errors.descripcion }}</p>
     </div>
 
@@ -262,19 +265,17 @@ const crearTour = async () => {
       <label for="precio" class="block text-sm font-medium text-gray-700">Precio</label>
       <input id="precio" type="number" v-model="tourData.precio" @blur="validarCampo('precio', tourData.precio)"
         placeholder="Ingresa el precio"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#3C4A28] focus:border-[#3C4A28]" />
       <p v-if="errors.precio" class="text-red-500 text-sm mt-1">{{ errors.precio }}</p>
     </div>
 
     <!-- Provincia -->
     <div class="mb-4">
       <label for="provincia" class="block text-sm font-medium text-gray-700">Provincia</label>
-      <input id="provincia" type="text"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100"
-        v-model="tourData.provincia" readonly />
-      <p v-if="errors.provincia" class="text-[#7E2323] text-sm mt-1">No se encontró la provincia</p>
+      <input id="provincia" type="text" v-model="tourData.provincia" readonly
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#3C4A28] focus:border-[#3C4A28]" />
+      <p v-if="errors.provincia" class="text-red-500 text-sm mt-1">{{ errors.provincia }}</p>
     </div>
-
 
     <!-- Duración -->
     <div class="mb-4">
@@ -325,13 +326,19 @@ const crearTour = async () => {
       <textarea id="politicaCancelacion" v-model="tourData.politicaCancelacion"
         @blur="validarCampo('politicaCancelacion', tourData.politicaCancelacion)"
         placeholder="Escribe la política de cancelación" rows="4"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#3C4A28] focus:border-[#3C4A28]"></textarea>
       <p v-if="errors.politicaCancelacion" class="text-red-500 text-sm mt-1">{{ errors.politicaCancelacion }}</p>
     </div>
 
-    <!-- Mensajes de éxito y error -->
-    <p v-if="mensajeExito" class="text-green-500 text-sm mt-4">{{ mensajeExito }}</p>
-    <p v-if="mensajeError" class="text-red-500 text-sm mt-4">{{ mensajeError }}</p>
+    <!-- Mensaje de éxito -->
+    <div v-if="mensajeExito" class="mt-4 mb-4 p-4 bg-green-100 border-l-4 border-[#788A68] text-[#222725]">
+      <p class="text-[green-500] text-sm">{{ mensajeExito }}</p>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div v-if="mensajeError" class="mt-4 mb-4 p-4 bg-red-100 border-l-4 border-[#7E2323] text-[#222725]">
+      <p class="text-red-500 text-sm">{{ mensajeError }}</p>
+    </div>
 
     <div class="flex justify-center">
       <BotonPrincipal @click="crearTour" :disabled="cargando">{{ cargando ? 'Creando Tour...' : 'Crear Tour' }}
