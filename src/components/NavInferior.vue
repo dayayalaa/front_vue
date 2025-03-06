@@ -88,19 +88,23 @@ onMounted(() => {
       <ul class="flex justify-around w-full">
         <!-- Ícono de Inicio -->
         <li class="relative flex-grow text-center">
-          <router-link :to="getInicioLink" class="relative block"
-            :class="{ 'text-[#222725]': isActive('/'), 'text-[#788B69]': !isActive('/') }"
-            @click="setActive('/')">
-            <IconoInicio :class="isActive('/') ? 'w-8 h-8' : 'w-8 h-8'" class="mx-auto transition-colors duration-300" />
+          <router-link :to="getInicioLink" class="relative block" :class="{
+            'text-[#222725]': isActive('/'),
+            'text-[#788B69]': !isActive('/')
+          }" @click="setActive('/')">
+            <IconoInicio :class="isActive('/') ? 'w-8 h-8' : 'w-8 h-8'"
+              class="mx-auto transition-colors duration-300" />
           </router-link>
         </li>
+
 
         <!-- Ícono de Crear -->
         <li class="relative flex-grow text-center">
           <router-link :to="getCrearLink" class="relative block"
             :class="{ 'text-[#222725]': isActive('/crear') || isActive('/crearTur'), 'text-[#788B69]': !isActive('/crear') && !isActive('/crearTur') }"
             @click="setActive('/crear')">
-            <IconoMas :class="isActive('/crear') || isActive('/crearTur') ? 'w-8 h-8' : 'w-8 h-8'" class="mx-auto transition-colors duration-300" />
+            <IconoMas :class="isActive('/crear') || isActive('/crearTur') ? 'w-8 h-8' : 'w-8 h-8'"
+              class="mx-auto transition-colors duration-300" />
           </router-link>
         </li>
 
@@ -109,14 +113,15 @@ onMounted(() => {
           <router-link :to="getProfileLink" class="relative block"
             :class="{ 'text-[#222725]': isActive(`/perfil/${userId}`), 'text-[#788B69]': !isActive(`/perfil/${userId}`) }"
             @click="setActive(`/perfil/${userId}`)">
-            <IconoUsuario :class="isActive(`/perfil/${userId}`) ? 'w-8 h-8' : 'w-8 h-8'" class="mx-auto transition-colors duration-300" />
+            <IconoUsuario :class="isActive(`/perfil/${userId}`) ? 'w-8 h-8' : 'w-8 h-8'"
+              class="mx-auto transition-colors duration-300" />
           </router-link>
         </li>
       </ul>
 
       <div
-        class="absolute w-16 h-16 bg-[#4F6D3A] border-[#222725] border-4 rounded-full transition-all duration-300 ease-in-out"
-        :style="{ transform: `translateX(${circlePosition}px) translateY(-30%)` }">
+        class="absolute w-16 h-16 bg-[#4F6D3A] border-[#222725] border-8 rounded-full transition-all duration-300 ease-in-out"
+        :style="{ transform: `translateX(${circlePosition}px) translateY(-20%)`, boxSizing: 'content-box' }">
         <router-link v-if="isActive('/') || isActive('/inicioguia')" :to="getInicioLink">
           <IconoInicio class="h-8 w-8 text-white absolute inset-0 m-auto" />
         </router-link>

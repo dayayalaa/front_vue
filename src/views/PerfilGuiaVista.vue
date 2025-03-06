@@ -152,7 +152,7 @@ const cancelarEliminacion = () => {
       </TituloSecundario>
 
       <p v-if="descripcion" class="text-gray-600 mt-2 ms-3 me-2 text-sm text-left">{{ descripcion }}</p>
-      <p v-if="provincia" class="text-gray-700 font-medium mt-1">{{ provincia }}</p>
+      <p v-if="provincia" class="text-gray-700 font-medium mt-1 font-sitka">{{ provincia }}</p>
     </div>
 
     <!-- Datos personales -->
@@ -186,7 +186,7 @@ const cancelarEliminacion = () => {
         <li v-for="tour in tours" :key="tour._id" class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
           <div class="flex flex-col">
             <div class="flex-1 mb-4">
-              <strong class="text-lg text-gray-800">{{ tour.titulo }}</strong>
+              <strong class="text-lg text-gray-800 font-sitka">{{ tour.titulo }}</strong>
               <p class="text-gray-600 text-sm mt-1">{{ tour.descripcion }}</p>
             </div>
 
