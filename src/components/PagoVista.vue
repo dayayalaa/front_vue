@@ -7,13 +7,14 @@ import TituloSecundario from './TituloSecundario.vue';
 import TituloTerciario from './TituloTerciario.vue';
 import BotonPrincipal from './BotonPrincipal.vue';
 
-const reserva = JSON.parse(localStorage.getItem('Reserva')) || null;
+const reserva = JSON.parse(localStorage.getItem('Reserva'));
+
 // console.log('Datos reserva', reserva);
 
 const calcularTotal = () => {
     const precioVueloIda = parseFloat(reserva.idaReserva.details.price || 0);
     const precioVueloVuelta = parseFloat(reserva.vueltaReserva.details.price || 0);
-    const precioHotel = parseFloat(reserva.hotelReserva.total_rate.extracted_before_taxes_fees || 0);
+    const precioHotel = reserva.hotelReserva ? parseFloat(reserva.hotelReserva.total_rate.extracted_before_taxes_fees || 0) : 0;
     return precioVueloIda + precioVueloVuelta + precioHotel;
 };
 
@@ -68,6 +69,7 @@ const enviarCorreoConfirmacion = async () => {
             console.error('Error: No hay una reserva activa.');
             return;
         }
+
         const correoData = {
             email: usuario.email,
             name: usuario.name,
@@ -79,11 +81,10 @@ const enviarCorreoConfirmacion = async () => {
             fechaVuelta: reserva.vueltaReserva?.details?.flights?.[0]?.departure_airport?.time || 'Fecha no disponible',
             precioIda: parseFloat(reserva.idaReserva?.details?.price) || 0,
             precioVuelta: parseFloat(reserva.vueltaReserva?.details?.price) || 0,
-            hotel: reserva.hotelReserva?.name || 'No disponible',
+            hotel: reserva.hotelReserva?.name || 'No se seleccionó ningún hotel',
             precioHotel: parseFloat(reserva.hotelReserva?.total_rate?.extracted_before_taxes_fees) || 0,
             total: calcularTotal(),
         };
-
 
         // console.log('Datos que se enviarán:', correoData);
 
@@ -101,7 +102,6 @@ const enviarCorreoConfirmacion = async () => {
     }
 };
 
-
 const realizarPago = async () => {
     try {
         const items = [
@@ -115,12 +115,15 @@ const realizarPago = async () => {
                 price: parseFloat(reserva.vueltaReserva.details.price),
                 quantity: 1,
             },
-            {
+        ];
+
+        if (reserva.hotelReserva && reserva.hotelReserva.total_rate?.extracted_before_taxes_fees) {
+            items.push({
                 title: 'Reserva de Hotel',
                 price: parseFloat(reserva.hotelReserva.total_rate.extracted_before_taxes_fees),
                 quantity: 1,
-            },
-        ];
+            });
+        }
 
         // console.log('Los elementos son:', items);
 
@@ -141,6 +144,7 @@ const realizarPago = async () => {
         console.error('Error al procesar el pago:', error);
     }
 };
+
 </script>
 
 <template>
@@ -163,9 +167,14 @@ const realizarPago = async () => {
                     <p><strong>Precio de Vuelta:</strong> ${{ reserva.vueltaReserva.details.price?.toLocaleString() }}
                     </p>
                     <hr class="m-4">
-                    <p><strong>Hotel:</strong> {{ reserva.hotelReserva.name }}</p>
-                    <p><strong>Precio del Hotel:</strong> ${{
-                        reserva.hotelReserva.total_rate.extracted_before_taxes_fees?.toLocaleString() }}</p>
+                    <div v-if="!reserva.hotelReserva">
+                        <p class="text-[#7E2323]">No se reservó ningún hotel</p>
+                    </div>
+                    <div v-else>
+                        <p><strong>Hotel:</strong> {{ reserva.hotelReserva.name }}</p>
+                        <p><strong>Precio del Hotel:</strong> ${{
+                            reserva.hotelReserva.total_rate.extracted_before_taxes_fees?.toLocaleString() }}</p>
+                    </div>
                     <hr class="m-6">
                     <p class="text-xl font-semibold text-[#788A68] text-center"><strong
                             class="font-bold text-lg text-black">Total: </strong>${{ calcularTotal().toLocaleString() }}

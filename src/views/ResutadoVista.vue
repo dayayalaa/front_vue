@@ -585,7 +585,7 @@ onMounted(async () => {
           <input id="adults" v-model="numAdultos" type="number" min="1" max="10"
             class="w-[70px] text-center h-10 rounded-md border-gray-300 shadow-sm appearance-none" placeholder="0" />
 
-          <button @click="obtenerHoteles" class="h-10 px-4 py-2 bg-[#3C4A28] text-white rounded-md">
+          <button @click="obtenerHoteles" class="h-10 px-4 py-2 text-sm bg-[#3C4A28] text-white rounded-md">
             Buscar Hoteles
           </button>
 
