@@ -176,7 +176,7 @@ onMounted(() => {
     <SpinnerCarga v-if="cargando" />
 
     <div v-if="tourData" class="relative mb-2">
-      <TituloSecundario class="text-center text-4xl">{{ tourData.titulo }}</TituloSecundario>
+      <TituloSecundario class="text-center">{{ tourData.titulo }}</TituloSecundario>
       <img :src="tourData.tourId?.fotoPortada" :alt="'Foto del tour ' + tourData.titulo"
         class="w-full h-64 object-cover" />
       <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#fcf9f4] to-transparent opacity-95 h-1/3"></div>

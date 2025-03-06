@@ -700,7 +700,7 @@ onMounted(async () => {
 
       </div>
 
-      <div class="mt-4">
+      <div class="mt-4 flex justify-center">
         <BotonPrincipal @click="confirmarReserva">Confirmar Reserva</BotonPrincipal>
       </div>
     </div>

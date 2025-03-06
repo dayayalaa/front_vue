@@ -174,7 +174,6 @@ const realizarPago = async () => {
 
                 <!-- Solo el botón de pago -->
                 <div class="flex flex-col justify-center items-center">
-                    <TituloSecundario>Confirmar Pago</TituloSecundario>
                     <div class="mt-4">
                         <BotonPrincipal @click="realizarPago">Confirmar Pago</BotonPrincipal>
                     </div>

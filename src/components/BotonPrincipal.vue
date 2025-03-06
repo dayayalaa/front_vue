@@ -1,7 +1,7 @@
 <template>
     <button 
     type="submit"
-    class="px-6 py-3 font-semibold text-white rounded-full bg-[#3C4A28] hover:bg-[#788B69]">
+    class="px-4 py-2 flex items-center justify-center font-semibold text-white rounded bg-[#3C4A28]">
       <slot></slot>
     </button>
   </template>

@@ -21,9 +21,43 @@ const userId = ref(null);
 const mensajeError = ref('');
 const mensajeExito = ref('');
 
+// console.log('Id del guia:', userId);
+
+const fetchUserData = async () => {
+  try {
+    // console.log('Obteniendo datos del usuario con ID:', userId.value);
+    const response = await fetch(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Error al obtener los datos del usuario: ${response.statusText}`);
+    }
+    const dataGuia = await response.json();
+    // console.log('Datos del Guia:', dataGuia);
+
+    const provinciaGuia = dataGuia.data?.provincia;
+    if (provinciaGuia) {
+      // console.log('Provincia del Guia:', provinciaGuia);
+      tourData.provincia = provinciaGuia;
+      // console.log('tourData.provincia:', tourData.provincia);
+    } else {
+      console.error('No se encontró la provincia del guía');
+      tourData.provincia = 'Provincia desconocida';
+    }
+  } catch (error) {
+    console.error('Error al obtener los datos del usuario:', error);
+  } finally {
+    cargando.value = false;
+  }
+};
+
+
 const fileInput = ref(null);
 const abrirSelector = () => {
-  fileInput.value.click(); 
+  fileInput.value.click();
 };
 
 const tourData = ref({
@@ -49,31 +83,6 @@ const errors = ref({
 });
 
 const fechaTemp = ref('');
-const provincias = [
-  'Buenos Aires',
-  'Catamarca',
-  'Chaco',
-  'Chubut',
-  'Córdoba',
-  'Corrientes',
-  'Entre Ríos',
-  'Formosa',
-  'Jujuy',
-  'La Pampa',
-  'La Rioja',
-  'Mendoza',
-  'Misiones',
-  'Neuquén',
-  'Río Negro',
-  'Salta',
-  'San Juan',
-  'San Luis',
-  'Santa Cruz',
-  'Santa Fe',
-  'Santiago del Estero',
-  'Tierra del Fuego',
-  'Tucumán'
-];
 
 onMounted(() => {
   if (token) {
@@ -84,6 +93,7 @@ onMounted(() => {
       //console.error('Error al decodificar el token:', error);
     }
   }
+  fetchUserData(userId);
 });
 
 const agregarFecha = () => {
@@ -173,7 +183,7 @@ const actualizarFoto = (event) => {
       errors.value.fotoPortada = 'El archivo debe ser una imagen.';
       return;
     }
-    if (file.size > 5 * 1024 * 1024) { 
+    if (file.size > 5 * 1024 * 1024) {
       errors.value.fotoPortada = 'El archivo no debe exceder 5 MB.';
       return;
     }
@@ -210,7 +220,7 @@ const crearTour = async () => {
     mensajeExito.value = 'Tour creado exitosamente!';
     setTimeout(() => {
       router.push({ name: 'vistaTur', params: { id: tourId } });
-    }, 1500); 
+    }, 1500);
   } catch (error) {
     console.error('Error creando el tour:', error);
     if (error.response && error.response.data) {
@@ -232,73 +242,46 @@ const crearTour = async () => {
     <!-- Título -->
     <div class="mb-4">
       <label for="titulo" class="block text-sm font-medium text-gray-700">Título del Tour</label>
-      <input
-        id="titulo"
-        type="text"
-        v-model="tourData.titulo"
-        @blur="validarCampo('titulo', tourData.titulo)"
+      <input id="titulo" type="text" v-model="tourData.titulo" @blur="validarCampo('titulo', tourData.titulo)"
         placeholder="Ingresa el título del tour"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      />
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
       <p v-if="errors.titulo" class="text-red-500 text-sm mt-1">{{ errors.titulo }}</p>
     </div>
 
     <!-- Descripción -->
     <div class="mb-4">
       <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
-      <textarea
-        id="descripcion"
-        v-model="tourData.descripcion"
-        @blur="validarCampo('descripcion', tourData.descripcion)"
-        placeholder="Describe el tour"
-        rows="4"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      ></textarea>
+      <textarea id="descripcion" v-model="tourData.descripcion"
+        @blur="validarCampo('descripcion', tourData.descripcion)" placeholder="Describe el tour" rows="4"
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
       <p v-if="errors.descripcion" class="text-red-500 text-sm mt-1">{{ errors.descripcion }}</p>
     </div>
 
     <!-- Precio -->
     <div class="mb-4">
       <label for="precio" class="block text-sm font-medium text-gray-700">Precio</label>
-      <input
-        id="precio"
-        type="number"
-        v-model="tourData.precio"
-        @blur="validarCampo('precio', tourData.precio)"
+      <input id="precio" type="number" v-model="tourData.precio" @blur="validarCampo('precio', tourData.precio)"
         placeholder="Ingresa el precio"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      />
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
       <p v-if="errors.precio" class="text-red-500 text-sm mt-1">{{ errors.precio }}</p>
     </div>
 
     <!-- Provincia -->
     <div class="mb-4">
       <label for="provincia" class="block text-sm font-medium text-gray-700">Provincia</label>
-      <select
-        id="provincia"
-        v-model="tourData.provincia"
-        @blur="validarCampo('provincia', tourData.provincia)"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      >
-        <option value="" disabled>Selecciona una provincia</option>
-        <option v-for="provincia in provincias" :key="provincia" :value="provincia">
-          {{ provincia }}
-        </option>
-      </select>
-      <p v-if="errors.provincia" class="text-red-500 text-sm mt-1">{{ errors.provincia }}</p>
+      <input id="provincia" type="text"
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100"
+        v-model="tourData.provincia" readonly />
+      <p v-if="errors.provincia" class="text-[#7E2323] text-sm mt-1">No se encontró la provincia</p>
     </div>
+
 
     <!-- Duración -->
     <div class="mb-4">
       <label for="duracion" class="block text-sm font-medium text-gray-700">Duración (en horas o días)</label>
-      <input
-        id="duracion"
-        type="text"
-        v-model="tourData.duracion"
-        @blur="validarCampo('duracion', tourData.duracion)"
+      <input id="duracion" type="text" v-model="tourData.duracion" @blur="validarCampo('duracion', tourData.duracion)"
         placeholder="Ej: '2 horas' o '1 día'"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#788A68] focus:border-[#788A68]"
-      />
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#788A68] focus:border-[#788A68]" />
       <p v-if="errors.duracion" class="text-red-500 text-sm mt-1">{{ errors.duracion }}</p>
     </div>
 
@@ -306,31 +289,18 @@ const crearTour = async () => {
     <div class="mb-4">
       <label class="block text-sm font-medium text-gray-700">Fechas Disponibles</label>
       <div class="flex items-center space-x-2">
-        <input
-          type="date"
-          v-model="fechaTemp"
-          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#788A68] focus:border-[#788A68]"
-        />
-        <BotonPrincipal
-          type="button"
-          @click="agregarFecha"
-          class="px-4 py-2 text-white"
-        >
+        <input type="date" v-model="fechaTemp"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#788A68] focus:border-[#788A68]" />
+        <BotonPrincipal type="button" @click="agregarFecha" class="px-4 py-2 text-white">
           Agregar
         </BotonPrincipal>
       </div>
       <ul class="mt-2 space-y-1">
-        <li
-          v-for="(fecha, index) in tourData.fechasDisponibles"
-          :key="index"
-          class="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md"
-        >
+        <li v-for="(fecha, index) in tourData.fechasDisponibles" :key="index"
+          class="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-md">
           {{ fecha }}
-          <button
-            type="button"
-            @click="eliminarFecha(index)"
-            class="text-red-500 hover:text-red-700 focus:outline-none"
-          >
+          <button type="button" @click="eliminarFecha(index)"
+            class="text-red-500 hover:text-red-700 focus:outline-none">
             Eliminar
           </button>
         </li>
@@ -341,35 +311,21 @@ const crearTour = async () => {
     <!-- Foto de Portada -->
     <div class="mb-4">
       <label for="fotoPortada" class="block text-sm font-medium text-gray-700">Foto de Portada</label>
-      <input
-      id="fotoPortada"
-      ref="fileInput"
-      type="file"
-      accept="image/*"
-      @change="actualizarFoto"
-      class="hidden"
-    />
+      <input id="fotoPortada" ref="fileInput" type="file" accept="image/*" @change="actualizarFoto" class="hidden" />
 
-    <button
-      @click="abrirSelector"
-      class="bg-[#788A68] text-[#F7F5EB] font-bold py-2 px-4 rounded mt-1"
-    >
-      Seleccionar imagen
-    </button>
+      <button @click="abrirSelector" class="bg-[#788A68] text-[#F7F5EB] font-bold py-2 px-4 rounded mt-1">
+        Seleccionar imagen
+      </button>
       <p v-if="errors.fotoPortada" class="text-red-500 text-sm mt-1">{{ errors.fotoPortada }}</p>
     </div>
 
     <!-- Política de Cancelación -->
     <div class="mb-4">
       <label for="politicaCancelacion" class="block text-sm font-medium text-gray-700">Política de Cancelación</label>
-      <textarea
-        id="politicaCancelacion"
-        v-model="tourData.politicaCancelacion"
+      <textarea id="politicaCancelacion" v-model="tourData.politicaCancelacion"
         @blur="validarCampo('politicaCancelacion', tourData.politicaCancelacion)"
-        placeholder="Escribe la política de cancelación"
-        rows="4"
-        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-      ></textarea>
+        placeholder="Escribe la política de cancelación" rows="4"
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
       <p v-if="errors.politicaCancelacion" class="text-red-500 text-sm mt-1">{{ errors.politicaCancelacion }}</p>
     </div>
 
@@ -378,7 +334,8 @@ const crearTour = async () => {
     <p v-if="mensajeError" class="text-red-500 text-sm mt-4">{{ mensajeError }}</p>
 
     <div class="flex justify-center">
-      <BotonPrincipal @click="crearTour" :disabled="cargando">{{ cargando ? 'Creando Tour...' : 'Crear Tour' }}</BotonPrincipal>
+      <BotonPrincipal @click="crearTour" :disabled="cargando">{{ cargando ? 'Creando Tour...' : 'Crear Tour' }}
+      </BotonPrincipal>
     </div>
   </div>
 </template>

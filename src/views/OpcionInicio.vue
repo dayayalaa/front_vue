@@ -24,7 +24,7 @@ const tipoRegistro = ref('usuario');
     @click.prevent="tipoRegistro = 'usuario'"
     class="py-3 px-6 rounded-full w-full transition-colors duration-200"
   >
-    Usuario
+    Viajero
   </button>
   <button
     :class="{'bg-[#3C4A28] text-white border-2 border-[#2a4b1a]': tipoRegistro === 'guia', 'bg-[#3C4A28] bg-opacity-50 text-white': tipoRegistro !== 'guia'}"
