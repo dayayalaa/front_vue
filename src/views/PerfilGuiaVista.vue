@@ -8,7 +8,6 @@ import BotonPrincipal from '../components/BotonPrincipal.vue';
 import IrAtras from '../components/IrAtras.vue';
 import MiReservasUsuario from '../components/MiReservasUsuario.vue';
 
-
 const userName = ref('');
 const userProfileImage = ref('');
 const userCoverImage = ref('');
@@ -20,9 +19,13 @@ const userId = ref('');
 const tours = ref([]);
 const cargando = ref(true);
 const router = useRouter();
+
+// Estados para el modal de confirmación
+const showModal = ref(false);
+const tourToDelete = ref(null);
+
 const fetchUserData = async () => {
   try {
-    // console.log('Obteniendo datos del usuario con ID:', userId.value);
     const response = await fetch(`https://back-tesis-lovat.vercel.app/arcana/usuarios/${userId.value}`, {
       method: 'GET',
       headers: {
@@ -33,7 +36,6 @@ const fetchUserData = async () => {
       throw new Error(`Error al obtener los datos del usuario: ${response.statusText}`);
     }
     const data = await response.json();
-    // console.log('Respuesta de la API:', data);
     if (!data.data) {
       throw new Error('La API no devolvió datos válidos.');
     }
@@ -45,13 +47,13 @@ const fetchUserData = async () => {
     email.value = correo;
     telefono.value = tel;
     provincia.value = prov;
-    // console.log('Nombre del usuario:', userName.value);
   } catch (error) {
     console.error(error);
   } finally {
     cargando.value = false;
   }
 };
+
 const obtenerTours = async (id) => {
   try {
     const response = await axios.get(`https://back-tesis-lovat.vercel.app/arcana/tur/segunGuia?id=${id}`);
@@ -60,6 +62,7 @@ const obtenerTours = async (id) => {
     console.error('Error al obtener los tours del guía:', error);
   }
 };
+
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split('.')[1];
@@ -74,6 +77,7 @@ const decodeJWT = (token) => {
     return null;
   }
 };
+
 onMounted(async () => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -82,28 +86,50 @@ onMounted(async () => {
       userId.value = decodedToken.userId;
       await fetchUserData();
       await obtenerTours(userId.value);
-
     }
   } else {
     cargando.value = false;
   }
 });
+
 const goToCreateTour = () => {
   router.push('/crearTur');
 };
-const eliminarTour = async (tourId) => {
-  try {
-    const response = await axios.delete(`https://back-tesis-lovat.vercel.app/arcana/tur/${tourId}`, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    });
-    if (response.status === 200) {
-      tours.value = tours.value.filter((tour) => tour._id !== tourId);
+
+// Función para abrir el modal de confirmación
+const confirmDelete = (tourId) => {
+  tourToDelete.value = tourId;
+  showModal.value = true;
+};
+
+// Función para eliminar el tour después de confirmar
+const eliminarTourConfirmado = async () => {
+  if (tourToDelete.value) {
+    try {
+      const response = await axios.delete(
+        `https://back-tesis-lovat.vercel.app/arcana/tur/${tourToDelete.value}`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+        }
+      );
+      if (response.status === 200) {
+        tours.value = tours.value.filter((tour) => tour._id !== tourToDelete.value);
+      }
+    } catch (error) {
+      console.error('Error al eliminar el tour:', error);
+    } finally {
+      showModal.value = false;
+      tourToDelete.value = null;
     }
-  } catch (error) {
-    console.error('Error al eliminar el tour:', error);
   }
+};
+
+// Función para cancelar la eliminación
+const cancelarEliminacion = () => {
+  showModal.value = false;
+  tourToDelete.value = null;
 };
 </script>
 
@@ -176,7 +202,7 @@ const eliminarTour = async (tourId) => {
                 <i class="fas fa-edit mr-2"></i> Editar
               </router-link>
 
-              <button @click="eliminarTour(tour._id)"
+              <button @click="confirmDelete(tour._id)"
                 class="px-4 py-2 flex items-center bg-[#7E2323] text-white text-sm rounded">
                 <i class="fas fa-trash-alt mr-2"></i> Eliminar
               </button>
@@ -188,8 +214,23 @@ const eliminarTour = async (tourId) => {
     <p v-else class="text-center text-gray-600 mt-4">No hay tours disponibles.</p>
 
     <TituloSecundario class="mt-12 text-2xl font-semibold text-gray-800 mb-4">
-        Reservas de tus Tours
-      </TituloSecundario>
-    <MiReservasUsuario  />
+      Reservas de tus Tours
+    </TituloSecundario>
+    <MiReservasUsuario />
+
+    <!-- Modal de confirmación -->
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">¿Estás seguro de eliminar este tour?</h3>
+        <div class="flex justify-end space-x-4">
+          <button @click="cancelarEliminacion" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">
+            Cancelar
+          </button>
+          <button @click="eliminarTourConfirmado" class="px-4 py-2 bg-[#7E2323] text-white rounded hover:bg-[#6A1C1C]">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
