@@ -92,7 +92,7 @@ onMounted(() => {
       >
         <img :src="guia.fotoPerfil" :alt="'Foto de ' + guia.nombre" class="w-24 h-24 rounded-full mb-4 object-cover" />
 
-        <strong class="text-lg text-[#222725]" v-html="resaltadoTexto(guia.nombre)"></strong>
+        <strong class="text-lg text-[#222725] font-sitka" v-html="resaltadoTexto(guia.nombre)"></strong>
         <p class="text-gray-600">{{ guia.provincia }}</p>
       </div>
     </div>

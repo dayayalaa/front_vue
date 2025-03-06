@@ -92,7 +92,7 @@ onMounted(async () => {
             <router-link :to="`/guias/${guia._id}`">
               <img :src="guia.fotoPerfil" alt="Guía" class="w-28 h-28 object-cover" />
               <div class="p-2">
-                <h3 class="text-md font-semibold text-gray-800">{{ guia.nombre }}</h3>
+                <h3 class="text-md font-semibold text-gray-800 font-sitka">{{ guia.nombre }}</h3>
               </div>
             </router-link>
           </div>

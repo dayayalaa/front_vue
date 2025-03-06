@@ -198,10 +198,6 @@ onMounted(() => {
     obtenerProvinciasPopulares();
     checkUserRole();
 });
-
-const irADetalleGuia = (id) => {
-    router.push(`/perfil/guia/${id}`);
-};
 </script>
 
 <template>
@@ -211,16 +207,16 @@ const irADetalleGuia = (id) => {
 
         <div v-else-if="provinciaInfo" class="text-center">
             <TituloSecundario class="text-center">Descubre {{ provinciaInfo.title }}</TituloSecundario>
-            <TituloTerciario class="text-gray-600 px-4 py-2">{{ provinciaInfo.address }}</TituloTerciario>
+            <TituloTerciario class="text-gray-600 px-2">{{ provinciaInfo.address }}</TituloTerciario>
 
             <div class="flex flex-col justify-center items-center p-4">
-                <div class="h-[250px] w-[300px] mt-6">
+                <div class="h-[250px] w-[300px]">
                     <img :src="provinciaInfo.gallery[0]" :alt="provinciaInfo.title"
                         class="w-full h-full object-cover rounded-lg" />
                 </div>
 
                 <p v-if="provinciaInfo.description" class="mt-4 text-gray-700 text-left">
-                    <strong class="text-green-600">Descripción:</strong>
+                    <strong class="text-[#788A68] font-sitka">Descripción:</strong>
                     {{ provinciaInfo.description }}
                 </p>
             </div>
@@ -246,7 +242,7 @@ const irADetalleGuia = (id) => {
                     <img :src="guia.fotoPerfil" :alt="'Foto de ' + guia.nombre"
                         class="w-24 h-24 rounded-full mb-4 object-cover" />
 
-                    <strong class="text-lg text-[#222725]">{{ guia.nombre }}</strong>
+                    <strong class="text-lg text-[#222725] font-sitka">{{ guia.nombre }}</strong>
                     <p class="text-gray-600">{{ guia.provincia }}</p>
                 </router-link>
             </div>

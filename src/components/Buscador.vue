@@ -44,6 +44,18 @@ const filtrarProvincias = computed(() => {
   );
 });
 
+// Función para capitalizar la primera letra de cada palabra
+const capitalizarPrimeraLetra = (texto) => {
+  return texto
+    .split(' ') 
+    .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase()) 
+    .join(' ');
+};
+
+watch(busqueda, (nuevoValor) => {
+  busqueda.value = capitalizarPrimeraLetra(nuevoValor); // Capitaliza la primera letra
+});
+
 onMounted(() => {
   provinciasDisponibles.value = [
     "Buenos Aires", "Catamarca", "Chaco", "Chubut", "CABA", "Córdoba", "Corrientes", "Entre Ríos",
@@ -69,6 +81,7 @@ const activarBusqueda = () => {
 };
 
 </script>
+
 
 <template>
   <div class="relative w-full max-w-lg mx-auto px-4">

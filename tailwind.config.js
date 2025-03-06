@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sableklish: ['Sableklish', 'sans-serif'],
+        sitka: ['SitkaB', 'sans-serif'], 
       },
     },
   },
