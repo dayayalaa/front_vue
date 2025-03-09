@@ -146,17 +146,18 @@ const obtenerHoteles = async () => {
       }
     });
 
-    // console.log('hotel:', response);
+    console.log('Respuesta:', response);
+    console.log('Hoteles:', response.data.hoteles);
 
     if (response.status === 200 && response.data && response.data.hoteles && response.data.hoteles.length > 0) {
       hoteles.value = response.data.hoteles;
-      // Aquí se asegura de que la reserva no se establezca si no se seleccionó ningún hotel
+      console.log('Respuesta value:', hoteles.value);
+
       if (hoteles.value.length === 0) {
         reserva.value.hotelReserva = null;
       }
     } else {
       errorMensaje.value = 'No se encontraron hoteles disponibles.';
-      // También dejamos hotelReserva en null si no hay hoteles disponibles
       reserva.value.hotelReserva = null;
     }
   } catch (error) {
@@ -206,6 +207,7 @@ const obtenerNombreAeropuerto = (codigo) => {
 
 const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
   reserva.value = JSON.parse(localStorage.getItem('Reserva')) || {};
+  console.log('Obtener reserva:', reserva.value);
 
   switch (tipo) {
     case 'ida':
@@ -216,7 +218,6 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
             token: tokenSeleccionado,
             details: vueloSeleccionado
           };
-          // console.log('Vuelo de ida actualizado:', reserva.value.idaReserva);
         } else {
           console.error('No se encontró el vuelo de ida seleccionado.');
         }
@@ -228,16 +229,12 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
     case 'vuelta':
       if (vuelta.value.length > 0) {
         const vueloVueltaSeleccionado = vuelta.value.find(v => v.arrival_token === tokenSeleccionado);
-        // console.log(arrival_id);
-        // console.log('vuelo de vuelta:', vueloVueltaSeleccionado.arrival_id);
-        // console.log('seleccion:', vueloVueltaSeleccionado);
         if (vueloVueltaSeleccionado) {
           reserva.value.vueltaReserva = {
             token: tokenSeleccionado,
             details: vueloVueltaSeleccionado,
             arrival_id: vueloVueltaSeleccionado.arrival_id
           };
-          // console.log('Vuelo de vuelta actualizado:', reserva.value.vueltaReserva);
         } else {
           console.error('No se encontró el vuelo de vuelta seleccionado.');
         }
@@ -247,20 +244,16 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
       break;
 
     case 'hotel':
-
       if (hoteles.value.length > 0) {
         const hotelSeleccionado = hoteles.value.find(h => h.property_token === tokenSeleccionado);
-        // console.log('Seleccionando hotel:', hotelSeleccionado, 'Con token:', tokenSeleccionado);
-
         if (hotelSeleccionado) {
-          // console.log('Hotel encontrado:', hotelSeleccionado);
           reserva.value.hotelReserva = hotelSeleccionado;
         } else {
-          console.error('No se encontró el hotel seleccionado. Verifica que el ID sea correcto.');
+          console.error('No se encontró el hotel seleccionado.');
           reserva.value.hotelReserva = null;
         }
       } else {
-        console.error('No se seleccionó un hotel. Verifica la lista de hoteles disponibles.');
+        console.error('No se seleccionó un hotel.');
         reserva.value.hotelReserva = null;
       }
       break;
@@ -271,9 +264,11 @@ const manejarReserva = (tipo, tokenSeleccionado, hotelSeleccionado) => {
   }
 
   localStorage.setItem('Reserva', JSON.stringify(reserva.value));
-  // console.log('Reserva actualizada:', reserva.value);
+  console.log('Reserva actualizada:', reserva.value);
 
+  console.log('Paso actual antes de incrementar:', pasoActual.value);
   pasoActual.value += 1;
+  console.log('Paso actual después de incrementar:', pasoActual.value);
 };
 
 const decodeJWT = (token) => {
@@ -630,7 +625,10 @@ onMounted(async () => {
           </p>
 
           <!-- Precio -->
-          <p><strong>Precio:</strong> {{ hotel.total_rate.before_taxes_fees }}</p>
+          <p><strong>Precio:</strong>
+            {{ hotel.total_rate && hotel.total_rate.before_taxes_fees ? hotel.total_rate.before_taxes_fees :
+              hotel.total_rate && hotel.total_rate.lowest ? hotel.total_rate.lowest : 'No disponible' }}
+          </p>
 
           <div class="flex justify-end mt-4">
             <BotonPrincipal @click="manejarReserva('hotel', hotel.property_token)">Reservar</BotonPrincipal>

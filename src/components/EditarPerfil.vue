@@ -326,11 +326,17 @@ onMounted(() => {
 
 
             <!-- Mensajes de error y éxito -->
-            <div v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</div>
-            <div v-if="successMessage" class="text-green-500 text-center mt-4">{{ successMessage }}</div>
+            <div v-if="errorMessage" class="mt-4 mb-4 p-4 bg-red-100 border-l-4 border-[#7E2323] text-[#222725]">
+                <p>{{ errorMessage }}</p>
+            </div>
+
+            <!-- Mensaje de éxito -->
+            <div v-if="successMessage" class="mt-4 mb-4 p-4 bg-green-100 border-l-4 border-[#788A68] text-[#222725]">
+                <p>{{ successMessage }}</p>
+            </div>
 
             <!-- Botón de Actualizar Perfil -->
-            <div class="mt-6 text-center">
+            <div class="mt-6 text-center flex justify-center">
                 <BotonPrincipal :disabled="enviando">
                     {{ enviando ? 'Actualizando...' : 'Actualizar Perfil' }}
                 </BotonPrincipal>
